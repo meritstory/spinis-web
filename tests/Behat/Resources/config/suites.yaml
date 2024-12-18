@@ -1,0 +1,10 @@
+default:
+    suites:
+        default:
+            contexts:
+                # the list must be in alphabetical order for easier conflict resolution
+                - 'Behat\MinkExtension\Context\MinkContext'
+
+    gherkin:
+        filters:
+            tags: ~@wip

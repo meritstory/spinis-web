@@ -1,0 +1,19 @@
+imports:
+  - './tests/Behat/Resources/config/suites.yaml'
+
+default:
+  formatters:
+    pretty:
+      verbose:  true
+      paths:    false
+      snippets: false
+  extensions:
+    Behat\MinkExtension:
+      base_url: "https://127.0.0.1:8080/"
+      default_session: symfony
+      sessions:
+        symfony:
+          symfony: ~
+    FriendsOfBehat\SymfonyExtension:
+      bootstrap: 'tests/bootstrap.php'
+    FriendsOfBehat\VariadicExtension: ~

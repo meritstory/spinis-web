@@ -36,3 +36,7 @@
 ###< squizlabs/php_codesniffer ###
 
 node_modules/
+
+###> friends-of-behat/symfony-extension ###
+/behat.yml
+###< friends-of-behat/symfony-extension ###
