@@ -1,0 +1,40 @@
+# Base Symfony project
+
+## Requirements
+
+* To run the project you should have installed: Docker, Docker Compose
+* The project requirements you can check if needed `./docker-compose.yaml`
+
+## Development environment
+
+1. cd project directory
+2. Run `cp docker-compose.override.dist.yaml docker-compose.override.yaml`<br />
+3. Build/run containers `./start-dev.sh`
+4. Update your system host file (add sf.dev) or you can use localhost:8080
+
+ ```
+ sudo echo "127.0.0.1 sf.dev" >> /etc/hosts
+ ```
+
+5. Connect to php container by running this command: `./backend.sh` and run next steps inside the connected php container
+    1. Run this command `composer install`
+    2. Run this command `bin/console doctrine:migrations:migrate`
+    3. Run this command `bin/console assets:install --symlink`
+6. PhpStorm only
+    1. Install plugins:
+        - Symfony Support
+        - PHP Annotations
+        - PHP Toolbox
+        - deep-assoc-completion
+        - Php Inspections (EA Extended)
+        - PHPUnit Enhancement
+    2. Choose correct PHP interpreter:
+        - Settings -> PHP -> CLI Interpreter -> choose `php from docker-compose`
+        - Settings -> PHP -> Quality Tools -> PHP_CodeSniffer -> Configuration -> choose `By default project interpreter`
+        - Settings -> PHP -> Quality Tools -> PHPStan -> Configuration -> choose `By default project interpreter`
+    3. Sync settings with composer
+        - Press `Enable sync` if you see popup
+        - Otherwise: Settings -> PHP -> Composer -> check `Synchronize IDE Settings with composer.json`
+7. Run `./phpstan/check-project.sh` to check for errors before git push.
+    1. You need to regenerate baseline config after some fixes to old code:
+        - run `./phpstan/update-baseline-config.sh`

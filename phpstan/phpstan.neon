@@ -1,0 +1,19 @@
+includes:
+    ####- phpstan-baseline.neon
+
+parameters:
+    level: 7
+    paths:
+        - ../src
+    inferPrivatePropertyTypeFromConstructor: true
+    parallel:
+        processTimeout: 300.0
+    symfony:
+        containerXmlPath: '%rootDir%/../../../var/cache/dev/App_KernelDevDebugContainer.xml'
+        consoleApplicationLoader: '%rootDir%/../../../phpstan/console-loader.php'
+    doctrine:
+        objectManagerLoader: '%rootDir%/../../../phpstan/doctrine-orm-bootstrap.php'
+    scanDirectories:
+        - '%rootDir%/../../../var/cache/dev/Symfony/Config'
+    ignoreErrors:
+#        - identifier: missingType.generics

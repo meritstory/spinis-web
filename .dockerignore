@@ -1,0 +1,8 @@
+docker/.data
+var
+vendor
+.dockerignore
+.git
+.github
+.idea
+.platform
