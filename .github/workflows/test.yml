@@ -1,23 +1,57 @@
 name: Test
 
 on:
-  push:
+    push:
 
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    test:
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:17
+                ports:
+                    - 5432:5432
+                env:
+                    POSTGRES_USER: sf-test
+                    POSTGRES_PASSWORD: sf-test
+                    POSTGRES_DB: sf-test
+                options: >-
+                    --health-cmd "pg_isready -U sf-test"
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+        env:
+            DATABASE_URL: postgresql://sf-test:sf-test@localhost:5432/sf?serverVersion=17&charset=utf8
+            APP_ENV: test
+        steps:
+            -   uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.3'
 
-      - name: Install dependencies
-        run: composer install
+            -   name: Install dependencies
+                run: composer install
+                env:
+                    APP_ENV: dev
 
-      - name: Run PHPStan check
-        run: ./phpstan/check-project.sh
+            -   name: Run PHPStan check
+                run: ./phpstan/check-project.sh
+
+            -   name: Wait for PostgreSQL to be ready
+                run: |
+                    for i in {1..10}; do
+                      pg_isready -h localhost -p 5432 -U postgres && break || sleep 2
+                    done
+
+            -   name: Create database schema
+                run: php bin/console doctrine:schema:create
+
+            -   name: Generate JWT keys
+                run: php bin/console lexik:jwt:generate-keypair
+
+            -   name: Run Behat tests
+                run: vendor/bin/behat

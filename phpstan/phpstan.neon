@@ -6,6 +6,7 @@ parameters:
     paths:
         - ../src
     inferPrivatePropertyTypeFromConstructor: true
+    treatPhpDocTypesAsCertain: false
     parallel:
         processTimeout: 300.0
     symfony:
@@ -16,4 +17,6 @@ parameters:
     scanDirectories:
         - '%rootDir%/../../../var/cache/dev/Symfony/Config'
     ignoreErrors:
-#        - identifier: missingType.generics
+        #- '#\$id is never written, only read#'
+        - '#Property .+::\$[a-zA-Z0-9_]+ type mapping mismatch: property can contain .+ but database expects .+#'
+        - '#Class App\\Repository\\.+ has PHPDoc tag @method for method find.+ parameter .+ .+ with no value type specified in iterable type array.#'

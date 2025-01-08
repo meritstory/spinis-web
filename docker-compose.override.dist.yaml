@@ -10,6 +10,18 @@ services:
             default:
                 ipv4_address: 172.34.21.20
 
+    db-test:
+        environment:
+            POSTGRES_DB: sf-test
+            POSTGRES_USER: sf-test
+            POSTGRES_PASSWORD: sf-test
+        volumes:
+            -   type: tmpfs
+                target: /var/lib/postgresql
+        networks:
+            default:
+                ipv4_address: 172.34.21.21
+
     app:
         build:
             args:

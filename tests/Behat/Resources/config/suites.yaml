@@ -3,6 +3,11 @@ default:
         default:
             contexts:
                 # the list must be in alphabetical order for easier conflict resolution
+                - 'App\Tests\Behat\Context\Api\UserContext'
+                - 'App\Tests\Behat\Context\Hook\DoctrineORMContext'
+                - 'App\Tests\Behat\Context\Transform\UserContext'
+                - 'App\Tests\Behat\Context\FeatureContext'
+                - 'App\Tests\Behat\Context\UserContext'
                 - 'Behat\MinkExtension\Context\MinkContext'
 
     gherkin:
