@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.4-fpm
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libssl-dev zlib1g-dev curl gnupg unzip git \
@@ -6,6 +6,7 @@ RUN apt-get update && \
           libjpeg62-turbo-dev \
           libxml2-dev \
           libpng-dev \
+          libicu-dev \
           netcat-traditional libxml2-dev libpq-dev libzip-dev wget \
           nginx \
           openssh-server \
@@ -18,13 +19,14 @@ RUN docker-php-ext-configure gd \
           --with-jpeg && \
     docker-php-ext-configure pcntl --enable-pcntl && \
     docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
+    docker-php-ext-configure intl && \
     docker-php-ext-install -j$(nproc) zip opcache intl pdo_pgsql pgsql soap pcntl gd && \
     docker-php-ext-enable apcu pdo_pgsql sodium gd pcntl
 
 # Install yarn, Node.js
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -y \
+RUN curl -fsSL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/yarn-archive-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/yarn-archive-keyring.gpg] https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install -y --no-install-recommends \
     yarn \
     nodejs
 
