@@ -41,6 +41,9 @@ jobs:
             -   name: Run PHPStan check
                 run: ./phpstan/check-project.sh
 
+            -   name: Run Rector check
+                run: ./vendor/bin/rector process --dry-run
+
             -   name: Wait for PostgreSQL to be ready
                 run: |
                     for i in {1..10}; do

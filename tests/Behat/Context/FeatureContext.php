@@ -18,8 +18,8 @@ use Webmozart\Assert\Assert;
 
 final class FeatureContext extends RawMinkContext implements Context
 {
-    public const string SS_RESPONSE_CONTENT = __CLASS__.':responseContent';
-    public const string SS_BASIC_AUTH = __CLASS__.':basicAuth';
+    public const string SS_RESPONSE_CONTENT = self::class.':responseContent';
+    public const string SS_BASIC_AUTH = self::class.':basicAuth';
 
     public function __construct(
         private readonly SharedStorageInterface $sharedStorage,
@@ -59,7 +59,7 @@ final class FeatureContext extends RawMinkContext implements Context
     ): void {
         if (!array_key_exists('HTTP_AUTHORIZATION', $server)) {
             if ($this->sharedStorage->has(self::SS_BASIC_AUTH)) {
-                $token = \base64_encode($this->sharedStorage->get(self::SS_BASIC_AUTH));
+                $token = \base64_encode((string) $this->sharedStorage->get(self::SS_BASIC_AUTH));
                 $server['HTTP_AUTHORIZATION'] = "Basic $token";
             } elseif ($this->sharedStorage->has(UserContext::SS_AUTH_TOKEN)) {
                 $token = $this->sharedStorage->get(UserContext::SS_AUTH_TOKEN);

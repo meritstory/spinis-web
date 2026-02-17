@@ -10,13 +10,10 @@ use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\NullLogger;
 
-final class DoctrineORMContext implements Context
+final readonly class DoctrineORMContext implements Context
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     /**

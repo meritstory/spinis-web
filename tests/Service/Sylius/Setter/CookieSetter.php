@@ -19,12 +19,10 @@ use Symfony\Component\BrowserKit\Cookie;
 
 final class CookieSetter implements CookieSetterInterface
 {
-    private Session $minkSession;
-
     /** @var array */
     private $minkParameters;
 
-    public function __construct(Session $minkSession, $minkParameters)
+    public function __construct(private readonly Session $minkSession, $minkParameters)
     {
         if (!is_array($minkParameters) && !$minkParameters instanceof \ArrayAccess) {
             throw new \InvalidArgumentException(
@@ -35,8 +33,6 @@ final class CookieSetter implements CookieSetterInterface
                 )
             );
         }
-
-        $this->minkSession = $minkSession;
         $this->minkParameters = $minkParameters;
     }
 
@@ -54,7 +50,7 @@ final class CookieSetter implements CookieSetterInterface
 
         if ($driver instanceof SymfonyDriver) {
             $driver->getClient()->getCookieJar()->set(
-                new Cookie($name, $value, null, null, parse_url($this->minkParameters['base_url'], \PHP_URL_HOST))
+                new Cookie($name, $value, null, null, parse_url((string) $this->minkParameters['base_url'], \PHP_URL_HOST))
             );
 
             return;
@@ -66,7 +62,7 @@ final class CookieSetter implements CookieSetterInterface
     private function prepareMinkSessionIfNeeded(Session $session): void
     {
         if ($this->shouldMinkSessionBePrepared($session)) {
-            $session->visit(rtrim($this->minkParameters['base_url'], '/').'/');
+            $session->visit(rtrim((string) $this->minkParameters['base_url'], '/').'/');
         }
     }
 
@@ -86,7 +82,7 @@ final class CookieSetter implements CookieSetterInterface
 //            return true;
 //        }
 
-        if (false !== strpos($session->getCurrentUrl(), $this->minkParameters['base_url'])) {
+        if (str_contains($session->getCurrentUrl(), (string) $this->minkParameters['base_url'])) {
             return false;
         }
 

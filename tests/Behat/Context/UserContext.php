@@ -18,8 +18,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class UserContext extends RawMinkContext implements Context
 {
-    public const string SS_AUTH_TOKEN = __CLASS__.':authToken';
-    public const string SS_CURRENT_USER = __CLASS__.':currentUser';
+    public const string SS_AUTH_TOKEN = self::class.':authToken';
+    public const string SS_CURRENT_USER = self::class.':currentUser';
     public const string USER_DEFAULT_PASSWORD = 'test';
 
     public function __construct(
