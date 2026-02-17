@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM php:8.5-fpm
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libssl-dev zlib1g-dev curl gnupg unzip git \
@@ -18,9 +18,9 @@ RUN docker-php-ext-configure gd \
           --with-freetype \
           --with-jpeg && \
     docker-php-ext-configure pcntl --enable-pcntl && \
-    docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
+    docker-php-ext-configure pgsql && \
     docker-php-ext-configure intl && \
-    docker-php-ext-install -j$(nproc) zip opcache intl pdo_pgsql pgsql soap pcntl gd && \
+    docker-php-ext-install -j$(nproc) zip intl pdo_pgsql pgsql soap pcntl gd && \
     docker-php-ext-enable apcu pdo_pgsql sodium gd pcntl
 
 # Install yarn, Node.js
