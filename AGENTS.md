@@ -7,8 +7,12 @@
 - Run PHP, Composer, Symfony console, PHPStan, Rector, and Behat through Docker.
 - Use Behat as the test layer for behavior/API coverage. Do not add PHPUnit tests unless the user explicitly asks for them.
 - Do not refactor existing code unless it is required for the requested change.
+- Do not rename classes, methods, routes, fields, or files for cleanliness unless the requested change requires it.
+- Do not introduce new dependencies unless the user explicitly approves them.
 - Before changing code, inspect the existing implementation and follow the project's current patterns.
+- When implementing something new, find similar existing examples first and adapt only what is necessary.
 - Project-specific conventions and existing practices take precedence over generic Symfony best practices.
+- Preserve existing response formats, validation approach, and data handling style.
 - Keep changes minimal and focused on the requested behavior.
 
 ## Development Environment
@@ -35,6 +39,11 @@ docker compose exec -u www-data -T app bash -c "..."
 
 Run Behat commands through Docker, not directly on the host.
 
+- Before adding a new Behat step, search for an existing project step first.
+- Prefer existing project steps and built-in Mink steps when they fit.
+- Add a new custom step only when the assertion cannot be expressed clearly with existing steps.
+- Follow the existing `.feature` file style and wording.
+
 Create the test schema:
 
 ```bash
@@ -57,6 +66,18 @@ Run a specific scenario by line:
 
 ```bash
 ./backend.sh "vendor/bin/behat features/Api/auth.feature:3"
+```
+
+## Database
+
+- Use Doctrine migrations for schema changes.
+- Do not change existing schema conventions unless required by the requested behavior.
+- Generate migrations through Symfony console inside Docker.
+
+Generate a migration:
+
+```bash
+./backend.sh "php bin/console doctrine:migrations:generate"
 ```
 
 ## Static Checks
@@ -88,3 +109,5 @@ Run Rector dry-run:
 - Do not assume host `php` exists; use `./backend.sh`.
 - If existing code differs from common Symfony recommendations, preserve the existing project style unless the user asks for a broader refactor.
 - Avoid introducing new abstractions, services, or patterns only to align with framework best practices.
+- Do not introduce DTOs, serializer groups, services, or new architecture only because they are Symfony best practices.
+- If unsure, ask: "How is this already done in this project?", not "What is the best generic Symfony way?"
