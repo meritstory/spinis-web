@@ -10,6 +10,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -143,9 +144,43 @@ final class FeatureContext extends RawMinkContext implements Context
         return $content['data'];
     }
 
+    #[Given('/^fetched data should look like:$/')]
+    public function fetchedDataShouldLookLike(?TableNode $table = null): void
+    {
+        self::validateValueAgainstTable($this->getResponseData(), $table);
+    }
+
+    #[Given('/^fetched data list should not include items:$/')]
+    public function fetchedDataListShouldNotIncludeItems(TableNode $table): void
+    {
+        $dataList = $this->getResponseData();
+
+        foreach ($table as $row) {
+            foreach ($dataList as $data) {
+                $intersection = \array_intersect_assoc($data, $row);
+
+                if (\count($intersection) === \count($row)) {
+                    throw new \InvalidArgumentException(\sprintf('List should not contain item %s', \json_encode($row)));
+                }
+            }
+        }
+    }
+
+    #[Given('/^fetched response array should look like:$/')]
+    public function fetchedResponseArrayShouldLookLike(?TableNode $table = null): void
+    {
+        self::validateValueAgainstTable($this->getResponseContent(true), $table);
+    }
+
     public function getResponseCode(): int
     {
         return $this->getSession()->getStatusCode();
+    }
+
+    #[Given('/^I visit "([^"]*)"$/')]
+    public function iVisit(string $url): void
+    {
+        $this->request(Request::METHOD_GET, $url);
     }
 
     /** @BeforeScenario */
@@ -281,6 +316,45 @@ final class FeatureContext extends RawMinkContext implements Context
                 ? '['.strtr($propertyName, ['.' => '][']).']'
                 : $propertyName;
             Assert::eq($propertyAccessor->getValue($values, $prop), $expectedValue);
+        }
+    }
+
+    public static function validateValueAgainstTable(object|array|null $value, ?TableNode $table = null): void
+    {
+        if (!$table) {
+            Assert::null($value);
+
+            return;
+        }
+
+        $propertyAccessor = self::getPropertyAccessor();
+
+        foreach ($table as $row) {
+            $actual = $propertyAccessor->getValue($value, $row['Property']);
+
+            match (true) {
+                'true' === $row['Value'] => Assert::true($actual),
+                'false' === $row['Value'] => Assert::false($actual),
+                \in_array($row['Value'], ['NULL', '~'], true) => Assert::null($actual),
+                \str_starts_with((string) $row['Value'], 'REGEX:') => Assert::regex(
+                    $actual,
+                    \substr((string) $row['Value'], 6)
+                ),
+                \str_starts_with((string) $row['Value'], 'CONST:') => Assert::eq(
+                    $actual,
+                    \constant(\substr((string) $row['Value'], 6)),
+                ),
+                \in_array($row['Value'], ['TODAY', 'YESTERDAY'], true) => Assert::eq(
+                    (\is_string($actual) ? new \DateTimeImmutable($actual) : $actual)->format('Y-m-d'),
+                    new \DateTimeImmutable($row['Value'])->format('Y-m-d')
+                ),
+                $actual instanceof \DateTimeInterface => Assert::eq(
+                    $actual->format('Y-m-d H:i:s'),
+                    new \DateTimeImmutable($row['Value'])->format('Y-m-d H:i:s')
+                ),
+                $actual instanceof \UnitEnum => Assert::eq($actual->name, $row['Value']),
+                default => Assert::eq($actual, $row['Value']),
+            };
         }
     }
 }
