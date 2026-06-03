@@ -8,10 +8,12 @@ Feature: Authentication
     """
     And I submit the request
     Then the response status code should be 200
-    And the response should contain:
-      | token        | STRING |
-      | refreshToken | STRING |
+    And fetched response array should look like:
+      | Property       | Value  |
+      | [token]        | STRING |
+      | [refreshToken] | STRING |
     When I refresh my token
     Then the response status code should be 200
-    And the response should contain:
-      | refreshToken | STRING |
+    And fetched response array should look like:
+      | Property       | Value  |
+      | [refreshToken] | STRING |

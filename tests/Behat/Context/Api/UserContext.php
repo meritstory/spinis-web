@@ -9,7 +9,6 @@ use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Symfony\Component\HttpFoundation\Request;
-use Webmozart\Assert\Assert;
 
 class UserContext extends RawMinkContext implements Context
 {
@@ -39,9 +38,5 @@ class UserContext extends RawMinkContext implements Context
     public function fetchMyData(): void
     {
         $this->featureContext->request(Request::METHOD_GET, '/api/users/me');
-
-        $content = $this->featureContext->getResponseContent(true);
-
-        Assert::keyExists($content, 'username');
     }
 }

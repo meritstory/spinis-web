@@ -335,6 +335,7 @@ final class FeatureContext extends RawMinkContext implements Context
             match (true) {
                 'true' === $row['Value'] => Assert::true($actual),
                 'false' === $row['Value'] => Assert::false($actual),
+                'STRING' === $row['Value'] => Assert::stringNotEmpty($actual),
                 \in_array($row['Value'], ['NULL', '~'], true) => Assert::null($actual),
                 \str_starts_with((string) $row['Value'], 'REGEX:') => Assert::regex(
                     $actual,

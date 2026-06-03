@@ -6,5 +6,6 @@ Feature: User
 
   Scenario: I can fetch my data
     When I fetch my data
-    Then the response should contain:
-      | username | user@example.com |
+    Then fetched response array should look like:
+      | Property   | Value            |
+      | [username] | user@example.com |
