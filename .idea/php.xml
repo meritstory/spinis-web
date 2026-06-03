@@ -198,6 +198,9 @@
       <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
       <path value="$PROJECT_DIR$/vendor/lexik/jwt-authentication-bundle" />
       <path value="$PROJECT_DIR$/vendor/stof/doctrine-extensions-bundle" />
+      <path value="$PROJECT_DIR$/vendor/behat/mink-browserkit-driver" />
+      <path value="$PROJECT_DIR$/vendor/behat/mink" />
+      <path value="$PROJECT_DIR$/vendor/rector/rector" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -272,7 +275,7 @@
       </interpreter>
     </phpInfoCache>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.4" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.5" />
   <component name="PhpStan">
     <PhpStan_settings>
       <PhpStanConfiguration tool_path="$PROJECT_DIR$/vendor/bin/phpstan" />
