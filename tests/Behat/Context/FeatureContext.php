@@ -10,6 +10,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -24,6 +25,7 @@ final class FeatureContext extends RawMinkContext implements Context
 
     public function __construct(
         private readonly SharedStorageInterface $sharedStorage,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -172,6 +174,12 @@ final class FeatureContext extends RawMinkContext implements Context
         self::validateValueAgainstTable($this->getResponseContent(true), $table);
     }
 
+    #[Given('/^(user "[^"]*") entity data should look like:$/')]
+    public function entityDataShouldLookLike(object|array $entityOrListOf, ?TableNode $table = null): void
+    {
+        self::validateValueAgainstTable($entityOrListOf, $table);
+    }
+
     public function getResponseCode(): int
     {
         return $this->getSession()->getStatusCode();
@@ -188,6 +196,12 @@ final class FeatureContext extends RawMinkContext implements Context
     public function sessionIsRestarted(): void
     {
         $this->getSession()->restart();
+    }
+
+    #[Given('/^entity manager is cleared$/')]
+    public function entityManagerIsCleared(): void
+    {
+        $this->entityManager->clear();
     }
 
     #[Given('/^I get validation errors on "([^"]*)"$/')]
