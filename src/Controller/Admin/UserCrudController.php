@@ -55,7 +55,8 @@ class UserCrudController extends AbstractCrudController
             ->setLabel('user.field.password')
             ->setFormType(PasswordType::class)
             ->onlyOnForms()
-            ->setRequired(Crud::PAGE_NEW === $pageName);
+            ->setRequired(Crud::PAGE_NEW === $pageName)
+            ->setFormTypeOption('empty_data', '');
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
@@ -72,10 +73,11 @@ class UserCrudController extends AbstractCrudController
         $plainPassword = $entityInstance->getPassword();
 
         if (null === $plainPassword || '' === $plainPassword) {
-            $existingUser = $entityManager->getRepository(User::class)->find($entityInstance->getId());
+            $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance);
+            $originalPassword = $originalData['password'] ?? null;
 
-            if ($existingUser instanceof User) {
-                $entityInstance->setPassword($existingUser->getPassword());
+            if (is_string($originalPassword) && '' !== $originalPassword) {
+                $entityInstance->setPassword($originalPassword);
             }
         } else {
             $this->encodePassword($entityInstance);
