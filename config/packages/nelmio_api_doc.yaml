@@ -1,8 +1,8 @@
 nelmio_api_doc:
     documentation:
         info:
-            title: Base symfony project
-            description: API documentation
+            title: SPINIS API
+            description: Skundų priėmimo ir nagrinėjimo informacinė sistema — API dokumentacija
             version: 1.0.0
     areas: # to filter documented areas
         path_patterns:

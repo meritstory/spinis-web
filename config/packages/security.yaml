@@ -30,6 +30,18 @@ security:
             stateless: true
             jwt: ~
 
+        admin:
+            pattern: ^/admin
+            provider: app_user_provider
+            lazy: true
+            form_login:
+                login_path: admin_login
+                check_path: admin_login
+                default_target_path: admin
+            logout:
+                path: admin_logout
+                target: admin_login
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -50,6 +62,8 @@ security:
         - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

@@ -11,4 +11,5 @@ enum RoleEnum: string
     use EnumFromNameTrait;
 
     case USER = 'ROLE_USER';
+    case ADMIN = 'ROLE_ADMIN';
 }
