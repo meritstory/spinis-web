@@ -64,8 +64,8 @@ final class FeatureContext extends RawMinkContext implements Context
             if ($this->sharedStorage->has(self::SS_BASIC_AUTH)) {
                 $token = \base64_encode((string) $this->sharedStorage->get(self::SS_BASIC_AUTH));
                 $server['HTTP_AUTHORIZATION'] = "Basic $token";
-            } elseif ($this->sharedStorage->has(UserContext::SS_AUTH_TOKEN)) {
-                $token = $this->sharedStorage->get(UserContext::SS_AUTH_TOKEN);
+            } elseif ($this->sharedStorage->has(AdminContext::SS_AUTH_TOKEN)) {
+                $token = $this->sharedStorage->get(AdminContext::SS_AUTH_TOKEN);
                 $server['HTTP_AUTHORIZATION'] = "Bearer $token";
             } else {
                 $server['HTTP_AUTHORIZATION'] = null;
@@ -174,7 +174,7 @@ final class FeatureContext extends RawMinkContext implements Context
         self::validateValueAgainstTable($this->getResponseContent(true), $table);
     }
 
-    #[Given('/^(user "[^"]*") entity data should look like:$/')]
+    #[Given('/^(admin "[^"]*") entity data should look like:$/')]
     public function entityDataShouldLookLike(object|array $entityOrListOf, ?TableNode $table = null): void
     {
         self::validateValueAgainstTable($entityOrListOf, $table);

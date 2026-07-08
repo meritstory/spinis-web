@@ -11,17 +11,19 @@ final class Version20260707072007 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add refresh_tokens table for JWT refresh token storage';
+        return '';
     }
 
     public function up(Schema $schema): void
     {
         $this->addSql('CREATE TABLE refresh_tokens (id SERIAL NOT NULL, refresh_token VARCHAR(128) NOT NULL, username VARCHAR(255) NOT NULL, valid TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_9BACE7E1C74F2195 ON refresh_tokens (refresh_token)');
+        $this->addSql('ALTER TABLE "user" RENAME TO "admin"');
     }
 
     public function down(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE "admin" RENAME TO "user"');
         $this->addSql('DROP TABLE refresh_tokens');
     }
 }

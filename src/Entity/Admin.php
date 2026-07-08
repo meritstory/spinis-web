@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\AdminRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+#[ORM\Entity(repositoryClass: AdminRepository::class)]
+#[ORM\Table(name: '`admin`')]
 #[ORM\UniqueConstraint(fields: ['username'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class Admin implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableEntity;
 
@@ -54,8 +54,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * A visual identifier that represents this user.
-     *
      * @see UserInterface
      */
     public function getUserIdentifier(): string
@@ -74,7 +72,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = RoleEnum::USER->value;
 
         return array_unique($roles);
@@ -110,7 +107,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 }

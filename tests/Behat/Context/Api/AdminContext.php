@@ -10,7 +10,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Symfony\Component\HttpFoundation\Request;
 
-class UserContext extends RawMinkContext implements Context
+class AdminContext extends RawMinkContext implements Context
 {
     public function __construct(
         private readonly FeatureContext $featureContext,
@@ -37,6 +37,6 @@ class UserContext extends RawMinkContext implements Context
     #[Given('/^I fetch my data$/')]
     public function fetchMyData(): void
     {
-        $this->featureContext->request(Request::METHOD_GET, '/api/users/me');
+        $this->featureContext->request(Request::METHOD_GET, '/api/admins/me');
     }
 }

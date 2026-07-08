@@ -3,12 +3,12 @@ app:
     short_name: SPINIS
 
 menu:
-    users: Users
+    admins: Administrators
 
-user:
+admin:
     label:
-        singular: User
-        plural: Users
+        singular: Administrator
+        plural: Administrators
     field:
         username: Username
         password: Password

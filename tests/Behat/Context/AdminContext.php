@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat\Context;
 
+use App\Entity\Admin;
 use App\Entity\RoleEnum;
-use App\Entity\User;
 use App\Tests\Service\Sylius\SharedStorageInterface;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -16,11 +16,11 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class UserContext extends RawMinkContext implements Context
+class AdminContext extends RawMinkContext implements Context
 {
     public const string SS_AUTH_TOKEN = self::class.':authToken';
-    public const string SS_CURRENT_USER = self::class.':currentUser';
-    public const string USER_DEFAULT_PASSWORD = 'test';
+    public const string SS_CURRENT_ADMIN = self::class.':currentAdmin';
+    public const string ADMIN_DEFAULT_PASSWORD = 'test';
 
     public function __construct(
         private readonly UserPasswordHasherInterface $userPasswordHasher,
@@ -31,37 +31,36 @@ class UserContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[Given('/^(user) with username "([^"]*)" is created$/')]
-    #[Given('/^(user) with username "([^"]*)" and password "([^"]*)" is created$/')]
-    public function userIsCreated(
+    #[Given('/^(admin) with username "([^"]*)" is created$/')]
+    #[Given('/^(admin) with username "([^"]*)" and password "([^"]*)" is created$/')]
+    public function adminIsCreated(
         string $role,
         string $username,
-        string $password = self::USER_DEFAULT_PASSWORD
+        string $password = self::ADMIN_DEFAULT_PASSWORD
     ): void {
         $roleEnum = RoleEnum::fromName(strtoupper($role));
 
-        $user = (new User())
+        $admin = (new Admin())
             ->setUsername($username)
-            ->setRoles([$roleEnum->value])
-        ;
+            ->setRoles([$roleEnum->value]);
 
-        $user->setPassword($this->userPasswordHasher->hashPassword($user, $password));
+        $admin->setPassword($this->userPasswordHasher->hashPassword($admin, $password));
 
-        $this->entityManager->persist($user);
+        $this->entityManager->persist($admin);
         $this->entityManager->flush();
     }
 
-    #[Given('/^(user with username "[^"]*") is authenticated$/')]
-    public function userIsAuthenticated(User $user): void
+    #[Given('/^(admin with username "[^"]*") is authenticated$/')]
+    public function adminIsAuthenticated(Admin $admin): void
     {
         $this->sharedStorage->set(FeatureContext::SS_BASIC_AUTH, null);
 
-        $token = $this->tokenManager->create($user);
+        $token = $this->tokenManager->create($admin);
 
-        $this->tokenStorage->setToken(new JWTPostAuthenticationToken($user, 'api', $user->getRoles(), $token));
+        $this->tokenStorage->setToken(new JWTPostAuthenticationToken($admin, 'api', $admin->getRoles(), $token));
         $this->sharedStorage->set(self::SS_AUTH_TOKEN, $token);
 
         $this->getSession()->setRequestHeader('Authorization', "Bearer {$token}");
-        $this->sharedStorage->set(self::SS_CURRENT_USER, $user);
+        $this->sharedStorage->set(self::SS_CURRENT_ADMIN, $admin);
     }
 }

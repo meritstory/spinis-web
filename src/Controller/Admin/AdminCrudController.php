@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Admin;
 use App\Entity\RoleEnum;
-use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -17,9 +17,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @extends AbstractCrudController<User>
+ * @extends AbstractCrudController<Admin>
  */
-class UserCrudController extends AbstractCrudController
+class AdminCrudController extends AbstractCrudController
 {
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
@@ -29,30 +29,30 @@ class UserCrudController extends AbstractCrudController
 
     public static function getEntityFqcn(): string
     {
-        return User::class;
+        return Admin::class;
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('user.label.singular')
-            ->setEntityLabelInPlural('user.label.plural')
-            ->setPageTitle('index', 'user.label.plural');
+            ->setEntityLabelInSingular('admin.label.singular')
+            ->setEntityLabelInPlural('admin.label.plural')
+            ->setPageTitle('index', 'admin.label.plural');
     }
 
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
-        yield TextField::new('username')->setLabel('user.field.username');
+        yield TextField::new('username')->setLabel('admin.field.username');
         yield ChoiceField::new('roles')
-            ->setLabel('user.field.roles')
+            ->setLabel('admin.field.roles')
             ->setChoices([
-                $this->translator->trans('user.role.admin') => RoleEnum::ADMIN->value,
+                $this->translator->trans('admin.role.admin') => RoleEnum::ADMIN->value,
             ])
             ->allowMultipleChoices()
             ->renderExpanded();
         yield TextField::new('password')
-            ->setLabel('user.field.password')
+            ->setLabel('admin.field.password')
             ->setFormType(PasswordType::class)
             ->onlyOnForms()
             ->setRequired(Crud::PAGE_NEW === $pageName)
@@ -61,7 +61,7 @@ class UserCrudController extends AbstractCrudController
 
     public function persistEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
-        /** @var User $entityInstance */
+        /** @var Admin $entityInstance */
         $this->encodePassword($entityInstance);
 
         parent::persistEntity($entityManager, $entityInstance);
@@ -69,14 +69,14 @@ class UserCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
     {
-        /** @var User $entityInstance */
+        /** @var Admin $entityInstance */
         $plainPassword = $entityInstance->getPassword();
 
-        if (null === $plainPassword || '' === $plainPassword) {
+        if ($plainPassword === null || $plainPassword === '') {
             $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance);
             $originalPassword = $originalData['password'] ?? null;
 
-            if (is_string($originalPassword) && '' !== $originalPassword) {
+            if (is_string($originalPassword) && $originalPassword !== '') {
                 $entityInstance->setPassword($originalPassword);
             }
         } else {
@@ -86,14 +86,14 @@ class UserCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $entityInstance);
     }
 
-    private function encodePassword(User $user): void
+    private function encodePassword(Admin $admin): void
     {
-        $plainPassword = $user->getPassword();
+        $plainPassword = $admin->getPassword();
 
-        if (null === $plainPassword || '' === $plainPassword) {
+        if ($plainPassword === null || $plainPassword === '') {
             return;
         }
 
-        $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, $plainPassword));
     }
 }

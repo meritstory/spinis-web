@@ -21,7 +21,7 @@ class DashboardController extends AbstractDashboardController
 
     public function index(): Response
     {
-        return $this->redirectToRoute('admin_user_index');
+        return $this->redirectToRoute('admin_admin_index');
     }
 
     public function configureDashboard(): Dashboard
@@ -33,6 +33,6 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkTo(UserCrudController::class, 'menu.users', 'fa fa-users');
+        yield MenuItem::linkTo(AdminCrudController::class, 'menu.admins', 'fa fa-users');
     }
 }

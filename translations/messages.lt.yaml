@@ -3,12 +3,12 @@ app:
     short_name: SPINIS
 
 menu:
-    users: Vartotojai
+    admins: Administratoriai
 
-user:
+admin:
     label:
-        singular: Vartotojas
-        plural: Vartotojai
+        singular: Administratorius
+        plural: Administratoriai
     field:
         username: 'Vartotojo vardas'
         password: Slaptažodis
