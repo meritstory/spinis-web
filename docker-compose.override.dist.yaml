@@ -48,7 +48,7 @@ services:
 
 networks:
     default:
-        name: base-sf-project
+        name: spinis-web
         driver: bridge
         ipam:
             driver: default

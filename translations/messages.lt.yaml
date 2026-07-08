@@ -1,0 +1,17 @@
+app:
+    name: 'Skundų priėmimo ir nagrinėjimo informacinė sistema'
+    short_name: SPINIS
+
+menu:
+    admins: Administratoriai
+
+admin:
+    label:
+        singular: Administratorius
+        plural: Administratoriai
+    field:
+        username: 'Vartotojo vardas'
+        password: Slaptažodis
+        roles: Rolės
+    role:
+        admin: Administratorius

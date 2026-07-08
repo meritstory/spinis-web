@@ -1,0 +1,17 @@
+app:
+    name: 'Complaint intake and processing information system'
+    short_name: SPINIS
+
+menu:
+    admins: Administrators
+
+admin:
+    label:
+        singular: Administrator
+        plural: Administrators
+    field:
+        username: Username
+        password: Password
+        roles: Roles
+    role:
+        admin: Administrator

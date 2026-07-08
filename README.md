@@ -1,4 +1,6 @@
-# Base Symfony project
+# spinis-web
+
+**Skundų priėmimo ir nagrinėjimo informacinė sistema**
 
 ## Requirements
 
@@ -19,7 +21,8 @@
     1. Run this command `composer install`
     2. Run this command `bin/console lexik:jwt:generate-keypair` to generate the SSL keys for LexikJWTAuthenticationBundle
     3. Run this command `bin/console doctrine:migrations:migrate`
-    4. Run this command `bin/console assets:install --symlink`
+    4. Run this command `bin/console app:create-admin <username> <password>` to create an admin user
+    5. Run this command `bin/console assets:install --symlink`
 6. PhpStorm only
     1. Install plugins:
         - Symfony Support
@@ -41,3 +44,13 @@
 8. Run behat tests:
     1. php bin/console doctrine:schema:create --env=test
     2. vendor/bin/behat
+
+## LocalStack S3
+
+For local development, S3 goes through LocalStack instead of AWS. It starts with `./start-dev.sh`. Connection details are in `.env`.
+
+Run this command to see if the `dev` bucket is there:
+
+```bash
+docker compose exec localstack awslocal s3 ls
+```
