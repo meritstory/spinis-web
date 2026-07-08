@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Skundų nagrinėjimo sistema{% endblock %}
+
+{% block body %}
+    {% include '_header.html.twig' %}
+
+    <main>
+        <section class="hero">
+            <div class="container hero__inner">
+                <div class="hero__content">
+                    <h1>Skundų nagrinėjimo sistema</h1>
+                    <p>
+                        Pateikite skundą dėl sveikatos priežiūros paslaugų kokybės ar
+                        pacientų teisių pažeidimų. Tai greitas, paprastas ir aiškus procesas.
+                    </p>
+                    <a href="#" class="button button--primary">Teikti skundą</a>
+                </div>
+
+                {# Same video shown 3x, cropped differently per box via CSS object-position (see hero_collage_controller.js) #}
+                <div class="hero__collage" data-controller="hero-collage">
+                    <video class="hero__image hero__image--1" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto"></video>
+                    <video class="hero__image hero__image--2" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto"></video>
+                    <video class="hero__image hero__image--3" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto"></video>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <div class="container">
+                <h2>Kaip tai veikia?</h2>
+
+                <div class="how-it-works__cards">
+                    <article class="how-card">
+                        <div class="how-card__icon"><img src="{{ asset('images/how-it-works-1.svg') }}" alt=""></div>
+                        <h3>Prisijunkite</h3>
+                        <p>Prisijunkite per el. valdžios vartus naudodami savo asmens tapatybę patvirtinančias priemones.</p>
+                    </article>
+
+                    <article class="how-card how-card--raised">
+                        <h3>Užpildykite formą</h3>
+                        <p>Pasirinkite skundo tipą, nurodykite įstaigą, aprašykite situaciją bei pridėkite reikalingus dokumentus.</p>
+                        <div class="how-card__icon"><img src="{{ asset('images/how-it-works-2.svg') }}" alt=""></div>
+                    </article>
+
+                    <article class="how-card">
+                        <div class="how-card__icon"><img src="{{ asset('images/how-it-works-3.svg') }}" alt=""></div>
+                        <h3>Gaukite atsakymą</h3>
+                        <p>Sekite skundo nagrinėjimo eigą sistemoje ir gaukite oficialų tarnybos atsakymą.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq">
+            <div class="container">
+                <h2>Dažniausiai užduodami klausimai</h2>
+                <p class="faq__intro">Raskite atsakymus į pagrindinius klausimus apie skundų teikimą ir nagrinėjimą.</p>
+
+                {# TODO: placeholder answer copy -- replace with the real FAQ content #}
+                <div class="faq__list">
+                    <details class="faq__item">
+                        <summary>Kaip pateikti skundą?</summary>
+                        <p>Skundą galite pateikti prisijungę prie sistemos ir užpildę skundo formą.</p>
+                    </details>
+                    <details class="faq__item">
+                        <summary>Kokie dokumentai reikalingi?</summary>
+                        <p>Priklausomai nuo skundo tipo gali prireikti asmens tapatybės ir įvykį patvirtinančių dokumentų.</p>
+                    </details>
+                    <details class="faq__item">
+                        <summary>Per kiek laiko bus nagrinėjamas skundas?</summary>
+                        <p>Skundai paprastai nagrinėjami per teisės aktuose nustatytą terminą nuo jų gavimo dienos.</p>
+                    </details>
+                    <details class="faq__item">
+                        <summary>Ar galiu pateikti skundą kito asmens vardu?</summary>
+                        <p>Taip, tačiau tokiu atveju reikės pateikti tai patvirtinantį įgaliojimą.</p>
+                    </details>
+                    <details class="faq__item">
+                        <summary>Kur kreiptis dėl pagalbos?</summary>
+                        <p>Susisiekite su mumis per kontaktuose nurodytus el. paštą ar telefono numerį.</p>
+                    </details>
+                </div>
+
+                <a href="#" class="faq__more">Daugiau</a>
+            </div>
+        </section>
+    </main>
+
+    {% include '_footer.html.twig' %}
+{% endblock %}

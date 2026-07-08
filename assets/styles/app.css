@@ -1,3 +1,370 @@
+/* Reset & base */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 body {
-    background-color: skyblue;
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #1f2a24;
+    line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.button {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.button--primary {
+    background-color: #28865f;
+    color: #fff;
+}
+
+.button--primary:hover {
+    background-color: #216b4c;
+}
+
+/* Header */
+.site-header {
+    border-bottom: 1px solid #e6e9e8;
+}
+
+.site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.site-header__logo {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.site-header__logo-accent {
+    color: #28865f;
+}
+
+.site-header__nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-left: auto;
+    font-size: 15px;
+    color: #374151;
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-menu__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #28865f;
+    background: none;
+    color: #28865f;
+    cursor: pointer;
+}
+
+.user-menu__panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: #fff;
+    border: 1px solid #e6e9e8;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 8px;
+    z-index: 10;
+}
+
+.user-menu__item {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.user-menu__item:hover {
+    background-color: #f3f5f4;
+}
+
+/* Hero */
+.hero {
+    padding: 72px 0;
+}
+
+.hero__inner {
+    display: flex;
+    align-items: center;
+    gap: 64px;
+}
+
+.hero__content {
+    flex: 1 1 420px;
+}
+
+.hero__content h1 {
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 20px;
+}
+
+.hero__content p {
+    color: #4b5563;
+    font-size: 16px;
+    margin-bottom: 32px;
+    max-width: 440px;
+}
+
+.hero__collage {
+    flex: 1 1 420px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+    height: 420px;
+}
+
+.hero__image {
+    width: 100%;
+    height: 100%;
+    background-color: #e7ece9;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+/* object-position picks which part of the (same) video frame this box shows.
+   These are starting guesses -- adjust once the real video is in place. */
+.hero__image--1 {
+    grid-column: 1;
+    grid-row: 1;
+    object-position: 20% 25%;
+}
+
+.hero__image--2 {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    object-position: 65% 50%;
+}
+
+.hero__image--3 {
+    grid-column: 1;
+    grid-row: 2;
+    object-position: 20% 80%;
+}
+
+/* How it works */
+.how-it-works {
+    background-color: #f4f6f5;
+    padding: 72px 0;
+}
+
+.how-it-works h2 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.how-it-works__cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.how-card {
+    background-color: #fff;
+    border: 1px solid #e6e9e8;
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+}
+
+.how-card--raised {
+    box-shadow: 0 16px 32px rgba(16, 41, 31, 0.1);
+    border-color: transparent;
+    transform: translateY(-16px);
+}
+
+.how-card__icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background-color: #e7ece9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.how-card__icon img {
+    width: 68%;
+    height: 68%;
+    object-fit: contain;
+}
+
+.how-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.how-card p {
+    color: #4b5563;
+    font-size: 14px;
+}
+
+/* FAQ */
+.faq {
+    padding: 72px 0;
+}
+
+.faq h2 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.faq__intro {
+    color: #4b5563;
+    margin-bottom: 32px;
+}
+
+.faq__list {
+    border-top: 1px solid #e6e9e8;
+}
+
+.faq__item {
+    border-bottom: 1px solid #e6e9e8;
+    padding: 20px 0;
+}
+
+.faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    list-style: none;
+}
+
+.faq__item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq__item summary::after {
+    content: '\25BE';
+    color: #28865f;
+    transition: transform 0.15s ease;
+}
+
+.faq__item[open] summary::after {
+    transform: rotate(180deg);
+}
+
+.faq__item p {
+    color: #4b5563;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+.faq__more {
+    display: inline-block;
+    margin-top: 20px;
+    color: #28865f;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* Footer */
+.site-footer {
+    background-color: #f4f6f5;
+    border-top: 1px solid #e6e9e8;
+    padding: 40px 0;
+}
+
+.site-footer__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 32px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #e2e6e5;
+}
+
+.site-footer__logo {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.site-footer__logo-accent {
+    color: #28865f;
+}
+
+.site-footer__social {
+    display: flex;
+    gap: 12px;
+}
+
+.site-footer__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #28865f;
+    color: #fff;
+}
+
+.site-footer__columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.site-footer__column h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.site-footer__column p {
+    color: #4b5563;
+    font-size: 14px;
 }
