@@ -121,7 +121,7 @@ class SecurityController extends AbstractController
                 $this->adminMailer->sendPasswordResetLink(
                     $admin->getEmail(),
                     $this->urlGenerator->generate(
-                        'admin_reset_password',
+                        'admin_reset_password_link',
                         ['token' => $resetToken->getToken()],
                         UrlGeneratorInterface::ABSOLUTE_URL,
                     ),
@@ -133,27 +133,50 @@ class SecurityController extends AbstractController
         return $this->redirectToRoute('admin_login', ['step' => 'forgot_sent']);
     }
 
-    #[Route('/admin/reset-password/{token}', name: 'admin_reset_password', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function resetPassword(string $token, Request $request): Response
+    #[Route('/admin/reset-password/{token}', name: 'admin_reset_password_link', methods: [Request::METHOD_GET])]
+    public function resetPasswordLink(string $token): Response
     {
         if ($this->getUser() instanceof Admin) {
             return $this->redirectToRoute('admin');
         }
 
+        try {
+            $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+        } catch (ResetPasswordExceptionInterface) {
+            return $this->renderResetPasswordInvalidToken();
+        }
+
+        $this->storeTokenInSession($token);
+
+        return $this->redirectToRoute('admin_reset_password');
+    }
+
+    #[Route('/admin/reset-password', name: 'admin_reset_password', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    public function resetPassword(Request $request): Response
+    {
+        if ($this->getUser() instanceof Admin) {
+            return $this->redirectToRoute('admin');
+        }
+
+        $token = $this->getTokenFromSession();
+        if ($token === null) {
+            return $this->renderResetPasswordInvalidToken();
+        }
+
         if ($request->isMethod(Request::METHOD_POST)) {
             if (!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->request->getString('_csrf_token'))) {
-                return $this->renderResetPasswordForm($token, $this->translator->trans('login.error.invalid_request'));
+                return $this->renderResetPasswordForm($this->translator->trans('login.error.invalid_request'));
             }
 
             $password = $request->request->getString('password');
             $passwordConfirm = $request->request->getString('password_confirm');
 
             if ($password === '') {
-                return $this->renderResetPasswordForm($token, $this->translator->trans('login.reset.empty_password'));
+                return $this->renderResetPasswordForm($this->translator->trans('login.reset.empty_password'));
             }
 
             if ($password !== $passwordConfirm) {
-                return $this->renderResetPasswordForm($token, $this->translator->trans('login.reset.password_mismatch'));
+                return $this->renderResetPasswordForm($this->translator->trans('login.reset.password_mismatch'));
             }
 
             try {
@@ -178,7 +201,7 @@ class SecurityController extends AbstractController
             return $this->renderResetPasswordInvalidToken();
         }
 
-        return $this->renderResetPasswordForm($token);
+        return $this->renderResetPasswordForm();
     }
 
     /**
@@ -193,10 +216,9 @@ class SecurityController extends AbstractController
         ], $extra));
     }
 
-    private function renderResetPasswordForm(string $token, ?string $error = null): Response
+    private function renderResetPasswordForm(?string $error = null): Response
     {
         return $this->render('admin/reset_password.html.twig', [
-            'token' => $token,
             'page_title' => $this->translator->trans('app.name'),
             'csrf_token_intention' => self::CSRF_TOKEN_ID,
             'error' => $error,
@@ -206,8 +228,9 @@ class SecurityController extends AbstractController
 
     private function renderResetPasswordInvalidToken(): Response
     {
+        $this->cleanSessionAfterReset();
+
         return $this->render('admin/reset_password.html.twig', [
-            'token' => '',
             'page_title' => $this->translator->trans('app.name'),
             'csrf_token_intention' => self::CSRF_TOKEN_ID,
             'error' => $this->translator->trans('login.reset.invalid_token'),

@@ -114,7 +114,7 @@ final class LoginContext extends RawMinkContext implements Context
         $client->request('GET', '/admin/reset-password/'.$token);
         $csrfToken = $this->getCsrfToken($client->getCrawler());
 
-        $client->request('POST', '/admin/reset-password/'.$token, [
+        $client->request('POST', '/admin/reset-password', [
             '_csrf_token' => $csrfToken,
             'password' => $password,
             'password_confirm' => $password,
