@@ -20,13 +20,14 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Admin::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private Admin $user;
-
-    public function __construct(Admin $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
-    {
-        $this->user = $user;
+    public function __construct(
+        #[ORM\ManyToOne(targetEntity: Admin::class)]
+        #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+        private Admin $user,
+        \DateTimeInterface $expiresAt,
+        string $selector,
+        string $hashedToken,
+    ) {
         $this->initialize($expiresAt, $selector, $hashedToken);
     }
 

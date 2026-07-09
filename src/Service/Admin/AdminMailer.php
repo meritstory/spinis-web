@@ -9,13 +9,13 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-final class AdminMailer
+final readonly class AdminMailer
 {
     public function __construct(
-        private readonly MailerInterface $mailer,
-        private readonly TranslatorInterface $translator,
-        private readonly string $mailerFrom,
-        private readonly string $shortName,
+        private MailerInterface $mailer,
+        private TranslatorInterface $translator,
+        private string $mailerFrom,
+        private string $shortName,
     ) {
     }
 

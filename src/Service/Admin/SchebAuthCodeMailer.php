@@ -7,10 +7,10 @@ namespace App\Service\Admin;
 use Scheb\TwoFactorBundle\Mailer\AuthCodeMailerInterface;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 
-final class SchebAuthCodeMailer implements AuthCodeMailerInterface
+final readonly class SchebAuthCodeMailer implements AuthCodeMailerInterface
 {
     public function __construct(
-        private readonly AdminMailer $adminMailer,
+        private AdminMailer $adminMailer,
     ) {
     }
 
