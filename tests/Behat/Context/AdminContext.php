@@ -35,13 +35,13 @@ class AdminContext extends RawMinkContext implements Context
     #[Given('/^(admin) with username "([^"]*)" and password "([^"]*)" is created$/')]
     public function adminIsCreated(
         string $role,
-        string $username,
+        string $email,
         string $password = self::ADMIN_DEFAULT_PASSWORD
     ): void {
         $roleEnum = RoleEnum::fromName(strtoupper($role));
 
         $admin = (new Admin())
-            ->setEmail($username)
+            ->setEmail($email)
             ->setRoles([$roleEnum->value])
             ->setActive(true);
 
@@ -52,10 +52,10 @@ class AdminContext extends RawMinkContext implements Context
     }
 
     #[Given('/^inactive admin with username "([^"]*)" and password "([^"]*)" is created$/')]
-    public function inactiveAdminIsCreated(string $username, string $password): void
+    public function inactiveAdminIsCreated(string $email, string $password): void
     {
         $admin = (new Admin())
-            ->setEmail($username)
+            ->setEmail($email)
             ->setRoles([RoleEnum::ADMIN->value])
             ->setActive(false);
 
