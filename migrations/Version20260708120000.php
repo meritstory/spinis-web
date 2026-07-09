@@ -23,11 +23,11 @@ final class Version20260708120000 extends AbstractMigration
         $this->addSql('ALTER TABLE "admin" ALTER COLUMN email SET NOT NULL');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_880E0D76E7927C74 ON "admin" (email)');
         $this->addSql('ALTER TABLE "admin" ADD active BOOLEAN DEFAULT true NOT NULL');
-        $this->addSql('ALTER TABLE "admin" ADD last_active_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL');
+        $this->addSql('ALTER TABLE "admin" ADD last_active_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
         $this->addSql('ALTER TABLE "admin" ADD auth_code VARCHAR(255) DEFAULT NULL');
-        $this->addSql('ALTER TABLE "admin" ADD auth_code_expires_at TIMESTAMP(0) WITH TIME ZONE DEFAULT NULL');
-        $this->addSql('COMMENT ON COLUMN "admin".last_active_at IS \'(DC2Type:datetimetz_immutable)\'');
-        $this->addSql('COMMENT ON COLUMN "admin".auth_code_expires_at IS \'(DC2Type:datetimetz_immutable)\'');
+        $this->addSql('ALTER TABLE "admin" ADD auth_code_expires_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
+        $this->addSql('COMMENT ON COLUMN "admin".last_active_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN "admin".auth_code_expires_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('DROP INDEX UNIQ_8D93D649F85E0677');
         $this->addSql('ALTER TABLE "admin" DROP username');
 

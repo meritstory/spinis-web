@@ -130,6 +130,7 @@ final class LoginContext extends RawMinkContext implements Context
 
         $admin->setAuthCodeExpiresAt(new \DateTimeImmutable('-1 minute'));
         $this->entityManager->flush();
+        $this->entityManager->clear();
     }
 
     #[Then('I should be on the admin accounts page')]
