@@ -42,7 +42,7 @@ class SecurityController extends AbstractController
     ) {
     }
 
-    #[Route('/admin/login', name: 'admin_login', methods: ['GET'])]
+    #[Route('/admin/login', name: 'admin_login', methods: [Request::METHOD_GET])]
     public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
     {
         if ($this->getUser() instanceof Admin) {
@@ -65,25 +65,25 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/login_check', name: 'admin_login_check', methods: ['POST'])]
+    #[Route('/admin/login_check', name: 'admin_login_check', methods: [Request::METHOD_POST])]
     public function loginCheck(): never
     {
         throw new \LogicException('Login check must be handled by the security firewall.');
     }
 
-    #[Route('/admin/login/2fa', name: 'admin_2fa_login', methods: ['GET'])]
+    #[Route('/admin/login/2fa', name: 'admin_2fa_login', methods: [Request::METHOD_GET])]
     public function twoFactorLogin(Request $request): Response
     {
         return $this->twoFactorFormController->form($request);
     }
 
-    #[Route('/admin/login/2fa_check', name: 'admin_2fa_login_check', methods: ['POST'])]
+    #[Route('/admin/login/2fa_check', name: 'admin_2fa_login_check', methods: [Request::METHOD_POST])]
     public function twoFactorLoginCheck(): never
     {
         throw new \LogicException('Two-factor login check must be handled by the security firewall.');
     }
 
-    #[Route('/admin/login/2fa/resend', name: 'admin_2fa_resend', methods: ['POST'])]
+    #[Route('/admin/login/2fa/resend', name: 'admin_2fa_resend', methods: [Request::METHOD_POST])]
     public function twoFactorResend(Request $request): Response
     {
         if (!$this->isCsrfTokenValid('two_factor', $request->request->getString('_csrf_token'))) {
@@ -103,7 +103,7 @@ class SecurityController extends AbstractController
         return $this->redirectToRoute('admin_2fa_login');
     }
 
-    #[Route('/admin/forgot-password', name: 'admin_forgot_password', methods: ['POST'])]
+    #[Route('/admin/forgot-password', name: 'admin_forgot_password', methods: [Request::METHOD_POST])]
     public function forgotPassword(Request $request): Response
     {
         if (!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->request->getString('_csrf_token'))) {
@@ -133,14 +133,14 @@ class SecurityController extends AbstractController
         return $this->redirectToRoute('admin_login', ['step' => 'forgot_sent']);
     }
 
-    #[Route('/admin/reset-password/{token}', name: 'admin_reset_password', methods: ['GET', 'POST'])]
+    #[Route('/admin/reset-password/{token}', name: 'admin_reset_password', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function resetPassword(string $token, Request $request): Response
     {
         if ($this->getUser() instanceof Admin) {
             return $this->redirectToRoute('admin');
         }
 
-        if ($request->isMethod('POST')) {
+        if ($request->isMethod(Request::METHOD_POST)) {
             if (!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->request->getString('_csrf_token'))) {
                 return $this->renderResetPasswordForm($token, $this->translator->trans('login.error.invalid_request'));
             }

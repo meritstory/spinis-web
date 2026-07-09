@@ -1,8 +1,8 @@
 Feature: Admin
 
   Background:
-    Given admin with username "admin@example.com" and password "test" is created
-    And admin with username "admin@example.com" is authenticated
+    Given admin with email "admin@example.com" and password "test" is created
+    And admin with email "admin@example.com" is authenticated
 
   Scenario: I can fetch my data
     When I fetch my data

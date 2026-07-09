@@ -56,7 +56,7 @@ class CreateAdminCommand extends Command
             return Command::SUCCESS;
         }
 
-        $admin = (new Admin())
+        $admin = new Admin()
             ->setEmail($email)
             ->setRoles([RoleEnum::ADMIN->value])
             ->setActive(true);

@@ -34,7 +34,7 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
 
     #[Groups(['me'])]
     #[ORM\Column(length: 180)]
-    private ?string $email = null;
+    private string $email = '';
 
     /**
      * @var string[]
@@ -86,7 +86,7 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -98,20 +98,12 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
-        /** @var non-empty-string $userIdentifier */
-        $userIdentifier = $this->email;
-
-        return $userIdentifier;
+        return $this->requireEmail();
     }
 
     /**
-     * @see UserInterface
-     *
      * @return string[]
      */
     public function getRoles(): array
@@ -132,9 +124,6 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -212,6 +201,18 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
 
     public function getEmailAuthRecipient(): string
     {
+        return $this->requireEmail();
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    private function requireEmail(): string
+    {
+        if ($this->email === '') {
+            throw new \LogicException('Admin email is not set.');
+        }
+
         /** @var non-empty-string $email */
         $email = $this->email;
 
@@ -229,9 +230,6 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         $this->authCodeExpiresAt = new \DateTimeImmutable(AdminAuthCode::EXPIRES_AFTER);
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials(): void
     {
     }

@@ -17,6 +17,7 @@ security:
             stateless: true
             json_login:
                 check_path: /api/auth/login
+                username_path: email
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
@@ -50,6 +51,7 @@ security:
                 path: /admin/logout
                 target: admin_login
                 invalidate_session: true
+                enable_csrf: true
             two_factor:
                 auth_form_path: admin_2fa_login
                 check_path: admin_2fa_login_check

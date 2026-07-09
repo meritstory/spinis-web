@@ -31,8 +31,8 @@ class AdminContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[Given('/^(admin) with username "([^"]*)" is created$/')]
-    #[Given('/^(admin) with username "([^"]*)" and password "([^"]*)" is created$/')]
+    #[Given('/^(admin) with email "([^"]*)" is created$/')]
+    #[Given('/^(admin) with email "([^"]*)" and password "([^"]*)" is created$/')]
     public function adminIsCreated(
         string $role,
         string $email,
@@ -40,7 +40,7 @@ class AdminContext extends RawMinkContext implements Context
     ): void {
         $roleEnum = RoleEnum::fromName(strtoupper($role));
 
-        $admin = (new Admin())
+        $admin = new Admin()
             ->setEmail($email)
             ->setRoles([$roleEnum->value])
             ->setActive(true);
@@ -51,10 +51,10 @@ class AdminContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[Given('/^inactive admin with username "([^"]*)" and password "([^"]*)" is created$/')]
+    #[Given('/^inactive admin with email "([^"]*)" and password "([^"]*)" is created$/')]
     public function inactiveAdminIsCreated(string $email, string $password): void
     {
-        $admin = (new Admin())
+        $admin = new Admin()
             ->setEmail($email)
             ->setRoles([RoleEnum::ADMIN->value])
             ->setActive(false);
@@ -65,7 +65,7 @@ class AdminContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[Given('/^(admin with username "[^"]*") is authenticated$/')]
+    #[Given('/^(admin with email "[^"]*") is authenticated$/')]
     public function adminIsAuthenticated(Admin $admin): void
     {
         $this->sharedStorage->set(FeatureContext::SS_BASIC_AUTH, null);

@@ -10,7 +10,6 @@ use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Behat\Step\Then;
-use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -28,25 +27,25 @@ final class LoginContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[When('I submit the admin login form with email :email and password :password')]
+    #[Given('I submit the admin login form with email :email and password :password')]
     public function iSubmitAdminLoginForm(string $email, string $password): void
     {
         $this->submitLoginCredentials($email, $password);
     }
 
-    #[When('I confirm admin login with the latest authentication code for :email')]
+    #[Given('I confirm admin login with the latest authentication code for :email')]
     public function iConfirmAdminLoginWithLatestCode(string $email): void
     {
         $this->submitVerificationCode($this->getLatestAuthenticationCode($email));
     }
 
-    #[When('I confirm admin login with authentication code :code')]
+    #[Given('I confirm admin login with authentication code :code')]
     public function iConfirmAdminLoginWithCode(string $code): void
     {
         $this->submitVerificationCode($code);
     }
 
-    #[When('I cancel admin two-factor authentication')]
+    #[Given('I cancel admin two-factor authentication')]
     public function iCancelAdminTwoFactorAuthentication(): void
     {
         $client = $this->getClient();
@@ -56,7 +55,7 @@ final class LoginContext extends RawMinkContext implements Context
         $client->request('GET', $logoutUrl);
     }
 
-    #[When('I resend the admin authentication code')]
+    #[Given('I resend the admin authentication code')]
     public function iResendAdminAuthenticationCode(): void
     {
         $client = $this->getClient();
@@ -68,26 +67,26 @@ final class LoginContext extends RawMinkContext implements Context
         ]);
     }
 
-    #[When('I remember the current authentication code for :email')]
+    #[Given('I remember the current authentication code for :email')]
     public function iRememberTheCurrentAuthenticationCode(string $email): void
     {
         $this->rememberedAuthenticationCode = $this->getLatestAuthenticationCode($email);
     }
 
-    #[When('I confirm admin login with the remembered authentication code')]
+    #[Given('I confirm admin login with the remembered authentication code')]
     public function iConfirmAdminLoginWithRememberedCode(): void
     {
         Assert::notNull($this->rememberedAuthenticationCode);
         $this->submitVerificationCode($this->rememberedAuthenticationCode);
     }
 
-    #[When('I open the admin forgot password form')]
+    #[Given('I open the admin forgot password form')]
     public function iOpenAdminForgotPasswordForm(): void
     {
         $this->getClient()->request('GET', '/admin/login?step=forgot');
     }
 
-    #[When('I request admin password reset for email :email')]
+    #[Given('I request admin password reset for email :email')]
     public function iRequestAdminPasswordReset(string $email): void
     {
         $this->getClient()->request('GET', '/admin/login?step=forgot');
@@ -104,7 +103,7 @@ final class LoginContext extends RawMinkContext implements Context
         $this->passwordResetTokenStore->set($resetToken->getToken());
     }
 
-    #[When('I reset admin password using the stored reset token to :password')]
+    #[Given('I reset admin password using the stored reset token to :password')]
     public function iResetAdminPasswordUsingStoredToken(string $password): void
     {
         $client = $this->getClient();
@@ -145,7 +144,7 @@ final class LoginContext extends RawMinkContext implements Context
         $this->assertSession()->addressMatches('#/admin/login#');
     }
 
-    #[When('I visit the logout page')]
+    #[Given('I visit the logout page')]
     public function iVisitTheLogoutPage(): void
     {
         $client = $this->getClient();

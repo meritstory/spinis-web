@@ -25,10 +25,5 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Service\Admin\AdminMailer:
-        arguments:
-            $mailerFrom: '%app.mailer_from%'
-            $shortName: '%app.short_name%'
-
     Scheb\TwoFactorBundle\Controller\FormController: '@scheb_two_factor.form_controller'
     Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGenerator: '@scheb_two_factor.security.email.default_code_generator'
