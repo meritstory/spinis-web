@@ -41,8 +41,23 @@ class AdminContext extends RawMinkContext implements Context
         $roleEnum = RoleEnum::fromName(strtoupper($role));
 
         $admin = (new Admin())
-            ->setUsername($username)
-            ->setRoles([$roleEnum->value]);
+            ->setEmail($username)
+            ->setRoles([$roleEnum->value])
+            ->setActive(true);
+
+        $admin->setPassword($this->userPasswordHasher->hashPassword($admin, $password));
+
+        $this->entityManager->persist($admin);
+        $this->entityManager->flush();
+    }
+
+    #[Given('/^inactive admin with username "([^"]*)" and password "([^"]*)" is created$/')]
+    public function inactiveAdminIsCreated(string $username, string $password): void
+    {
+        $admin = (new Admin())
+            ->setEmail($username)
+            ->setRoles([RoleEnum::ADMIN->value])
+            ->setActive(false);
 
         $admin->setPassword($this->userPasswordHasher->hashPassword($admin, $password));
 

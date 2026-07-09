@@ -8,4 +8,4 @@ Feature: Admin
     When I fetch my data
     Then fetched response array should look like:
       | Property   | Value              |
-      | [username] | admin@example.com |
+      | [email] | admin@example.com |

@@ -26,9 +26,9 @@ final readonly class AdminContext implements Context
      */
     public function transformAdminByEmail(string $username): Admin
     {
-        $admin = $this->adminRepository->findOneByUsername($username);
+        $admin = $this->adminRepository->findOneByEmail($username);
 
-        Assert::notNull($admin, sprintf('Admin by username "%s" does not exist', $username));
+        Assert::notNull($admin, sprintf('Admin by email "%s" does not exist', $username));
 
         return $admin;
     }

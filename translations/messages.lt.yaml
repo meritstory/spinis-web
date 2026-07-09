@@ -3,15 +3,60 @@ app:
     short_name: SPINIS
 
 menu:
-    admins: Administratoriai
+    admins: Paskyros
+
+login:
+    email: 'El. paštas'
+    password: Slaptažodis
+    forgot_password: 'Pamiršau slaptažodį'
+    submit: Prisijungti
+    auth_code: 'Autentifikacijos kodas'
+    auth_code_placeholder: 'Įveskite 6 skaitmenų kodą'
+    cancel: Atšaukti
+    confirm: Patvirtinti
+    resend_prompt: 'Negavote kodo?'
+    resend_link: 'Siųsti kodą iš naujo'
+    resend_success: 'Jums buvo išsiųstas naujas patvirtinimo kodas.'
+    reset_password: 'Atkurti slaptažodį'
+    forgot_sent: 'Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti'
+    back_to_login: 'Grįžti į prisijungimą'
+    error:
+        invalid_credentials: 'Neteisingi prisijungimo duomenys.'
+        invalid_code: 'Neteisingas autentifikacijos kodas.'
+        expired_code: 'Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo.'
+        empty_code: 'Įveskite autentifikacijos kodą.'
+        invalid_request: 'Neteisinga užklausa. Bandykite dar kartą.'
+    reset:
+        new_password: 'Naujas slaptažodis'
+        new_password_confirm: 'Pakartokite slaptažodį'
+        submit: 'Išsaugoti slaptažodį'
+        success: 'Slaptažodis sėkmingai pakeistas. Galite prisijungti.'
+        invalid_token: 'Slaptažodžio atkūrimo nuoroda negalioja arba pasibaigė.'
+        empty_password: 'Įveskite naują slaptažodį.'
+        password_mismatch: 'Slaptažodžiai nesutampa.'
+
+email:
+    auth_code:
+        subject: 'Jūsų patvirtinimo kodas'
+        greeting: 'Sveiki,'
+        body: 'Jūsų patvirtinimo kodas prisijungimui:'
+        expiry: 'Kodas galioja 10 minučių.'
+    password_reset:
+        subject: 'Slaptažodžio atkūrimas'
+        greeting: 'Sveiki,'
+        body: 'Norėdami atkurti slaptažodį, paspauskite šią nuorodą:'
+        expiry: 'Nuoroda galioja 1 valandą.'
 
 admin:
     label:
         singular: Administratorius
         plural: Administratoriai
     field:
-        username: 'Vartotojo vardas'
+        first_name: Vardas
+        last_name: Pavardė
+        email: 'El. paštas'
         password: Slaptažodis
         roles: Rolės
+        active: Aktyvus
     role:
         admin: Administratorius

@@ -33,7 +33,7 @@ class CreateAdminCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('username', InputArgument::REQUIRED, 'Admin username (email)')
+            ->addArgument('email', InputArgument::REQUIRED, 'Admin email')
             ->addArgument('password', InputArgument::REQUIRED, 'Admin password');
     }
 
@@ -41,31 +41,32 @@ class CreateAdminCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $username = trim((string) $input->getArgument('username'));
+        $email = trim((string) $input->getArgument('email'));
         $password = (string) $input->getArgument('password');
 
-        if ($username === '' || $password === '') {
-            $io->error('Username and password are required.');
+        if ($email === '' || $password === '') {
+            $io->error('Email and password are required.');
 
             return Command::FAILURE;
         }
 
-        if ($this->adminRepository->findOneByUsername($username) !== null) {
-            $io->success(sprintf('Admin "%s" already exists, skipping.', $username));
+        if ($this->adminRepository->findOneByEmail($email) !== null) {
+            $io->success(sprintf('Admin "%s" already exists, skipping.', $email));
 
             return Command::SUCCESS;
         }
 
         $admin = (new Admin())
-            ->setUsername($username)
-            ->setRoles([RoleEnum::ADMIN->value]);
+            ->setEmail($email)
+            ->setRoles([RoleEnum::ADMIN->value])
+            ->setActive(true);
 
         $admin->setPassword($this->passwordHasher->hashPassword($admin, $password));
 
         $this->entityManager->persist($admin);
         $this->entityManager->flush();
 
-        $io->success(sprintf('Admin "%s" created.', $username));
+        $io->success(sprintf('Admin "%s" created.', $email));
 
         return Command::SUCCESS;
     }
