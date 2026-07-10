@@ -31,42 +31,42 @@
             </div>
         </section>
 
-        <section class="bg-surface-muted py-18">
+        <section class="bg-subtle py-18">
             <div class="mx-auto max-w-[1200px] px-6">
                 <h2 class="mb-10 text-heading-h1 font-bold">{{ 'home.how_it_works.heading'|trans }}</h2>
 
                 <div class="grid grid-cols-3 gap-6">
-                    <article class="rounded-xl border border-border-default bg-white px-6 py-8 text-center">
-                        <div class="mx-auto mb-5 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-icon-bg">
-                            <img class="h-[68%] w-[68%] object-contain" src="{{ asset('images/how-it-works-1.svg') }}" alt="">
+                    <article class="rounded-md border border-border-default bg-white px-6 py-8 text-center">
+                        <div class="mx-auto mb-6 flex items-center justify-center">
+                            <img class="object-contain" src="{{ asset('images/how-it-works-1.svg') }}" alt="">
                         </div>
-                        <h3 class="mb-3 text-heading-h4 font-semibold">{{ 'home.how_it_works.step1.title'|trans }}</h3>
-                        <p class="text-body-md text-gray-600">{{ 'home.how_it_works.step1.description'|trans }}</p>
+                        <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'home.how_it_works.step1.title'|trans }}</h3>
+                        <p class="text-body-lg text-gray-600">{{ 'home.how_it_works.step1.description'|trans }}</p>
                     </article>
 
-                    <article class="-translate-y-4 rounded-xl border-transparent bg-white px-6 py-8 text-center shadow-[0_16px_32px_rgba(16,41,31,0.1)]">
-                        <h3 class="mb-3 text-heading-h4 font-semibold">{{ 'home.how_it_works.step2.title'|trans }}</h3>
-                        <p class="text-body-md text-gray-600">{{ 'home.how_it_works.step2.description'|trans }}</p>
-                        <div class="mx-auto mb-5 mt-5 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-icon-bg">
-                            <img class="h-[68%] w-[68%] object-contain" src="{{ asset('images/how-it-works-2.svg') }}" alt="">
+                    <article class="rounded-md border border-border-default bg-white px-6 py-8 text-center">
+                        <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'home.how_it_works.step2.title'|trans }}</h3>
+                        <p class="text-body-lg text-gray-600">{{ 'home.how_it_works.step2.description'|trans }}</p>
+                        <div class="mx-auto mb-6 mt-6 flex items-center justify-center">
+                            <img class="object-contain" src="{{ asset('images/how-it-works-2.svg') }}" alt="">
                         </div>
                     </article>
 
-                    <article class="rounded-xl border border-border-default bg-white px-6 py-8 text-center">
-                        <div class="mx-auto mb-5 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-icon-bg">
-                            <img class="h-[68%] w-[68%] object-contain" src="{{ asset('images/how-it-works-3.svg') }}" alt="">
+                    <article class="rounded-md border border-border-default bg-white px-6 py-8 text-center">
+                        <div class="mx-auto mb-6 flex items-center justify-center">
+                            <img class="object-contain" src="{{ asset('images/how-it-works-3.svg') }}" alt="">
                         </div>
-                        <h3 class="mb-3 text-heading-h4 font-semibold">{{ 'home.how_it_works.step3.title'|trans }}</h3>
-                        <p class="text-body-md text-gray-600">{{ 'home.how_it_works.step3.description'|trans }}</p>
+                        <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'home.how_it_works.step3.title'|trans }}</h3>
+                        <p class="text-body-lg text-gray-600">{{ 'home.how_it_works.step3.description'|trans }}</p>
                     </article>
                 </div>
             </div>
         </section>
 
-        <section class="py-18">
+        <section class="py-18 bg-page">
             <div class="mx-auto max-w-[1200px] px-6">
                 <h2 class="mb-3 text-heading-h1 font-bold">{{ 'home.faq.heading'|trans }}</h2>
-                <p class="mb-8 text-body-lg text-gray-600">{{ 'home.faq.intro'|trans }}</p>
+                <p class="mb-8 text-body-lg text-text-secondary">{{ 'home.faq.intro'|trans }}</p>
 
                 {# TODO: FAQ is still hardcoded placeholder content -- becomes DB-driven via the admin panel later#}
                 <div class="border-t border-border-default">
@@ -117,7 +117,7 @@
                     </details>
                 </div>
 
-                <a href="#" class="mt-5 inline-block text-body-lg font-semibold text-primary underline">{{ 'home.faq.more'|trans }}</a>
+                <a href="#" class="mt-6 inline-block text-body-md font-semibold text-primary underline">{{ 'home.faq.more'|trans }}</a>
             </div>
         </section>
     </main>
