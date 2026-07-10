@@ -9,6 +9,10 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+/config/reference.php
+
+/.idea/claudeCodeEditorTabs.xml
+
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
