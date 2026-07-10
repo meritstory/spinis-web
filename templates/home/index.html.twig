@@ -1,90 +1,124 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Skundų nagrinėjimo sistema{% endblock %}
+{% block title %}{{ 'home.title'|trans }}{% endblock %}
 
 {% block body %}
-    {% include '_header.html.twig' %}
-
     <main>
-        <section class="hero">
-            <div class="container hero__inner">
-                <div class="hero__content">
-                    <h1>Skundų nagrinėjimo sistema</h1>
-                    <p>
-                        Pateikite skundą dėl sveikatos priežiūros paslaugų kokybės ar
-                        pacientų teisių pažeidimų. Tai greitas, paprastas ir aiškus procesas.
+        <section class="py-18 bg-page">
+            <div class="mx-auto flex max-w-[1200px] items-center gap-16 px-6">
+                <div class="flex-[1_1_420px]">
+                    <h1 class="mb-5 text-[56px] font-bold leading-[64px]">{{ 'home.hero.heading'|trans }}</h1>
+                    <p class="mb-8 max-w-[440px] text-[22px] leading-[34px] text-text-secondary">
+                        {{ 'home.hero.description'|trans }}
                     </p>
-                    <a href="#" class="button button--primary">Teikti skundą</a>
+                    <a href="#" class="inline-block rounded-[2px] bg-primary px-12 py-4 text-body-lg text-white hover:bg-primary-dark">{{ 'home.hero.cta'|trans }}</a>
                 </div>
 
-                {# Same video shown 3x, cropped differently per box via CSS object-position (see hero_collage_controller.js) #}
-                <div class="hero__collage" data-controller="hero-collage">
-                    <video class="hero__image hero__image--1" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto"></video>
-                    <video class="hero__image hero__image--2" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto"></video>
-                    <video class="hero__image hero__image--3" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto"></video>
-                </div>
-            </div>
-        </section>
-
-        <section class="how-it-works">
-            <div class="container">
-                <h2>Kaip tai veikia?</h2>
-
-                <div class="how-it-works__cards">
-                    <article class="how-card">
-                        <div class="how-card__icon"><img src="{{ asset('images/how-it-works-1.svg') }}" alt=""></div>
-                        <h3>Prisijunkite</h3>
-                        <p>Prisijunkite per el. valdžios vartus naudodami savo asmens tapatybę patvirtinančias priemones.</p>
-                    </article>
-
-                    <article class="how-card how-card--raised">
-                        <h3>Užpildykite formą</h3>
-                        <p>Pasirinkite skundo tipą, nurodykite įstaigą, aprašykite situaciją bei pridėkite reikalingus dokumentus.</p>
-                        <div class="how-card__icon"><img src="{{ asset('images/how-it-works-2.svg') }}" alt=""></div>
-                    </article>
-
-                    <article class="how-card">
-                        <div class="how-card__icon"><img src="{{ asset('images/how-it-works-3.svg') }}" alt=""></div>
-                        <h3>Gaukite atsakymą</h3>
-                        <p>Sekite skundo nagrinėjimo eigą sistemoje ir gaukite oficialų tarnybos atsakymą.</p>
-                    </article>
+                <div class="relative h-[540px] w-[556px] flex-[1_1_556px]" data-controller="hero-collage">
+                    <div class="absolute left-0 top-0 h-[329px] w-[349px] overflow-hidden rounded-2xl bg-icon-bg">
+                        <video class="pointer-events-none absolute left-[-150px] top-0 h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                        <div class="absolute inset-0"></div>
+                    </div>
+                    <div class="absolute left-[365px] top-[55px] h-[412px] w-[191px] overflow-hidden rounded-2xl bg-icon-bg">
+                        <video class="pointer-events-none absolute left-[-515px] top-[-55px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                        <div class="absolute inset-0"></div>
+                    </div>
+                    <div class="absolute left-[90px] top-[350px] h-[190px] w-[259px] overflow-hidden rounded-2xl bg-icon-bg">
+                        <video class="pointer-events-none absolute left-[-240px] top-[-350px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                        <div class="absolute inset-0"></div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="faq">
-            <div class="container">
-                <h2>Dažniausiai užduodami klausimai</h2>
-                <p class="faq__intro">Raskite atsakymus į pagrindinius klausimus apie skundų teikimą ir nagrinėjimą.</p>
+        <section class="bg-surface-muted py-18">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <h2 class="mb-10 text-heading-h1 font-bold">{{ 'home.how_it_works.heading'|trans }}</h2>
 
-                {# TODO: placeholder answer copy -- replace with the real FAQ content #}
-                <div class="faq__list">
-                    <details class="faq__item">
-                        <summary>Kaip pateikti skundą?</summary>
-                        <p>Skundą galite pateikti prisijungę prie sistemos ir užpildę skundo formą.</p>
+                <div class="grid grid-cols-3 gap-6">
+                    <article class="rounded-xl border border-border-default bg-white px-6 py-8 text-center">
+                        <div class="mx-auto mb-5 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-icon-bg">
+                            <img class="h-[68%] w-[68%] object-contain" src="{{ asset('images/how-it-works-1.svg') }}" alt="">
+                        </div>
+                        <h3 class="mb-3 text-heading-h4 font-semibold">{{ 'home.how_it_works.step1.title'|trans }}</h3>
+                        <p class="text-body-md text-gray-600">{{ 'home.how_it_works.step1.description'|trans }}</p>
+                    </article>
+
+                    <article class="-translate-y-4 rounded-xl border-transparent bg-white px-6 py-8 text-center shadow-[0_16px_32px_rgba(16,41,31,0.1)]">
+                        <h3 class="mb-3 text-heading-h4 font-semibold">{{ 'home.how_it_works.step2.title'|trans }}</h3>
+                        <p class="text-body-md text-gray-600">{{ 'home.how_it_works.step2.description'|trans }}</p>
+                        <div class="mx-auto mb-5 mt-5 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-icon-bg">
+                            <img class="h-[68%] w-[68%] object-contain" src="{{ asset('images/how-it-works-2.svg') }}" alt="">
+                        </div>
+                    </article>
+
+                    <article class="rounded-xl border border-border-default bg-white px-6 py-8 text-center">
+                        <div class="mx-auto mb-5 flex h-[120px] w-[120px] items-center justify-center rounded-full bg-icon-bg">
+                            <img class="h-[68%] w-[68%] object-contain" src="{{ asset('images/how-it-works-3.svg') }}" alt="">
+                        </div>
+                        <h3 class="mb-3 text-heading-h4 font-semibold">{{ 'home.how_it_works.step3.title'|trans }}</h3>
+                        <p class="text-body-md text-gray-600">{{ 'home.how_it_works.step3.description'|trans }}</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-18">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <h2 class="mb-3 text-heading-h1 font-bold">{{ 'home.faq.heading'|trans }}</h2>
+                <p class="mb-8 text-body-lg text-gray-600">{{ 'home.faq.intro'|trans }}</p>
+
+                {# TODO: FAQ is still hardcoded placeholder content -- becomes DB-driven via the admin panel later#}
+                <div class="border-t border-border-default">
+                    <details class="group border-b border-border-default py-5">
+                        <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                            Kaip pateikti skundą?
+                            <svg class="h-4 w-4 shrink-0 text-primary transition-transform duration-150 group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                            </svg>
+                        </summary>
+                        <p class="mt-3 text-body-md text-gray-600">Skundą galite pateikti prisijungę prie sistemos ir užpildę skundo formą.</p>
                     </details>
-                    <details class="faq__item">
-                        <summary>Kokie dokumentai reikalingi?</summary>
-                        <p>Priklausomai nuo skundo tipo gali prireikti asmens tapatybės ir įvykį patvirtinančių dokumentų.</p>
+                    <details class="group border-b border-border-default py-5">
+                        <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                            Kokie dokumentai reikalingi?
+                            <svg class="h-4 w-4 shrink-0 text-primary transition-transform duration-150 group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                            </svg>
+                        </summary>
+                        <p class="mt-3 text-body-md text-gray-600">Priklausomai nuo skundo tipo gali prireikti asmens tapatybės ir įvykį patvirtinančių dokumentų.</p>
                     </details>
-                    <details class="faq__item">
-                        <summary>Per kiek laiko bus nagrinėjamas skundas?</summary>
-                        <p>Skundai paprastai nagrinėjami per teisės aktuose nustatytą terminą nuo jų gavimo dienos.</p>
+                    <details class="group border-b border-border-default py-5">
+                        <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                            Per kiek laiko bus nagrinėjamas skundas?
+                            <svg class="h-4 w-4 shrink-0 text-primary transition-transform duration-150 group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                            </svg>
+                        </summary>
+                        <p class="mt-3 text-body-md text-gray-600">Skundai paprastai nagrinėjami per teisės aktuose nustatytą terminą nuo jų gavimo dienos.</p>
                     </details>
-                    <details class="faq__item">
-                        <summary>Ar galiu pateikti skundą kito asmens vardu?</summary>
-                        <p>Taip, tačiau tokiu atveju reikės pateikti tai patvirtinantį įgaliojimą.</p>
+                    <details class="group border-b border-border-default py-5">
+                        <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                            Ar galiu pateikti skundą kito asmens vardu?
+                            <svg class="h-4 w-4 shrink-0 text-primary transition-transform duration-150 group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                            </svg>
+                        </summary>
+                        <p class="mt-3 text-body-md text-gray-600">Taip, tačiau tokiu atveju reikės pateikti tai patvirtinantį įgaliojimą.</p>
                     </details>
-                    <details class="faq__item">
-                        <summary>Kur kreiptis dėl pagalbos?</summary>
-                        <p>Susisiekite su mumis per kontaktuose nurodytus el. paštą ar telefono numerį.</p>
+                    <details class="group border-b border-border-default py-5">
+                        <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                            Kur kreiptis dėl pagalbos?
+                            <svg class="h-4 w-4 shrink-0 text-primary transition-transform duration-150 group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
+                            </svg>
+                        </summary>
+                        <p class="mt-3 text-body-md text-gray-600">Susisiekite su mumis per kontaktuose nurodytus el. paštą ar telefono numerį.</p>
                     </details>
                 </div>
 
-                <a href="#" class="faq__more">Daugiau</a>
+                <a href="#" class="mt-5 inline-block text-body-lg font-semibold text-primary underline">{{ 'home.faq.more'|trans }}</a>
             </div>
         </section>
     </main>
-
-    {% include '_footer.html.twig' %}
 {% endblock %}
