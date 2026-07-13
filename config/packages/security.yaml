@@ -7,15 +7,17 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\Admin
-                property: username
+                property: email
 
     firewalls:
         login:
             pattern: ^/api/auth/login
             provider: app_user_provider
+            user_checker: App\Security\AdminUserChecker
             stateless: true
             json_login:
                 check_path: /api/auth/login
+                username_path: email
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
@@ -33,14 +35,34 @@ security:
         admin:
             pattern: ^/admin
             provider: app_user_provider
+            user_checker: App\Security\AdminUserChecker
             lazy: true
             form_login:
                 login_path: admin_login
-                check_path: admin_login
+                check_path: admin_login_check
+                username_parameter: email
+                password_parameter: password
+                enable_csrf: true
+                csrf_parameter: _csrf_token
+                csrf_token_id: authenticate
                 default_target_path: admin
+                always_use_default_target_path: true
             logout:
-                path: admin_logout
+                path: /admin/logout
                 target: admin_login
+                invalidate_session: true
+                enable_csrf: true
+            two_factor:
+                auth_form_path: admin_2fa_login
+                check_path: admin_2fa_login_check
+                post_only: true
+                default_target_path: admin
+                always_use_default_target_path: true
+                prepare_on_login: true
+                enable_csrf: true
+                csrf_parameter: _csrf_token
+                csrf_token_id: two_factor
+                provider: app_user_provider
 
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -62,9 +84,15 @@ security:
         - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login/2fa/resend, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/admin/login/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/admin/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/forgot-password, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/logout, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/reset-password, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

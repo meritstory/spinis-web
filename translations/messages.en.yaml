@@ -3,15 +3,60 @@ app:
     short_name: SPINIS
 
 menu:
-    admins: Administrators
+    admins: Accounts
+
+login:
+    email: Email
+    password: Password
+    forgot_password: 'Forgot password'
+    submit: 'Sign in'
+    auth_code: 'Authentication code'
+    auth_code_placeholder: 'Enter 6-digit code'
+    cancel: Cancel
+    confirm: Confirm
+    resend_prompt: 'Did not receive the code?'
+    resend_link: 'Resend code'
+    resend_success: 'A new verification code has been sent to you.'
+    reset_password: 'Reset password'
+    forgot_sent: 'If the specified email address is registered in our system, you will soon receive an email with a link to reset your password'
+    back_to_login: 'Back to login'
+    error:
+        invalid_credentials: 'Invalid login credentials.'
+        invalid_code: 'Invalid authentication code.'
+        expired_code: 'The authentication code has expired. Please resend the code.'
+        empty_code: 'Enter the authentication code.'
+        invalid_request: 'Invalid request. Please try again.'
+    reset:
+        new_password: 'New password'
+        new_password_confirm: 'Confirm password'
+        submit: 'Save password'
+        success: 'Password changed successfully. You can now sign in.'
+        invalid_token: 'The password reset link is invalid or has expired.'
+        empty_password: 'Enter a new password.'
+        password_mismatch: 'Passwords do not match.'
+
+email:
+    auth_code:
+        subject: 'Your verification code'
+        greeting: 'Hello,'
+        body: 'Your verification code for sign in:'
+        expiry: 'The code is valid for 10 minutes.'
+    password_reset:
+        subject: 'Password reset'
+        greeting: 'Hello,'
+        body: 'To reset your password, click this link:'
+        expiry: 'The link is valid for 1 hour.'
 
 admin:
     label:
         singular: Administrator
         plural: Administrators
     field:
-        username: Username
+        first_name: 'First name'
+        last_name: 'Last name'
+        email: Email
         password: Password
         roles: Roles
+        active: Active
     role:
         admin: Administrator

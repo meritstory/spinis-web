@@ -1,0 +1,120 @@
+{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+
+{% block body_class 'page-login' %}
+{% block page_title %}{{ page_title }}{% endblock %}
+
+{% block wrapper_wrapper %}
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                <div class="logo logo-long">{{ page_title }}</div>
+            </div>
+        </header>
+
+        <section class="content">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="w-100 alert alert-{{ label in ['success', 'info'] ? 'success' : 'danger' }} rounded mb-3">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% if error is defined and error %}
+                <div class="w-100 alert alert-danger rounded mb-3">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            {% if step == 'login' or step == 'forgot' %}
+                <div id="login-form-wrapper"{% if step == 'forgot' %} class="d-none"{% endif %}>
+                    <form method="post" action="{{ path('admin_login_check') }}" id="login-form">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
+
+                        <div class="form-group">
+                            <label class="form-control-label required" for="email">{{ 'login.email'|trans }}</label>
+                            <div class="form-widget">
+                                <input type="email" id="email" name="email" class="form-control" value="{{ last_email|default('') }}" required autofocus autocomplete="username">
+                            </div>
+
+                            <label class="form-control-label required mt-3" for="password">{{ 'login.password'|trans }}</label>
+                            <div class="form-widget">
+                                <input type="password" id="password" name="password" class="form-control" required autocomplete="current-password">
+                            </div>
+
+                            <div class="form-text mt-2">
+                                <a href="{{ path('admin_login', {step: 'forgot'}) }}" id="show-forgot-form">{{ 'login.forgot_password'|trans }}</a>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-block w-100 mt-3">
+                            {{ 'login.submit'|trans }}
+                        </button>
+                    </form>
+                </div>
+
+                <div id="forgot-form-wrapper"{% if step == 'login' %} class="d-none"{% endif %}>
+                    <form method="post" action="{{ path('admin_forgot_password') }}" id="forgot-form">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
+
+                        <div class="form-group">
+                            <label class="form-control-label required" for="forgot-email">{{ 'login.email'|trans }}</label>
+                            <div class="form-widget">
+                                <input type="email" id="forgot-email" name="email" class="form-control" required{% if step == 'forgot' %} autofocus{% endif %} autocomplete="email">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-block w-100 mt-3">
+                            {{ 'login.reset_password'|trans }}
+                        </button>
+
+                        <div class="form-text mt-2">
+                            <a href="#" id="show-login-form">{{ 'login.back_to_login'|trans }}</a>
+                        </div>
+                    </form>
+                </div>
+            {% elseif step == 'forgot_sent' %}
+                <p>{{ 'login.forgot_sent'|trans }}</p>
+                <div class="form-text mt-3">
+                    <a href="{{ path('admin_login') }}">{{ 'login.back_to_login'|trans }}</a>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+
+    {% if step == 'login' or step == 'forgot' %}
+        <script>
+            (function () {
+                const loginWrapper = document.getElementById('login-form-wrapper');
+                const forgotWrapper = document.getElementById('forgot-form-wrapper');
+                const showForgot = document.getElementById('show-forgot-form');
+                const showLogin = document.getElementById('show-login-form');
+                const emailInput = document.getElementById('email');
+                const forgotEmailInput = document.getElementById('forgot-email');
+
+                if (!loginWrapper || !forgotWrapper || !showForgot || !showLogin) {
+                    return;
+                }
+
+                showForgot.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    loginWrapper.classList.add('d-none');
+                    forgotWrapper.classList.remove('d-none');
+
+                    if (emailInput && forgotEmailInput && emailInput.value) {
+                        forgotEmailInput.value = emailInput.value;
+                    }
+
+                    forgotEmailInput?.focus();
+                });
+
+                showLogin.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    forgotWrapper.classList.add('d-none');
+                    loginWrapper.classList.remove('d-none');
+                    emailInput?.focus();
+                });
+            })();
+        </script>
+    {% endif %}
+{% endblock %}

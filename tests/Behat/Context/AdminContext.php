@@ -31,18 +31,19 @@ class AdminContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[Given('/^(admin) with username "([^"]*)" is created$/')]
-    #[Given('/^(admin) with username "([^"]*)" and password "([^"]*)" is created$/')]
+    #[Given('/^(admin) with email "([^"]*)" is created$/')]
+    #[Given('/^(admin) with email "([^"]*)" and password "([^"]*)" is created$/')]
     public function adminIsCreated(
         string $role,
-        string $username,
+        string $email,
         string $password = self::ADMIN_DEFAULT_PASSWORD
     ): void {
         $roleEnum = RoleEnum::fromName(strtoupper($role));
 
-        $admin = (new Admin())
-            ->setUsername($username)
-            ->setRoles([$roleEnum->value]);
+        $admin = new Admin()
+            ->setEmail($email)
+            ->setRoles([$roleEnum->value])
+            ->setActive(true);
 
         $admin->setPassword($this->userPasswordHasher->hashPassword($admin, $password));
 
@@ -50,7 +51,21 @@ class AdminContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[Given('/^(admin with username "[^"]*") is authenticated$/')]
+    #[Given('/^inactive admin with email "([^"]*)" and password "([^"]*)" is created$/')]
+    public function inactiveAdminIsCreated(string $email, string $password): void
+    {
+        $admin = new Admin()
+            ->setEmail($email)
+            ->setRoles([RoleEnum::ADMIN->value])
+            ->setActive(false);
+
+        $admin->setPassword($this->userPasswordHasher->hashPassword($admin, $password));
+
+        $this->entityManager->persist($admin);
+        $this->entityManager->flush();
+    }
+
+    #[Given('/^(admin with email "[^"]*") is authenticated$/')]
     public function adminIsAuthenticated(Admin $admin): void
     {
         $this->sharedStorage->set(FeatureContext::SS_BASIC_AUTH, null);
