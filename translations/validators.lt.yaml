@@ -1,0 +1,9 @@
+link:
+    title:
+        not_blank: 'Įveskite pavadinimą.'
+    key:
+        not_blank: 'Įveskite raktą.'
+        unique: 'Toks raktas jau egzistuoja.'
+    url:
+        not_blank: 'Įveskite nuorodą.'
+        invalid: 'Įveskite galiojančią nuorodą.'

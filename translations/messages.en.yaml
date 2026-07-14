@@ -4,6 +4,7 @@ app:
 
 menu:
     admins: Accounts
+    links: Links
 
 login:
     email: Email
@@ -46,6 +47,19 @@ email:
         greeting: 'Hello,'
         body: 'To reset your password, click this link:'
         expiry: 'The link is valid for 1 hour.'
+
+link:
+    label:
+        singular: Link
+    field:
+        title: Title
+        key: Key
+        url: URL
+    page:
+        new: Create link
+        edit: Edit link
+    action:
+        create: Create link
 
 admin:
     label:
