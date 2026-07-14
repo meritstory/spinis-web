@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'link')]
 #[ORM\UniqueConstraint(fields: ['key'])]
 #[UniqueEntity(fields: ['key'], message: 'link.key.unique')]
-class Link
+class Link implements \Stringable
 {
     use TimestampableEntity;
 
