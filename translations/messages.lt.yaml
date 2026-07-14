@@ -77,4 +77,3 @@ faq:
         updated_at: 'Atnaujinimo data'
     action:
         create: 'Sukurti DUK'
-        delete: Ištrinti

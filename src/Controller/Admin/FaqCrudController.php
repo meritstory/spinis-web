@@ -41,18 +41,11 @@ class FaqCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $deleteLabel = static function (Action $action): Action {
-            return $action->setLabel('faq.action.delete');
-        };
-
         return $actions
             ->update(Crud::PAGE_INDEX, Action::NEW, static function (Action $action): Action {
                 return $action->setLabel('faq.action.create');
             })
-            ->update(Crud::PAGE_INDEX, Action::DELETE, $deleteLabel)
-            ->update(Crud::PAGE_DETAIL, Action::DELETE, $deleteLabel)
             ->add(Crud::PAGE_EDIT, Action::DELETE)
-            ->update(Crud::PAGE_EDIT, Action::DELETE, $deleteLabel)
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
             ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);

@@ -77,4 +77,3 @@ faq:
         updated_at: 'Updated at'
     action:
         create: 'Create FAQ'
-        delete: Delete
