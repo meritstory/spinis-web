@@ -1,5 +1,7 @@
-faq.validation.question_required: 'Pavadinimas yra privalomas.'
-faq.validation.answer_required: 'Tekstas yra privalomas.'
-faq.validation.position_required: 'Pozicija yra privaloma.'
-faq.validation.position_positive: 'Pozicija turi būti didesnė už 0.'
-faq.validation.position_unique: 'Ši pozicija jau naudojama.'
+faq:
+    validation:
+        question_required: 'Pavadinimas yra privalomas.'
+        answer_required: 'Tekstas yra privalomas.'
+        position_required: 'Pozicija yra privaloma.'
+        position_positive: 'Pozicija turi būti didesnė už 0.'
+        position_unique: 'Ši pozicija jau naudojama.'

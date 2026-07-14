@@ -9,7 +9,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FaqRepository::class)]
@@ -22,23 +21,19 @@ class Faq implements \Stringable
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['faq'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: 'faq.validation.question_required')]
     #[ORM\Column(length: 255)]
-    #[Groups(['faq'])]
     private string $question = '';
 
     #[Assert\NotBlank(message: 'faq.validation.answer_required')]
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['faq'])]
     private string $answer = '';
 
     #[Assert\NotBlank(message: 'faq.validation.position_required')]
     #[Assert\Positive(message: 'faq.validation.position_positive')]
     #[ORM\Column(unique: true)]
-    #[Groups(['faq'])]
     private ?int $position = null;
 
     public function getId(): ?int
