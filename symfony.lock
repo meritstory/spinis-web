@@ -74,6 +74,9 @@
             "tests/Behat/DemoContext.php"
         ]
     },
+    "friendsofsymfony/ckeditor-bundle": {
+        "version": "2.8.0"
+    },
     "friendsofsymfony/rest-bundle": {
         "version": "3.8",
         "recipe": {

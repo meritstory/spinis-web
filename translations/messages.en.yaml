@@ -4,6 +4,7 @@ app:
 
 menu:
     admins: Accounts
+    faq: FAQ
 
 login:
     email: Email
@@ -60,3 +61,20 @@ admin:
         active: Active
     role:
         admin: Administrator
+
+faq:
+    label:
+        singular: FAQ
+    page:
+        create: 'Create FAQ'
+        edit: 'Edit FAQ'
+        detail: FAQ
+    field:
+        question: Title
+        answer: Text
+        position: Position
+        created_at: 'Created at'
+        updated_at: 'Updated at'
+    action:
+        create: 'Create FAQ'
+        delete: Delete

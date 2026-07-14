@@ -1,0 +1,7 @@
+fos_ck_editor:
+    input_sync: true
+    default_config: standard
+    configs:
+        standard:
+            height: 300
+            versionCheck: false
