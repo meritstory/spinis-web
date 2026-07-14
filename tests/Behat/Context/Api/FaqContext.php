@@ -17,12 +17,12 @@ final readonly class FaqContext implements Context
     }
 
     #[Given('faq with question :question, answer :answer and position :position exists')]
-    public function faqExists(string $question, string $answer, int $position): void
+    public function faqExists(string $question, string $answer, string $position): void
     {
         $faq = (new Faq())
             ->setQuestion($question)
             ->setAnswer($answer)
-            ->setPosition($position);
+            ->setPosition((int) $position);
 
         $this->entityManager->persist($faq);
         $this->entityManager->flush();
