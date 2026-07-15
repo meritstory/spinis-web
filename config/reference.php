@@ -1901,49 +1901,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         collect_components?: bool|Param, // Collect components instances // Default: true
  *     },
  * }
- * @psalm-type FosCkEditorConfig = array{
- *     enable?: bool|Param, // Default: true
- *     async?: bool|Param, // Default: false
- *     auto_inline?: bool|Param, // Default: true
- *     inline?: bool|Param, // Default: false
- *     autoload?: bool|Param, // Default: true
- *     jquery?: bool|Param, // Default: false
- *     require_js?: bool|Param, // Default: false
- *     input_sync?: bool|Param, // Default: false
- *     base_path?: scalar|Param|null, // Default: "bundles/fosckeditor/"
- *     js_path?: scalar|Param|null, // Default: "bundles/fosckeditor/ckeditor.js"
- *     jquery_path?: scalar|Param|null, // Default: "bundles/fosckeditor/adapters/jquery.js"
- *     default_config?: scalar|Param|null, // Default: null
- *     configs?: array<string, array<string, mixed>>,
- *     plugins?: array<string, array{ // Default: []
- *         path?: scalar|Param|null,
- *         filename?: scalar|Param|null,
- *     }>,
- *     styles?: array<string, list<array{ // Default: []
- *         name?: scalar|Param|null,
- *         type?: scalar|Param|null,
- *         widget?: scalar|Param|null,
- *         element?: mixed,
- *         styles?: array<string, scalar|Param|null>,
- *         attributes?: array<string, scalar|Param|null>,
- *     }>>,
- *     templates?: array<string, array{ // Default: []
- *         imagesPath?: scalar|Param|null,
- *         templates?: list<array{ // Default: []
- *             title?: scalar|Param|null,
- *             image?: scalar|Param|null,
- *             description?: scalar|Param|null,
- *             html?: scalar|Param|null,
- *             template?: scalar|Param|null,
- *             template_parameters?: array<string, scalar|Param|null>,
- *         }>,
- *     }>,
- *     filebrowsers?: array<string, scalar|Param|null>,
- *     toolbars?: array{
- *         configs?: array<string, list<mixed>>,
- *         items?: array<string, list<mixed>>,
- *     },
- * }
  * @psalm-type SentryConfig = array{
  *     dsn?: scalar|Param|null, // If this value is not provided, the SDK will try to read it from the SENTRY_DSN environment variable. If that variable also does not exist, the SDK will not send any events.
  *     register_error_listener?: bool|Param, // Default: true
@@ -2076,7 +2033,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *     gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *     twig_component?: TwigComponentConfig,
- *     fos_ck_editor?: FosCkEditorConfig,
  *     scheb_two_factor?: SchebTwoFactorConfig,
  *     symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     "when@dev"?: array{
@@ -2101,7 +2057,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
- *         fos_ck_editor?: FosCkEditorConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     },
@@ -2124,7 +2079,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
- *         fos_ck_editor?: FosCkEditorConfig,
  *         sentry?: SentryConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
@@ -2149,7 +2103,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
- *         fos_ck_editor?: FosCkEditorConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     },

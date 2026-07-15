@@ -8,12 +8,10 @@ use App\Repository\FaqRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FaqRepository::class)]
 #[ORM\Table(name: 'faq')]
-#[UniqueEntity(fields: ['position'], message: 'faq.validation.position_unique')]
 class Faq implements \Stringable
 {
     use TimestampableEntity;
@@ -33,7 +31,7 @@ class Faq implements \Stringable
 
     #[Assert\NotBlank(message: 'faq.validation.position_required')]
     #[Assert\Positive(message: 'faq.validation.position_positive')]
-    #[ORM\Column(unique: true)]
+    #[ORM\Column]
     private ?int $position = null;
 
     public function getId(): ?int

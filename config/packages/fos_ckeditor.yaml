@@ -1,8 +1,0 @@
-fos_ck_editor:
-    input_sync: true
-    default_config: standard
-    configs:
-        standard:
-            height: 300
-            versionCheck: false
-            allowedContent: 'p br strong b em i u ul ol li h2 h3 h4 blockquote a[!href,title,target,rel]'

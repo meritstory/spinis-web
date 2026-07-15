@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Admin\Field\CkEditorField;
+use App\Admin\Field\TinyMceField;
 use App\Entity\Faq;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -36,7 +38,15 @@ class FaqCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_DETAIL, 'faq.page.detail')
             ->setSearchFields(['question', 'answer'])
             ->setDefaultSort(['position' => 'ASC'])
-            ->setDefaultRowAction(Action::DETAIL);
+            ->setDefaultRowAction(Action::DETAIL)
+            ->setFormOptions(['attr' => ['novalidate' => 'novalidate']]);
+    }
+
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets->addAssetMapperEntry(
+            Asset::new('admin/tinymce-field')->onlyOnForms()
+        );
     }
 
     public function configureActions(Actions $actions): Actions
@@ -58,7 +68,7 @@ class FaqCrudController extends AbstractCrudController
             ->setLabel('faq.field.question')
             ->setRequired(true)
             ->setFormTypeOption('empty_data', '');
-        yield CkEditorField::new('answer')
+        yield TinyMceField::new('answer')
             ->setLabel('faq.field.answer')
             ->hideOnIndex()
             ->setRequired(true)

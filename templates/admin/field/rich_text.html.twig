@@ -3,7 +3,7 @@
 {% if ea().crud.currentAction == 'detail' %}
     {{ field.formattedValue|raw }}
 {% else %}
-    {% set html_id = 'ea-ck-editor-' ~ field.uniqueId %}
+    {% set html_id = 'ea-rich-text-' ~ field.uniqueId %}
     <button type="button" class="btn btn-link p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#{{ html_id }}">
         <twig:ea:Icon name="internal:file-lines" /> {{ 'field.text_editor.view_content'|trans([], domain: 'EasyAdminBundle') }}
     </button>

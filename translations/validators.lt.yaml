@@ -4,4 +4,3 @@ faq:
         answer_required: 'Tekstas yra privalomas.'
         position_required: 'Pozicija yra privaloma.'
         position_positive: 'Pozicija turi būti didesnė už 0.'
-        position_unique: 'Ši pozicija jau naudojama.'

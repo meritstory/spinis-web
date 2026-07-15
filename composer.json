@@ -12,7 +12,6 @@
         "doctrine/doctrine-migrations-bundle": "^3.7.0",
         "doctrine/orm": "^3.6.7",
         "easycorp/easyadmin-bundle": "^5.1",
-        "friendsofsymfony/ckeditor-bundle": "^2.8",
         "friendsofsymfony/rest-bundle": "^3.9",
         "gesdinet/jwt-refresh-token-bundle": "^1.5",
         "lexik/jwt-authentication-bundle": "^3.2.0",
@@ -91,8 +90,7 @@
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "importmap:install": "symfony-cmd",
-            "ckeditor:install --tag=4.22.1 --clear=skip --no-interaction": "symfony-cmd"
+            "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"

@@ -1,21 +1,35 @@
 {% extends '@!EasyAdmin/crud/form_theme.html.twig' %}
 
-{% use '@FOSCKEditor/Form/ckeditor_widget.html.twig' %}
-
-{# CKEditor hides the textarea; disable native validation (Symfony still validates). #}
-{% block form_start %}
-    {% set attr = attr|merge({novalidate: 'novalidate'}) %}
-    {{ parent() }}
-{% endblock %}
-
-{# Same error styling as EasyAdmin's built-in TextEditorField. #}
-{% block ckeditor_widget %}
-    <div class="ea-text-editor-wrapper{{ not valid ? ' has-error' : '' }}">
+{% block form_row %}
+    {% if form.vars.attr['data-tinymce-editor']|default(false) %}
+        {% set field = form.vars.ea_vars.field|default(null) %}
+        <div class="{{ field.columns ?? field.defaultColumns ?? '' }}">
+            <div class="mb-3 form-group">
+                {{- form_label(form) -}}
+                <div class="form-widget">
+                    {{ form_widget(form) }}
+                    {{- form_errors(form) -}}
+                </div>
+            </div>
+        </div>
+        {% if field.columns|default(null) is null %}
+            <div class="flex-fill"></div>
+        {% endif %}
+    {% else %}
         {{ parent() }}
-    </div>
+    {% endif %}
 {% endblock %}
 
-{# EasyAdmin's auto-wrapper fieldset has no header; per-field .has-error is enough. #}
+{% block textarea_widget %}
+    {% if attr['data-tinymce-editor']|default(false) %}
+        <div class="ea-text-editor-wrapper{{ not valid ? ' has-error' : '' }}">
+            {{ parent() }}
+        </div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
 {% block ea_form_fieldset_open_row %}
     {% set has_help = ea_help is not same as(false) and ea_help is not null and ea_help is not same as('') %}
     {% set has_label = form.vars.label is not same as(false) and form.vars.label is not null and form.vars.label is not same as('') %}
