@@ -25,7 +25,7 @@ final class LinkContext extends RawMinkContext implements Context
     #[Given('a link exists with title :title, key :key and url :url')]
     public function aLinkExists(string $title, string $key, string $url): void
     {
-        $link = (new Link())
+        $link = new Link()
             ->setTitle($title)
             ->setKey($key)
             ->setUrl($url);
