@@ -14,3 +14,11 @@ link:
     url:
         not_blank: 'Įveskite nuorodą.'
         invalid: 'Įveskite galiojančią nuorodą.'
+
+setting:
+    key:
+        not_blank: 'Pasirinkite nustatymą.'
+        unique: 'Šis nustatymas jau sukurtas.'
+    value:
+        not_blank: 'Įveskite reikšmę.'
+        invalid_email: 'Įveskite galiojantį el. pašto adresą.'

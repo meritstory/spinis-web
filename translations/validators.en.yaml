@@ -14,3 +14,11 @@ link:
     url:
         not_blank: 'Enter a URL.'
         invalid: 'Enter a valid URL.'
+
+setting:
+    key:
+        not_blank: 'Select a setting.'
+        unique: 'This setting already exists.'
+    value:
+        not_blank: 'Enter a value.'
+        invalid_email: 'Enter a valid email address.'
