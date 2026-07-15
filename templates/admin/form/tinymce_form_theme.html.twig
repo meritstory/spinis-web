@@ -1,0 +1,50 @@
+{% extends '@!EasyAdmin/crud/form_theme.html.twig' %}
+
+{% block form_row %}
+    {% if form.vars.attr['data-tinymce-editor']|default(false) %}
+        {% set field = form.vars.ea_vars.field|default(null) %}
+        <div class="{{ field.columns ?? field.defaultColumns ?? '' }}">
+            <div class="mb-3 form-group">
+                {{- form_label(form) -}}
+                <div class="form-widget">
+                    {{ form_widget(form) }}
+                    {{- form_errors(form) -}}
+                </div>
+            </div>
+        </div>
+        {% if field.columns|default(null) is null %}
+            <div class="flex-fill"></div>
+        {% endif %}
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block textarea_widget %}
+    {% if attr['data-tinymce-editor']|default(false) %}
+        <div class="ea-text-editor-wrapper{{ not valid ? ' has-error' : '' }}">
+            {{ parent() }}
+        </div>
+    {% else %}
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block ea_form_fieldset_open_row %}
+    {% set has_help = ea_help is not same as(false) and ea_help is not null and ea_help is not same as('') %}
+    {% set has_label = form.vars.label is not same as(false) and form.vars.label is not null and form.vars.label is not same as('') %}
+    {% set fieldset_has_header = has_label or ea_icon or has_help %}
+    {% set collapsed_option_name = constant('EasyCorp\\Bundle\\EasyAdminBundle\\Field\\FormField::OPTION_COLLAPSED') %}
+    {% set fieldset_error_count_option_name = constant('EasyCorp\\Bundle\\EasyAdminBundle\\Field\\FormField::OPTION_FIELDSET_ERROR_COUNT') %}
+    {% set fieldset_has_errors = form.vars.ea_vars.field.getCustomOption(fieldset_error_count_option_name)|default(0) > 0 %}
+    {% set is_collapsed = form.vars.ea_vars.field.getCustomOption(collapsed_option_name)|default(false) %}
+
+    <div class="form-fieldset {{ not fieldset_has_header ? 'form-fieldset-no-header' }} {{ fieldset_has_errors and fieldset_has_header ? 'has-fieldset-error' }} {{ ea_css_class }} {{ form.vars.attr.class|default('') }}" {% for key, value in form.vars.attr %}{% if key != 'class' %}{{ key }}="{{ value|e('html') }}" {% endif %}{% endfor %}>
+        <fieldset>
+            {% if fieldset_has_header %}
+                {{ form_label(form) }}
+            {% endif %}
+
+            <div id="content-{{ form.vars.name }}" class="form-fieldset-body {{ not fieldset_has_header ? 'without-header' }} {{ ea_is_collapsible ? 'collapse' }} {{ not is_collapsed ? 'show' }}">
+                <div class="row">
+{% endblock %}
