@@ -33,6 +33,7 @@ final readonly class RequestMailer
             ->subject($subject)
             ->htmlTemplate('emails/request_notification.html.twig')
             ->context([
+                'subject' => $subject,
                 'body' => $body,
             ])
         ;
