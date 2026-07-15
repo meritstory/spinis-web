@@ -39,6 +39,13 @@ final class LoginContext extends RawMinkContext implements Context
         $this->submitVerificationCode($this->getLatestAuthenticationCode($email));
     }
 
+    #[Given('I am logged in to the admin panel as :email with password :password')]
+    public function iAmLoggedInToTheAdminPanel(string $email, string $password): void
+    {
+        $this->submitLoginCredentials($email, $password);
+        $this->submitVerificationCode($this->getLatestAuthenticationCode($email));
+    }
+
     #[Given('I confirm admin login with authentication code :code')]
     public function iConfirmAdminLoginWithCode(string $code): void
     {

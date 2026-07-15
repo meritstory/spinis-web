@@ -5,6 +5,7 @@ app:
 menu:
     admins: Paskyros
     faq: DUK
+    links: Nuorodos
 
 login:
     email: 'El. paštas'
@@ -47,6 +48,19 @@ email:
         greeting: 'Sveiki,'
         body: 'Norėdami atkurti slaptažodį, paspauskite šią nuorodą:'
         expiry: 'Nuoroda galioja 1 valandą.'
+
+link:
+    label:
+        singular: Nuoroda
+    field:
+        title: Pavadinimas
+        key: Raktas
+        url: Nuoroda
+    page:
+        new: Sukurti nuorodą
+        edit: Redaguoti nuorodą
+    action:
+        create: Sukurti nuorodą
 
 admin:
     label:

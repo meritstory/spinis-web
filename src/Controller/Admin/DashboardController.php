@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Admin;
 use App\Service\Admin\AdminHomeRouteResolver;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -40,9 +41,16 @@ class DashboardController extends AbstractDashboardController
             ->setTranslationDomain('messages');
     }
 
+    public function configureAssets(): Assets
+    {
+        return Assets::new()
+            ->addCssFile('styles/admin-forms.css');
+    }
+
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkTo(AdminCrudController::class, 'menu.admins', 'fa fa-users');
         yield MenuItem::linkTo(FaqCrudController::class, 'menu.faq', 'fa fa-question-circle');
+        yield MenuItem::linkTo(LinkCrudController::class, 'menu.links', 'fa fa-link');
     }
 }
