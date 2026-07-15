@@ -68,7 +68,14 @@
                 <h2 class="mb-3 text-heading-h1 font-bold">{{ 'home.faq.heading'|trans }}</h2>
                 <p class="mb-8 text-body-lg text-text-secondary">{{ 'home.faq.intro'|trans }}</p>
 
-                {# TODO: FAQ is still hardcoded placeholder content -- becomes DB-driven via the admin panel later#}
+                {# TODO: FAQ is still hardcoded placeholder content. feature/SIS-42 (not yet merged into dev) adds
+                   the App\Entity\Faq {question, answer, position} entity + FaqRepository::findAllOrderedByPosition(),
+                   same EasyAdmin CRUD pattern as Link. Once that branch merges into dev and gets merged in here,
+                   wire this section the same way the footer social links are wired to Link: fetch via the
+                   repository and loop. Note `answer` is TinyMCE-authored HTML, so it needs `|raw` when output.
+                   Also still needs exclusive-accordion behavior (opening one closes the others) per the ticket --
+                   native <details> doesn't do that alone; needs grouped <details name="..."> (check browser
+                   support) or a small Stimulus controller. #}
                 <div class="border-t border-border-default">
                     <details class="group border-b border-border-default py-5">
                         <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
