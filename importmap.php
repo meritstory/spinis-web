@@ -25,4 +25,47 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+    'tinymce' => [
+        'version' => '8.8.0',
+    ],
+    'admin/tinymce-field' => [
+        'path' => './assets/admin/tinymce-field.js',
+        'entrypoint' => true,
+    ],
+    'tinymce/icons/default' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/models/dom' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/themes/silver' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/skins/ui/oxide/skin.js' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/skins/ui/oxide/content.js' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/skins/content/default/content.js' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/plugins/advlist' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/plugins/autoresize' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/plugins/code' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/plugins/link' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/plugins/lists' => [
+        'version' => '8.8.0',
+    ],
+    'tinymce/plugins/table' => [
+        'version' => '8.8.0',
+    ],
 ];

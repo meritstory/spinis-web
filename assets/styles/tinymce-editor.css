@@ -1,0 +1,7 @@
+.tinymce-editor-invalid .tox-tinymce {
+    border-color: var(--form-invalid-border-color, #dc3545);
+}
+
+.ea-text-editor-wrapper.has-error .tox-tinymce {
+    border-color: var(--form-invalid-border-color, #dc3545);
+}

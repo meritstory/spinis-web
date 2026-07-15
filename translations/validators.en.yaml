@@ -1,3 +1,10 @@
+faq:
+    validation:
+        question_required: 'Title is required.'
+        answer_required: 'Text is required.'
+        position_required: 'Position is required.'
+        position_positive: 'Position must be greater than 0.'
+
 link:
     title:
         not_blank: 'Enter a title.'

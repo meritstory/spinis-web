@@ -4,6 +4,7 @@ app:
 
 menu:
     admins: Paskyros
+    faq: DUK
     links: Nuorodos
 
 login:
@@ -125,3 +126,19 @@ home:
         heading: Dažniausiai užduodami klausimai
         intro: 'Raskite atsakymus į pagrindinius klausimus apie skundų teikimą ir nagrinėjimą.'
         more: Daugiau
+
+faq:
+    label:
+        singular: DUK
+    page:
+        create: 'Sukurti DUK'
+        edit: 'Redaguoti DUK'
+        detail: DUK
+    field:
+        question: Pavadinimas
+        answer: Tekstas
+        position: Pozicija
+        created_at: 'Sukūrimo data'
+        updated_at: 'Atnaujinimo data'
+    action:
+        create: 'Sukurti DUK'

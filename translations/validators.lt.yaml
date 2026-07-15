@@ -1,3 +1,10 @@
+faq:
+    validation:
+        question_required: 'Pavadinimas yra privalomas.'
+        answer_required: 'Tekstas yra privalomas.'
+        position_required: 'Pozicija yra privaloma.'
+        position_positive: 'Pozicija turi būti didesnė už 0.'
+
 link:
     title:
         not_blank: 'Įveskite pavadinimą.'

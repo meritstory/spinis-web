@@ -4,6 +4,7 @@ app:
 
 menu:
     admins: Accounts
+    faq: FAQ
     links: Links
 
 login:
@@ -125,3 +126,19 @@ home:
         heading: Frequently Asked Questions
         intro: 'Find answers to the main questions about submitting and handling complaints.'
         more: More
+
+faq:
+    label:
+        singular: FAQ
+    page:
+        create: 'Create FAQ'
+        edit: 'Edit FAQ'
+        detail: FAQ
+    field:
+        question: Title
+        answer: Text
+        position: Position
+        created_at: 'Created at'
+        updated_at: 'Updated at'
+    action:
+        create: 'Create FAQ'
