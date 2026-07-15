@@ -7,7 +7,6 @@ default:
                 - 'App\Tests\Behat\Context\Admin\LinkContext'
                 - 'App\Tests\Behat\Context\Admin\LoginContext'
                 - 'App\Tests\Behat\Context\Api\AdminContext'
-                - 'App\Tests\Behat\Context\Hook\DebugContext'
                 - 'App\Tests\Behat\Context\Hook\DoctrineORMContext'
                 - 'App\Tests\Behat\Context\Transform\AdminContext'
                 - 'App\Tests\Behat\Context\FeatureContext'
