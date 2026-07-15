@@ -17,7 +17,7 @@ class AppExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('link_url', [$this, 'getLinkUrl']),
+            new TwigFunction('link_url', $this->getLinkUrl(...)),
         ];
     }
 
