@@ -15,7 +15,7 @@ final class TinyMceField implements FieldInterface
 
     public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): self
     {
-        return (new self())
+        return new self()
             ->setProperty($propertyName)
             ->setLabel($label)
             ->setTemplatePath('admin/field/rich_text.html.twig')
