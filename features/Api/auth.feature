@@ -1,10 +1,10 @@
 Feature: Authentication
 
   Scenario: I can login and refresh token
-    Given admin with username "user@example.com" and password "test" is created
+    Given admin with email "user@example.com" and password "test" is created
     When I create "POST" request to "/api/auth/login" with json:
     """
-    {"username":"user@example.com","password":"test"}
+    {"email":"user@example.com","password":"test"}
     """
     And I submit the request
     Then the response status code should be 200

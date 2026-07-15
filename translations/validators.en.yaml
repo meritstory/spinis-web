@@ -1,0 +1,9 @@
+link:
+    title:
+        not_blank: 'Enter a title.'
+    key:
+        not_blank: 'Enter a key.'
+        unique: 'This key already exists.'
+    url:
+        not_blank: 'Enter a URL.'
+        invalid: 'Enter a valid URL.'

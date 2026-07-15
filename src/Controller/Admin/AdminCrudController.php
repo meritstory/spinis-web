@@ -9,7 +9,9 @@ use App\Entity\RoleEnum;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -36,14 +38,16 @@ class AdminCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('admin.label.singular')
-            ->setEntityLabelInPlural('admin.label.plural')
-            ->setPageTitle('index', 'admin.label.plural');
+            ->setEntityLabelInPlural('menu.admins')
+            ->setPageTitle('index', 'menu.admins');
     }
 
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
-        yield TextField::new('username')->setLabel('admin.field.username');
+        yield TextField::new('firstName')->setLabel('admin.field.first_name');
+        yield TextField::new('lastName')->setLabel('admin.field.last_name');
+        yield EmailField::new('email')->setLabel('admin.field.email');
         yield ChoiceField::new('roles')
             ->setLabel('admin.field.roles')
             ->setChoices([
@@ -51,6 +55,7 @@ class AdminCrudController extends AbstractCrudController
             ])
             ->allowMultipleChoices()
             ->renderExpanded();
+        yield BooleanField::new('active')->setLabel('admin.field.active');
         yield TextField::new('password')
             ->setLabel('admin.field.password')
             ->setFormType(PasswordType::class)

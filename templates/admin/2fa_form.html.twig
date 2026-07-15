@@ -1,0 +1,81 @@
+{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+
+{% block body_class 'page-login' %}
+{% block page_title %}{{ page_title|default('app.name'|trans) }}{% endblock %}
+
+{% block wrapper_wrapper %}
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                <div class="logo logo-long">{{ page_title|default('app.name'|trans) }}</div>
+            </div>
+        </header>
+
+        <section class="content">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="w-100 alert alert-{{ label in ['success', 'info'] ? 'success' : 'danger' }} rounded mb-3">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% if authenticationError is defined and authenticationError %}
+                <div class="w-100 alert alert-danger rounded mb-3">
+                    {% if authenticationError == 'code_invalid' %}
+                        {{ 'login.error.invalid_code'|trans }}
+                    {% elseif authenticationError == 'login.error.empty_code' %}
+                        {{ 'login.error.empty_code'|trans }}
+                    {% elseif authenticationError == 'login.error.expired_code' %}
+                        {{ 'login.error.expired_code'|trans }}
+                    {% else %}
+                        {{ authenticationError|trans({}, 'SchebTwoFactorBundle') }}
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <form method="post" action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}" id="verify-form">
+                <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+
+                <div class="form-group">
+                    <label class="form-control-label required" for="_auth_code">{{ 'login.auth_code'|trans }}</label>
+                    <div class="form-widget">
+                        <input type="text" id="_auth_code" name="{{ authCodeParameterName }}" class="form-control" placeholder="{{ 'login.auth_code_placeholder'|trans }}" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autofocus autocomplete="one-time-code">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                    {{ 'login.confirm'|trans }}
+                </button>
+            </form>
+
+            <div class="mt-2">
+                <a href="{{ logoutPath }}" class="btn btn-secondary btn-lg w-100">
+                    {{ 'login.cancel'|trans }}
+                </a>
+            </div>
+
+            <form method="post" action="{{ path('admin_2fa_resend') }}" class="form-text mt-3 text-center">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('two_factor') }}">
+                {{ 'login.resend_prompt'|trans }} <button type="submit" class="resend-auth-code-link">{{ 'login.resend_link'|trans }}</button>
+            </form>
+        </section>
+    </div>
+
+    <style>
+        .login-wrapper .resend-auth-code-link {
+            border: 0;
+            background: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: var(--link-color, var(--bs-link-color, #0d6efd));
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .login-wrapper .resend-auth-code-link:hover {
+            color: var(--link-hover-color, var(--bs-link-hover-color, #0a58ca));
+        }
+    </style>
+{% endblock %}

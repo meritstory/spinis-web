@@ -6,5 +6,8 @@ services:
     App\Tests\Behat\:
         resource: '../tests/Behat/*'
 
+    App\Tests\Behat\Support\:
+        resource: '../tests/Behat/Support/*'
+
     App\Tests\Service\:
         resource: '../tests/Service/*'

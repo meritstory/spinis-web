@@ -20,15 +20,15 @@ final readonly class AdminContext implements Context
     }
 
     /**
-     * @Transform /^admin(?:| with username) "([^"]*)"$/
+     * @Transform /^admin(?:| with email) "([^"]*)"$/
      * @Transform /^"([^"]*)" admin$/
      * @Transform /^admin "([^"]*)"$/
      */
-    public function transformAdminByEmail(string $username): Admin
+    public function transformAdminByEmail(string $email): Admin
     {
-        $admin = $this->adminRepository->findOneByUsername($username);
+        $admin = $this->adminRepository->findOneByEmail($email);
 
-        Assert::notNull($admin, sprintf('Admin by username "%s" does not exist', $username));
+        Assert::notNull($admin, sprintf('Admin by email "%s" does not exist', $email));
 
         return $admin;
     }
