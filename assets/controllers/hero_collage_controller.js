@@ -27,7 +27,7 @@ export default class extends Controller {
         setTimeout(() => {
             for (const video of this.videoTargets) {
                 video.currentTime = 0;
-                video.play();
+                void video.play().catch(() => {});
             }
         }, RESTART_DELAY_MS);
     }
