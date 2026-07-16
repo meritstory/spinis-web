@@ -101,7 +101,7 @@ setting:
         value: Reikšmė
         key_placeholder: 'Pasirinkite nustatymą'
     key:
-        request_recipient_email: 'Užklausų gavėjo el. paštas'
+        version: Versija
     page:
         create: 'Sukurti nustatymą'
         edit: 'Redaguoti nustatymą'

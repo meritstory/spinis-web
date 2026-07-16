@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\SettingRepository;
-use App\Validator\SettingValue;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -16,7 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'setting')]
 #[ORM\UniqueConstraint(fields: ['key'])]
 #[UniqueEntity(fields: ['key'], message: 'setting.key.unique')]
-#[SettingValue]
 class Setting implements \Stringable
 {
     use TimestampableEntity;

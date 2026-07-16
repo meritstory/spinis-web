@@ -8,7 +8,7 @@ enum SettingKeyEnum: string
 {
     use EnumFromNameTrait;
 
-    case REQUEST_RECIPIENT_EMAIL = 'request_recipient_email';
+    case VERSION = 'version';
 
     /**
      * @return list<string>
@@ -21,7 +21,7 @@ enum SettingKeyEnum: string
     public function getLabelKey(): string
     {
         return match ($this) {
-            self::REQUEST_RECIPIENT_EMAIL => 'setting.key.request_recipient_email',
+            self::VERSION => 'setting.key.version',
         };
     }
 }

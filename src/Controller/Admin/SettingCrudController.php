@@ -66,10 +66,6 @@ class SettingCrudController extends AbstractCrudController
             ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE)
             ->disable(Action::DELETE);
 
-        if ($this->getAvailableKeyChoices() === []) {
-            $actions = $actions->remove(Crud::PAGE_INDEX, Action::NEW);
-        }
-
         return $actions;
     }
 

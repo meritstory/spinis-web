@@ -6,7 +6,6 @@ namespace App\Tests\Behat\Context\Admin;
 
 use App\Entity\Setting;
 use App\Repository\SettingRepository;
-use App\Service\Request\RequestMailer;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
@@ -20,7 +19,6 @@ final class SettingsContext extends RawMinkContext implements Context
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SettingRepository $settingRepository,
-        private readonly RequestMailer $requestMailer,
     ) {
     }
 
@@ -80,13 +78,6 @@ final class SettingsContext extends RawMinkContext implements Context
         $this->assertSession()->pageTextContains('Įveskite reikšmę.');
     }
 
-    #[Given('the admin setting form has an invalid email validation error')]
-    public function theAdminSettingFormHasAnInvalidEmailValidationError(): void
-    {
-        $this->assertUnprocessableFormResponse();
-        $this->assertSession()->pageTextContains('Įveskite galiojantį el. pašto adresą.');
-    }
-
     #[Given('the admin create setting form should not show key :label')]
     public function theAdminCreateSettingFormShouldNotShowKey(string $label): void
     {
@@ -101,12 +92,6 @@ final class SettingsContext extends RawMinkContext implements Context
         }
 
         Assert::false(in_array($label, $labels, true));
-    }
-
-    #[Given('the request recipient email should be :email')]
-    public function theRequestRecipientEmailShouldBe(string $email): void
-    {
-        Assert::same($email, $this->requestMailer->getRecipientEmail());
     }
 
     private function submitSettingForm(string $key, string $value): void

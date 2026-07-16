@@ -101,7 +101,7 @@ setting:
         value: Value
         key_placeholder: 'Select a setting'
     key:
-        request_recipient_email: 'Request recipient email'
+        version: Version
     page:
         create: 'Create setting'
         edit: 'Edit setting'

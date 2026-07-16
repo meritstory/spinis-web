@@ -21,4 +21,3 @@ setting:
         unique: 'Šis nustatymas jau sukurtas.'
     value:
         not_blank: 'Įveskite reikšmę.'
-        invalid_email: 'Įveskite galiojantį el. pašto adresą.'
