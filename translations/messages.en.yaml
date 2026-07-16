@@ -6,6 +6,7 @@ menu:
     admins: Accounts
     faq: FAQ
     links: Links
+    settings: Settings
 
 login:
     email: Email
@@ -142,3 +143,20 @@ faq:
         updated_at: 'Updated at'
     action:
         create: 'Create FAQ'
+
+setting:
+    label:
+        singular: Setting
+    field:
+        key: Setting
+        value: Value
+        key_placeholder: 'Select a setting'
+    key:
+        version: Version
+    page:
+        create: 'Create setting'
+        edit: 'Edit setting'
+        detail: Setting
+    action:
+        create: 'Create setting'
+    all_created: 'All available settings have already been created.'

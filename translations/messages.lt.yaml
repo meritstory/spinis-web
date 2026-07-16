@@ -6,6 +6,7 @@ menu:
     admins: Paskyros
     faq: DUK
     links: Nuorodos
+    settings: Nustatymai
 
 login:
     email: 'El. paštas'
@@ -142,3 +143,20 @@ faq:
         updated_at: 'Atnaujinimo data'
     action:
         create: 'Sukurti DUK'
+
+setting:
+    label:
+        singular: Nustatymas
+    field:
+        key: Nustatymas
+        value: Reikšmė
+        key_placeholder: 'Pasirinkite nustatymą'
+    key:
+        version: Versija
+    page:
+        create: 'Sukurti nustatymą'
+        edit: 'Redaguoti nustatymą'
+        detail: Nustatymas
+    action:
+        create: 'Sukurti nustatymą'
+    all_created: 'Visi galimi nustatymai jau sukurti.'
