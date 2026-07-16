@@ -18,6 +18,17 @@ link:
 setting:
     key:
         not_blank: 'Pasirinkite nustatymą.'
+        invalid: 'Pasirinkite galiojantį nustatymą.'
         unique: 'Šis nustatymas jau sukurtas.'
     value:
         not_blank: 'Įveskite reikšmę.'
+
+document:
+    title:
+        not_blank: 'Įveskite pavadinimą.'
+    key:
+        not_blank: 'Pasirinkite raktą.'
+        invalid: 'Pasirinkite galiojantį raktą.'
+        unique: 'Šis raktas jau naudojamas.'
+    description:
+        not_blank: 'Įveskite aprašymą.'
