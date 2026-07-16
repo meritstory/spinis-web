@@ -14,7 +14,7 @@
         <div class="relative" data-controller="dropdown">
             <button
                 type="button"
-                class="flex h-9 w-9 items-center justify-center rounded-full border border-border-default text-primary"
+                class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-border-default text-primary"
                 data-action="dropdown#toggle click@window->dropdown#closeOnClickOutside"
                 data-dropdown-target="toggle"
                 aria-haspopup="true"
@@ -24,8 +24,11 @@
                 <img src="{{ asset('images/user.svg') }}" width="24" height="24" alt="">
             </button>
 
-            <div class="absolute right-0 top-[calc(100%+8px)] z-10 min-w-[160px] rounded-lg border border-border-default bg-white p-2 shadow-[0_2px_20px_rgba(99,115,129,0.10)]" data-dropdown-target="panel" hidden>
-                <a href="#" class="block rounded-md px-3 py-2 text-body-md hover:bg-[#f3f5f4]">{{ 'header.login'|trans }}</a>
+            <div class="absolute right-0 top-[calc(100%+8px)] z-10 min-w-[308px] rounded-sm border border-border-default bg-white shadow-[0_2px_20px_rgba(99,115,129,0.10)]" data-dropdown-target="panel" hidden>
+                <a href="#" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
+                    <img src="{{ asset('images/login.svg') }}" width="24" height="24" alt="">
+                    {{ 'header.login'|trans }}
+                </a>
             </div>
         </div>
     </div>

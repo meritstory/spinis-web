@@ -5,8 +5,8 @@
 {% block body %}
     <main>
         <section class="py-18 bg-page">
-            <div class="mx-auto flex max-w-[1200px] items-center gap-16 px-6">
-                <div class="flex-[1_1_420px]">
+            <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 xl:flex-row xl:items-center xl:gap-16">
+                <div class="xl:flex-[1_1_420px]">
                     <h1 class="mb-5 text-[56px] font-bold leading-[64px]">{{ 'home.hero.heading'|trans }}</h1>
                     <p class="mb-8 max-w-[440px] text-[22px] leading-[34px] text-text-secondary">
                         {{ 'home.hero.description'|trans }}
@@ -14,18 +14,20 @@
                     <a href="#" class="inline-block rounded-[2px] bg-primary px-12 py-4 text-body-lg text-white hover:bg-primary-dark">{{ 'home.hero.cta'|trans }}</a>
                 </div>
 
-                <div class="relative h-[540px] w-[556px] flex-[1_1_556px]" data-controller="hero-collage">
-                    <div class="absolute left-0 top-0 h-[329px] w-[349px] overflow-hidden rounded-2xl bg-icon-bg">
-                        <video class="pointer-events-none absolute left-[-150px] top-0 h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
-                        <div class="absolute inset-0"></div>
-                    </div>
-                    <div class="absolute left-[365px] top-[55px] h-[412px] w-[191px] overflow-hidden rounded-2xl bg-icon-bg">
-                        <video class="pointer-events-none absolute left-[-515px] top-[-55px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
-                        <div class="absolute inset-0"></div>
-                    </div>
-                    <div class="absolute left-[90px] top-[350px] h-[190px] w-[259px] overflow-hidden rounded-2xl bg-icon-bg">
-                        <video class="pointer-events-none absolute left-[-240px] top-[-350px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
-                        <div class="absolute inset-0"></div>
+                <div class="relative mx-auto h-[270px] w-[278px] overflow-hidden sm:h-[540px] sm:w-[556px] xl:mx-0 xl:flex-[1_1_556px]">
+                    <div class="absolute left-0 top-0 h-[540px] w-[556px] origin-top-left scale-50 sm:scale-100" data-controller="hero-collage" aria-hidden="true">
+                        <div class="absolute left-0 top-0 h-[329px] w-[349px] overflow-hidden rounded-2xl bg-icon-bg">
+                            <video class="pointer-events-none absolute left-[-150px] top-0 h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                            <div class="absolute inset-0"></div>
+                        </div>
+                        <div class="absolute left-[365px] top-[55px] h-[412px] w-[191px] overflow-hidden rounded-2xl bg-icon-bg">
+                            <video class="pointer-events-none absolute left-[-515px] top-[-55px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                            <div class="absolute inset-0"></div>
+                        </div>
+                        <div class="absolute left-[90px] top-[350px] h-[190px] w-[259px] overflow-hidden rounded-2xl bg-icon-bg">
+                            <video class="pointer-events-none absolute left-[-240px] top-[-350px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                            <div class="absolute inset-0"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -73,14 +75,14 @@
                         <details name="faq-accordion" class="group border-b border-border-default py-5">
                             <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
                                 {{ faq.question }}
-                                <img src="{{ asset('images/chevron.svg') }}" class="h-4 w-4 shrink-0 transition-transform duration-150 group-open:rotate-180" alt="">
+                                <img src="{{ asset('images/chevron.svg') }}" class="h-6 w-6 shrink-0 transition-transform duration-150 group-open:rotate-180" alt="">
                             </summary>
                             <div class="mt-3 text-body-md text-gray-600">{{ faq.answer|raw }}</div>
                         </details>
                     {% endfor %}
                 </div>
 
-                <a href="#" class="mt-6 inline-block text-body-md font-semibold text-primary underline">{{ 'home.faq.more'|trans }}</a>
+                <a href="#" class="mt-6 inline-block text-body-md font-semibold text-primary-dark underline">{{ 'home.faq.more'|trans }}</a>
             </div>
         </section>
     </main>
