@@ -16,7 +16,7 @@ final readonly class SettingService
 
     public function get(SettingKeyEnum $key): ?string
     {
-        return $this->settingRepository->findByKey($key)?->getValue();
+        return $this->settingRepository->findOneBy(['key' => $key->value])?->getValue();
     }
 
     public function getRequired(SettingKeyEnum $key): string
