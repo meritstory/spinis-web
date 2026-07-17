@@ -34,11 +34,12 @@ final readonly class LabelledEnumHelper
         }
 
         $caseParts[] = sprintf('ELSE %s END', $keyFieldPath);
+        $rootAlias = str_contains($keyFieldPath, '.') ? explode('.', $keyFieldPath, 2)[0] : 'entity';
         $queryBuilder
             ->resetDQLPart('orderBy')
             ->addSelect(implode(' ', $caseParts).' AS HIDDEN key_label_sort')
             ->addOrderBy('key_label_sort', $direction)
-            ->addOrderBy('entity.id', $direction);
+            ->addOrderBy(sprintf('%s.id', $rootAlias), $direction);
     }
 
     /** @return array<string> */
