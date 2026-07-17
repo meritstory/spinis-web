@@ -36,7 +36,6 @@ final class HomeContext extends RawMinkContext implements Context
         }
 
         $this->entityManager->flush();
-        $this->entityManager->clear();
     }
 
     #[Then('the FAQ questions should appear in this order:')]
