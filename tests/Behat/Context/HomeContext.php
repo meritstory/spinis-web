@@ -20,15 +20,21 @@ final class HomeContext extends RawMinkContext implements Context
     {
     }
 
-    #[Given('a faq exists with question :question, answer :answer and position :position')]
-    public function aFaqExists(string $question, string $answer, string $position): void
+    #[Given('/^faqs exist:$/')]
+    public function faqsExist(TableNode $table): void
     {
-        $faq = new Faq()
-            ->setQuestion($question)
-            ->setAnswer($answer)
-            ->setPosition((int) $position);
+        $propertyAccessor = FeatureContext::getPropertyAccessor();
 
-        $this->entityManager->persist($faq);
+        foreach ($table as $row) {
+            $faq = new Faq();
+
+            foreach ($row as $property => $value) {
+                $propertyAccessor->setValue($faq, $property, $value);
+            }
+
+            $this->entityManager->persist($faq);
+        }
+
         $this->entityManager->flush();
         $this->entityManager->clear();
     }

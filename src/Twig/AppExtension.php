@@ -13,11 +13,6 @@ use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
 {
-    /**
-     * @var array<string, string|null>
-     */
-    private array $linkUrlCache = [];
-
     private readonly HtmlSanitizer $richTextSanitizer;
 
     public function __construct(private readonly LinkRepository $linkRepository)
@@ -41,11 +36,7 @@ class AppExtension extends AbstractExtension
 
     public function getLinkUrl(string $key): ?string
     {
-        if (array_key_exists($key, $this->linkUrlCache)) {
-            return $this->linkUrlCache[$key];
-        }
-
-        return $this->linkUrlCache[$key] = $this->linkRepository->findOneBy(['key' => $key])?->getUrl();
+        return $this->linkRepository->findOneBy(['key' => $key])?->getUrl();
     }
 
     public function sanitizeHtml(string $html): string
