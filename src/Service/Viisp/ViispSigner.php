@@ -91,7 +91,7 @@ readonly class ViispSigner
         $dom = $signInfo->ownerDocument;
         $privateKeyId = $this->getPrivateKeyId($privateKey);
         openssl_sign($signInfo->C14N(), $signature, $privateKeyId);
-        $signatureValue = base64_encode($signature);
+        $signatureValue = base64_encode((string) $signature);
         $signatureValueElement = $dom->createElement('SignatureValue', $signatureValue);
         $dom->appendChild($signatureValueElement);
 

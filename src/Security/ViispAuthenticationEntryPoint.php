@@ -10,10 +10,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-final class ViispAuthenticationEntryPoint implements AuthenticationEntryPointInterface
+final readonly class ViispAuthenticationEntryPoint implements AuthenticationEntryPointInterface
 {
     public function __construct(
-        private readonly UrlGeneratorInterface $urlGenerator,
+        private UrlGeneratorInterface $urlGenerator,
     ) {
     }
 

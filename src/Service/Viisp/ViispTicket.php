@@ -28,7 +28,7 @@ readonly class ViispTicket
         $resp = $this->viispHttpClient->doRequest($ticketDom);
 
         /** @var SimpleXMLElement $respXml */
-        $respXml = simplexml_load_string($resp);
+        $respXml = simplexml_load_string((string) $resp);
         $respXml->registerXPathNamespace('ns2', $this->viispAuthUrl);
         /** @var SimpleXMLElement[] $elements */
         $elements = $respXml->xpath('//ns2:ticket');
