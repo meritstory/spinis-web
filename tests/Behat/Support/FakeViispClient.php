@@ -13,11 +13,15 @@ use App\Service\Viisp\ViispIdentityData;
  * state can't just live on `$this` — it has to survive across container rebuilds.
  * A small state file does that; `reset()` is called before each scenario so
  * leftover state never leaks into a scenario that never configures this fake.
+ *
+ * The state file lives under the system temp dir, not the project directory —
+ * this needs to work both inside this project's Docker container (project root
+ * `/var/www/symfony`) and on a CI runner (an arbitrary checkout path), so it
+ * can't hardcode either one.
  */
 final class FakeViispClient implements ViispClientInterface
 {
     private const string FAKE_TICKET = 'fake-ticket';
-    private const string STATE_FILE = '/var/www/symfony/var/behat_viisp_fake_client_state.json';
 
     public function willSucceedWith(string $personalCode, string $firstName, string $lastName): void
     {
@@ -35,8 +39,8 @@ final class FakeViispClient implements ViispClientInterface
 
     public function reset(): void
     {
-        if (is_file(self::STATE_FILE)) {
-            unlink(self::STATE_FILE);
+        if (is_file($this->getStateFilePath())) {
+            unlink($this->getStateFilePath());
         }
     }
 
@@ -61,7 +65,7 @@ final class FakeViispClient implements ViispClientInterface
      */
     private function writeState(array $state): void
     {
-        file_put_contents(self::STATE_FILE, (string) json_encode($state));
+        file_put_contents($this->getStateFilePath(), (string) json_encode($state));
     }
 
     /**
@@ -69,13 +73,18 @@ final class FakeViispClient implements ViispClientInterface
      */
     private function readState(): ?array
     {
-        if (!is_file(self::STATE_FILE)) {
+        if (!is_file($this->getStateFilePath())) {
             return null;
         }
 
         /** @var array<string, mixed>|null $decoded */
-        $decoded = json_decode((string) file_get_contents(self::STATE_FILE), true);
+        $decoded = json_decode((string) file_get_contents($this->getStateFilePath()), true);
 
         return $decoded;
+    }
+
+    private function getStateFilePath(): string
+    {
+        return sys_get_temp_dir().'/behat_viisp_fake_client_state.json';
     }
 }
