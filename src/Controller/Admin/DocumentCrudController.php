@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
-use App\Entity\Setting;
-use App\Enum\SettingKeyEnum;
-use App\Repository\SettingRepository;
+use App\Admin\Field\TinyMceField;
+use App\Entity\Document;
+use App\Enum\DocumentKeyEnum;
+use App\Repository\DocumentRepository;
 use App\Service\Admin\LabelledEnumHelper;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
@@ -25,46 +28,52 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * @extends AbstractCrudController<Setting>
+ * @extends AbstractCrudController<Document>
  */
-class SettingCrudController extends AbstractCrudController
+class DocumentCrudController extends AbstractCrudController
 {
     public function __construct(
-        private readonly SettingRepository $settingRepository,
+        private readonly DocumentRepository $documentRepository,
         private readonly LabelledEnumHelper $labelledEnumHelper,
     ) {
     }
 
     public static function getEntityFqcn(): string
     {
-        return Setting::class;
+        return Document::class;
     }
 
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('setting.label.singular')
-            ->setEntityLabelInPlural('menu.settings')
-            ->setPageTitle(Crud::PAGE_INDEX, 'menu.settings')
-            ->setPageTitle(Crud::PAGE_NEW, 'setting.page.create')
-            ->setPageTitle(Crud::PAGE_EDIT, 'setting.page.edit')
-            ->setPageTitle(Crud::PAGE_DETAIL, 'setting.page.detail')
-            ->setSearchFields(['value'])
-            ->setDefaultSort(['key' => 'ASC'])
+            ->setEntityLabelInSingular('document.label.singular')
+            ->setEntityLabelInPlural('menu.documents')
+            ->setPageTitle(Crud::PAGE_INDEX, 'menu.documents')
+            ->setPageTitle(Crud::PAGE_NEW, 'document.page.create')
+            ->setPageTitle(Crud::PAGE_EDIT, 'document.page.edit')
+            ->setPageTitle(Crud::PAGE_DETAIL, 'document.page.detail')
+            ->setSearchFields(['title', 'key'])
+            ->setDefaultSort(['title' => 'ASC'])
             ->setDefaultRowAction(Action::DETAIL)
             ->setFormOptions(['attr' => ['novalidate' => 'novalidate']]);
+    }
+
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets->addAssetMapperEntry(
+            Asset::new('admin/tinymce-field')->onlyOnForms()
+        );
     }
 
     public function configureActions(Actions $actions): Actions
     {
         $actions = $actions
             ->update(Crud::PAGE_INDEX, Action::NEW, static function (Action $action): Action {
-                return $action->setLabel('setting.action.create');
+                return $action->setLabel('document.action.create');
             })
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
-            ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE)
-            ->disable(Action::DELETE);
+            ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
 
         return $actions;
     }
@@ -73,24 +82,29 @@ class SettingCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
 
+        yield TextField::new('title')
+            ->setLabel('document.field.title')
+            ->setRequired(true)
+            ->setEmptyData('');
+
         if ($pageName === Crud::PAGE_INDEX || $pageName === Crud::PAGE_DETAIL) {
             yield TextField::new('key')
-                ->setLabel('setting.field.key')
-                ->formatValue(fn (?string $value): string => $this->labelledEnumHelper->formatValue($value, SettingKeyEnum::class));
+                ->setLabel('document.field.key')
+                ->formatValue(fn (?string $value): string => $this->labelledEnumHelper->formatValue($value, DocumentKeyEnum::class));
         }
 
         if ($pageName === Crud::PAGE_NEW) {
             $availableChoices = $this->getAvailableKeyChoices();
 
             $keyField = ChoiceField::new('key')
-                ->setLabel('setting.field.key')
+                ->setLabel('document.field.key')
                 ->setRequired(true)
                 ->setChoices($availableChoices)
-                ->setFormTypeOption('placeholder', 'setting.field.key_placeholder')
+                ->setFormTypeOption('placeholder', 'document.field.key_placeholder')
                 ->setFormTypeOption('empty_data', '');
 
             if ($availableChoices === []) {
-                $keyField = $keyField->setHelp('setting.all_created');
+                $keyField = $keyField->setHelp('document.all_keys_used');
             }
 
             yield $keyField;
@@ -98,34 +112,16 @@ class SettingCrudController extends AbstractCrudController
 
         if ($pageName === Crud::PAGE_EDIT) {
             yield TextField::new('key')
-                ->setLabel('setting.field.key')
+                ->setLabel('document.field.key')
                 ->setFormTypeOption('disabled', true)
                 ->setFormTypeOption('mapped', false);
         }
 
-        yield TextField::new('value')
-            ->setLabel('setting.field.value')
+        yield TinyMceField::new('description')
+            ->setLabel('document.field.description')
+            ->hideOnIndex()
             ->setRequired(true)
-            ->setEmptyData('');
-    }
-
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-
-        $sort = $searchDto->getSort();
-        if (isset($sort['key'])) {
-            $this->labelledEnumHelper->applyKeyLabelSort($queryBuilder, 'entity.key', $sort['key'], SettingKeyEnum::class);
-        }
-
-        $matchingKeys = $this->labelledEnumHelper->findMatchingValues(trim($searchDto->getQuery()), SettingKeyEnum::class);
-        if ($matchingKeys !== []) {
-            $queryBuilder
-                ->orWhere('entity.key IN (:settingLabelSearchKeys)')
-                ->setParameter('settingLabelSearchKeys', $matchingKeys);
-        }
-
-        return $queryBuilder;
+            ->setFormTypeOption('empty_data', '');
     }
 
     /**
@@ -136,19 +132,43 @@ class SettingCrudController extends AbstractCrudController
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
 
         $entity = $entityDto->getInstance();
-        if ($entity instanceof Setting && $formBuilder->has('key')) {
-            $formBuilder->get('key')->setData($this->labelledEnumHelper->formatValue($entity->getKey(), SettingKeyEnum::class));
+        if ($entity instanceof Document && $formBuilder->has('key')) {
+            $formBuilder->get('key')->setData($this->labelledEnumHelper->formatValue($entity->getKey(), DocumentKeyEnum::class));
         }
 
         return $formBuilder;
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $sort = $searchDto->getSort();
+        if (isset($sort['key'])) {
+            $this->labelledEnumHelper->applyKeyLabelSort(
+                $queryBuilder,
+                'entity.key',
+                $sort['key'],
+                DocumentKeyEnum::class,
+            );
+        }
+
+        $matchingKeys = $this->labelledEnumHelper->findMatchingValues(trim($searchDto->getQuery()), DocumentKeyEnum::class);
+        if ($matchingKeys !== []) {
+            $queryBuilder
+                ->orWhere('entity.key IN (:documentLabelSearchKeys)')
+                ->setParameter('documentLabelSearchKeys', $matchingKeys);
+        }
+
+        return $queryBuilder;
     }
 
     /** @return array<string, string> */
     private function getAvailableKeyChoices(): array
     {
         return $this->labelledEnumHelper->getAvailableChoices(
-            SettingKeyEnum::class,
-            $this->settingRepository->findUsedKeys(),
+            DocumentKeyEnum::class,
+            $this->documentRepository->findUsedKeys(),
         );
     }
 }

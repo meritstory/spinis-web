@@ -5,6 +5,7 @@ app:
 menu:
     admins: Paskyros
     faq: DUK
+    documents: Dokumentai
     links: Nuorodos
     settings: Nustatymai
 
@@ -160,3 +161,22 @@ setting:
     action:
         create: 'Sukurti nustatymą'
     all_created: 'Visi galimi nustatymai jau sukurti.'
+
+document:
+    label:
+        singular: Dokumentas
+    field:
+        title: Pavadinimas
+        key: Raktas
+        description: Aprašymas
+        key_placeholder: 'Pasirinkite raktą'
+    page:
+        create: 'Sukurti dokumentą'
+        edit: 'Redaguoti dokumentą'
+        detail: Dokumentas
+    action:
+        create: 'Sukurti dokumentą'
+    all_keys_used: 'Visi galimi raktai jau panaudoti.'
+    key:
+        privacy_policy: 'Privatumo politika'
+        about_system: 'Apie sistemą'

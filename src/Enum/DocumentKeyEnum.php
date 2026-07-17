@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Enum;
 
-enum SettingKeyEnum: string
+enum DocumentKeyEnum: string
 {
     use EnumFromNameTrait;
 
-    case VERSION = 'version';
+    case PRIVACY_POLICY = 'privacy_policy';
+    case ABOUT_SYSTEM = 'about_system';
 
     /** @return array<string> */
     public static function values(): array
@@ -19,7 +20,8 @@ enum SettingKeyEnum: string
     public function getLabelKey(): string
     {
         return match ($this) {
-            self::VERSION => 'setting.key.version',
+            self::PRIVACY_POLICY => 'document.key.privacy_policy',
+            self::ABOUT_SYSTEM => 'document.key.about_system',
         };
     }
 }
