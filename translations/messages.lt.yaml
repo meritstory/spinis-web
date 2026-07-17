@@ -91,6 +91,8 @@ nav:
 header:
     user_menu_label: Vartotojo meniu
     login: Prisijungti per el. valdžios vartus
+    profile: Profilis
+    logout: Atsijungti
 
 footer:
     social:
@@ -160,3 +162,18 @@ setting:
     action:
         create: 'Sukurti nustatymą'
     all_created: 'Visi galimi nustatymai jau sukurti.'
+
+viisp:
+    login_submit:
+        title: 'Nukreipiama į el. valdžios vartus...'
+    login_error:
+        heading: Nepavyko prisijungti
+        dismiss: Uždaryti
+        retry: Bandyti dar kartą
+    error:
+        identity_exchange_failed: 'Nepavyko patvirtinti tapatybės. Bandykite dar kartą arba kreipkitės į pagalbos tarnybą, jei problema kartojasi.'
+        failed_to_login: 'Nepavyko prisijungti per el. valdžios vartus. Bandykite dar kartą.'
+
+mano_skundai:
+    title: Mano skundai
+    greeting: 'Sveiki, %name%'

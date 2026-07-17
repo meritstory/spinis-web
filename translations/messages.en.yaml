@@ -91,6 +91,8 @@ nav:
 header:
     user_menu_label: User menu
     login: Log in via the e-Government Portal
+    profile: Profile
+    logout: Log out
 
 footer:
     social:
@@ -160,3 +162,18 @@ setting:
     action:
         create: 'Create setting'
     all_created: 'All available settings have already been created.'
+
+viisp:
+    login_submit:
+        title: 'Redirecting to the e-Government Gateway...'
+    login_error:
+        heading: Login failed
+        dismiss: Dismiss
+        retry: Try again
+    error:
+        identity_exchange_failed: 'Failed to verify your identity. Please try again or contact support if the problem persists.'
+        failed_to_login: 'Failed to log in via the e-Government Gateway. Please try again.'
+
+mano_skundai:
+    title: My complaints
+    greeting: 'Hello, %name%'

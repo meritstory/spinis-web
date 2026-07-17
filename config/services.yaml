@@ -27,3 +27,30 @@ services:
 
     Scheb\TwoFactorBundle\Controller\FormController: '@scheb_two_factor.form_controller'
     Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGenerator: '@scheb_two_factor.security.email.default_code_generator'
+
+    App\Service\Viisp\ViispTicket:
+        arguments:
+            $pid: '%env(VIISP_PID)%'
+            $viispAuthUrl: '%env(VIISP_AUTH_URL)%'
+
+    App\Service\Viisp\ViispIdentity:
+        arguments:
+            $pid: '%env(VIISP_PID)%'
+            $viispAuthUrl: '%env(VIISP_AUTH_URL)%'
+
+    App\Service\Viisp\ViispHttpClient:
+        arguments:
+            $viispSoapEndpointUrl: '%env(VIISP_SOAP_ENDPOINT_URL)%'
+            $viispSoapActionBaseUrl: '%env(VIISP_SOAP_ACTION_BASE_URL)%'
+            $viispAuthUrl: '%env(VIISP_AUTH_URL)%'
+
+    App\Service\Viisp\ViispClient:
+        arguments:
+            $privateKey: '%env(resolve:VIISP_PRIVATE_KEY)%'
+            $privateKeyNew: '%env(resolve:VIISP_PRIVATE_KEY_NEW)%'
+
+    App\Service\Viisp\ViispClientInterface: '@App\Service\Viisp\ViispClient'
+
+    App\Controller\ViispAuthController:
+        arguments:
+            $viispSoapActionBaseUrl: '%env(VIISP_SOAP_ACTION_BASE_URL)%'

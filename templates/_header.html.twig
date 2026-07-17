@@ -25,10 +25,20 @@
             </button>
 
             <div class="absolute right-0 top-[calc(100%+8px)] z-10 min-w-[308px] rounded-sm border border-border-default bg-white shadow-[0_2px_20px_rgba(99,115,129,0.10)]" data-dropdown-target="panel" hidden>
-                <a href="#" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
-                    <img src="{{ asset('images/login.svg') }}" width="24" height="24" alt="">
-                    {{ 'header.login'|trans }}
-                </a>
+                {% if app.user %}
+                    <a href="#" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
+                        {{ 'header.profile'|trans }}
+                    </a>
+                    <a href="{{ path('logout') }}" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
+                        <img src="{{ asset('images/login.svg') }}" width="24" height="24" alt="">
+                        {{ 'header.logout'|trans }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('viisp_login_submit') }}" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
+                        <img src="{{ asset('images/login.svg') }}" width="24" height="24" alt="">
+                        {{ 'header.login'|trans }}
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>

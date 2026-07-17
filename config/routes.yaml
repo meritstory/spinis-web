@@ -9,3 +9,6 @@ api_login_check:
 
 gesdinet_jwt_refresh_token:
     path: /api/auth/refresh
+
+logout:
+    path: /logout

@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'mano_skundai.title'|trans }}{% endblock %}
+
+{% block body %}
+    <main class="mx-auto max-w-[1200px] px-6 py-16">
+        <h1 class="text-heading-h1 font-bold">{{ 'mano_skundai.greeting'|trans({'%name%': app.user.firstName}) }}</h1>
+    </main>
+{% endblock %}

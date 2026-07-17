@@ -1,0 +1,134 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Viisp;
+
+use DOMElement;
+use OpenSSLAsymmetricKey;
+use Symfony\Contracts\Cache\CacheInterface;
+
+readonly class ViispSigner
+{
+    public function __construct(
+        private CacheInterface $runtimeCache,
+    ) {
+    }
+
+    public function signDomElement(DOMElement $node, string $privateKey): DOMElement
+    {
+        $signInfoElement = $this->getSignInfo($node);
+        $signatureElement = $node->ownerDocument->createElement('Signature');
+        $signatureElement->setAttribute('xmlns', 'http://www.w3.org/2000/09/xmldsig#');
+        $signatureElement->appendChild($signInfoElement);
+        $node->appendChild($signatureElement);
+
+        $signatureValueElement = $this->getSignatureValue($signInfoElement, $privateKey);
+        $signatureElement->appendChild($signatureValueElement);
+
+        $keyInfoElement = $this->getKeyInfo($signInfoElement, $privateKey);
+        $signatureElement->appendChild($keyInfoElement);
+
+        $node->setAttribute('xmlns', 'http://www.w3.org/2000/09/xmldsig#');
+        $node->setAttribute('xmlns:ns3', 'http://www.w3.org/2001/10/xml-exc-c14n#');
+
+        return $node;
+    }
+
+    private function getSignInfo(DOMElement $node): DOMElement
+    {
+        $dom = $node->ownerDocument;
+
+        $signedInfoElement = $dom->createElement('SignedInfo');
+        $inclusiveNamespaces = $dom->createElement('InclusiveNamespaces');
+        $inclusiveNamespaces->setAttribute('PrefixList', 'ns2');
+        $inclusiveNamespaces->setAttribute('xmlns', 'http://www.w3.org/2001/10/xml-exc-c14n#');
+
+        $canonicalizationMethodElement = $dom->createElement('CanonicalizationMethod');
+        $canonicalizationMethodElement->setAttribute('Algorithm', 'http://www.w3.org/2001/10/xml-exc-c14n#');
+        $canonicalizationMethodElement->appendChild($inclusiveNamespaces);
+
+        $signedInfoElement->appendChild($canonicalizationMethodElement);
+
+        $signatureMethodElement = $dom->createElement('SignatureMethod');
+        $signatureMethodElement->setAttribute('Algorithm', 'http://www.w3.org/2000/09/xmldsig#rsa-sha1');
+        $signedInfoElement->appendChild($signatureMethodElement);
+
+        $referenceElement = $dom->createElement('Reference');
+        $referenceElement->setAttribute('URI', '#'.$node->getAttribute('id'));
+
+        $transformsElement = $dom->createElement('Transforms');
+        $transformsElementFirstChild = $dom->createElement('Transform');
+        $transformsElementFirstChild->setAttribute('Algorithm', 'http://www.w3.org/2000/09/xmldsig#enveloped-signature');
+        $transformsElement->appendChild($transformsElementFirstChild);
+
+        $transformsElementSecondChild = $dom->createElement('Transform');
+        $transformsElementSecondChild->setAttribute('Algorithm', 'http://www.w3.org/2001/10/xml-exc-c14n#');
+        $transformsElementSecondChild->appendChild(clone $inclusiveNamespaces);
+        $transformsElement->appendChild($transformsElementSecondChild);
+        $referenceElement->appendChild($transformsElement);
+
+        $digestMethodElement = $dom->createElement('DigestMethod');
+        $digestMethodElement->setAttribute('Algorithm', 'http://www.w3.org/2000/09/xmldsig#sha1');
+        $referenceElement->appendChild($digestMethodElement);
+
+        $digestValue = base64_encode(hash('sha1', $this->canonicalize($node), true));
+        $digestValueElement = $dom->createElement('DigestValue', $digestValue);
+        $referenceElement->appendChild($digestValueElement);
+
+        $signedInfoElement->appendChild($referenceElement);
+
+        return $signedInfoElement;
+    }
+
+    private function canonicalize(DOMElement $node): string
+    {
+        return $node->C14N(true);
+    }
+
+    private function getSignatureValue(DOMElement $signInfo, string $privateKey): DOMElement
+    {
+        $dom = $signInfo->ownerDocument;
+        $privateKeyId = $this->getPrivateKeyId($privateKey);
+        openssl_sign($signInfo->C14N(), $signature, $privateKeyId);
+        $signatureValue = base64_encode($signature);
+        $signatureValueElement = $dom->createElement('SignatureValue', $signatureValue);
+        $dom->appendChild($signatureValueElement);
+
+        return $signatureValueElement;
+    }
+
+    private function getKeyInfo(DOMElement $signInfo, string $privateKey): DOMElement
+    {
+        $dom = $signInfo->ownerDocument;
+        $privateKeyId = $this->getPrivateKeyId($privateKey);
+        /** @var array<string, array<string, string>> $keyDetails */
+        $keyDetails = openssl_pkey_get_details($privateKeyId);
+
+        $modulus = base64_encode($keyDetails['rsa']['n']);
+        $exponent = base64_encode($keyDetails['rsa']['e']);
+
+        $keyInfoElement = $dom->createElement('KeyInfo');
+        $keyValueElement = $keyInfoElement->appendChild($dom->createElement('KeyValue'));
+        $rsaKeyValueElement = $keyValueElement->appendChild($dom->createElement('RSAKeyValue'));
+        $rsaKeyValueElement->appendChild($dom->createElement('Modulus', $modulus));
+        $rsaKeyValueElement->appendChild($dom->createElement('Exponent', $exponent));
+
+        return $keyInfoElement;
+    }
+
+    private function getPrivateKeyId(string $privateKey): OpenSSLAsymmetricKey
+    {
+        // Keyed by a hash of the key path (not a fixed key) so the primary/rotation
+        // key fallback in ViispClient doesn't reuse the wrong cached key on retry.
+        return $this->runtimeCache->get('viisp_private_key_id.'.md5($privateKey), static function () use ($privateKey): OpenSSLAsymmetricKey {
+            /** @var string $privateKeyContent */
+            $privateKeyContent = file_get_contents($privateKey);
+
+            /** @var OpenSSLAsymmetricKey $opensslKey */
+            $opensslKey = openssl_pkey_get_private($privateKeyContent);
+
+            return $opensslKey;
+        });
+    }
+}
