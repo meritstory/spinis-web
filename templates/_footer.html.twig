@@ -1,0 +1,42 @@
+<footer class="border-t border-border-default bg-white py-10">
+    <div class="mx-auto mb-8 flex max-w-[1200px] items-center justify-between border-b border-border-default px-6 pb-8">
+        <a href="{{ path('home') }}" class="text-body-md text-text-primary">
+            <span class="text-primary font-bold">{{ 'layout.logo.accent'|trans }}</span> {{ 'layout.logo.rest'|trans }}
+        </a>
+
+        <div class="flex gap-3">
+            {% set social_links = [
+                {key: 'facebook_link', icon: 'facebook.svg', label: 'footer.social.facebook'},
+                {key: 'twitter_link', icon: 'twitter.svg', label: 'footer.social.twitter'},
+                {key: 'linkedin_link', icon: 'linkedin.svg', label: 'footer.social.linkedin'},
+            ] %}
+            {% for social in social_links %}
+                {% set url = link_url(social.key) %}
+                {% if url %}
+                    <a href="{{ url }}" target="_blank" rel="noopener" aria-label="{{ social.label|trans }}" class="flex h-8 w-8 items-center justify-center rounded-full border border-border-default bg-white">
+                        <img src="{{ asset('images/' ~ social.icon) }}" class="h-4 w-4 object-contain" alt="">
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mx-auto grid max-w-[1200px] grid-cols-4 gap-6 px-6">
+        <div>
+            <h3 class="mb-1 text-body-md font-bold leading-none">{{ 'footer.org_code.label'|trans }}</h3>
+            <p class="text-body-md text-text-primary">191352247</p>
+        </div>
+        <div>
+            <h3 class="mb-1 text-body-md font-bold leading-none">{{ 'footer.address.label'|trans }}</h3>
+            <p class="text-body-md text-text-primary">A. Juozapavičiaus g. 9, LT-09311<br>Vilnius</p>
+        </div>
+        <div>
+            <h3 class="mb-1 text-body-md font-bold leading-none">{{ 'footer.email.label'|trans }}</h3>
+            <p class="text-body-md text-text-primary">vaspvt@vaspvt.gov.lt</p>
+        </div>
+        <div>
+            <h3 class="mb-1 text-body-md font-bold leading-none">{{ 'footer.phone.label'|trans }}</h3>
+            <p class="text-body-md text-text-primary">+370 5 261 5177</p>
+        </div>
+    </div>
+</footer>

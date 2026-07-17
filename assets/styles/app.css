@@ -1,3 +1,34 @@
-body {
-    background-color: skyblue;
+@import "tailwindcss";
+
+/* Design tokens: --color-* here auto-generate the matching Tailwind
+   utilities (bg-primary, text-text-primary, border-border-default, ...).
+   --font-sans overrides the default body font (see Tailwind's base layer,
+   which reads it). */
+@theme {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --color-primary: #28865f;
+    --color-primary-dark: #216b4c;
+    --color-surface-muted: #f4f6f5;
+    --color-icon-bg: #e7ece9;
+    --color-page: #FAFAFA;
+    --color-light: #E5E8EB;
+    --color-subtle: #F3F6F5;
+    --color-text-primary: #212B36;
+    --color-text-secondary: #637381;
+    --color-border-default: #DCE0E4;
+
+    /* Typography: --text-* pairs with --text-*--line-height to bundle
+       font-size + line-height into one utility (e.g. text-body-lg),
+       mirroring Figma's named text styles. Font-weight is intentionally
+       NOT bundled in -- it stays a separate font-* utility applied
+       alongside, so an instance needing a different weight (e.g. a bold
+       nav link) doesn't fight the token's own font-weight declaration. */
+    --text-body-lg: 16px;
+    --text-body-lg--line-height: 24px;
+    --text-body-md: 14px;
+    --text-body-md--line-height: 20px;
+    --text-heading-h1: 32px;
+    --text-heading-h1--line-height: 40px;
+    --text-heading-h4: 18px;
+    --text-heading-h4--line-height: 24px;
 }

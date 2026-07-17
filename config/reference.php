@@ -653,7 +653,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         time_based_uuid_node?: scalar|Param|null,
  *     },
  *     html_sanitizer?: bool|array{ // HtmlSanitizer configuration
- *         enabled?: bool|Param, // Default: false
+ *         enabled?: bool|Param, // Default: true
  *         sanitizers?: array<string, array{ // Default: []
  *             allow_safe_elements?: bool|Param, // Allows "safe" elements and attributes. // Default: false
  *             allow_static_elements?: bool|Param, // Allows all static elements and attributes from the W3C Sanitizer API standard. // Default: false
@@ -1985,6 +1985,16 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         },
  *     },
  * }
+ * @psalm-type SymfonycastsTailwindConfig = array{
+ *     input_css?: list<scalar|Param|null>,
+ *     config_file?: scalar|Param|null, // Path to the tailwind.config.js file // Default: "%kernel.project_dir%/tailwind.config.js"
+ *     binary?: scalar|Param|null, // The tailwind binary to use instead of downloading a new one // Default: null
+ *     binary_version?: scalar|Param|null, // Tailwind CLI version to download - null means the latest version // Default: null
+ *     binary_platform?: "auto"|"linux-arm64"|"linux-arm64-musl"|"linux-x64"|"linux-x64-musl"|"macos-arm64"|"macos-x64"|"windows-x64"|Param, // Tailwind CLI platform to download - "auto" will try to detect the platform automatically // Default: "auto"
+ *     postcss_config_file?: scalar|Param|null, // Path to PostCSS config file which is passed to the Tailwind CLI // Default: null
+ *     strict_mode?: bool|Param|null, // When enabled, an exception will be thrown if there are no built assets (default: false in `test` env, true otherwise) // Default: null
+ *     process_timeout?: int|Param, // Timeout in seconds for the Tailwind build process - use "0" to disable // Default: 60
+ * }
  * @psalm-type SchebTwoFactorConfig = array{
  *     persister?: scalar|Param|null, // Default: "scheb_two_factor.persister.doctrine"
  *     model_manager_name?: scalar|Param|null, // Default: null
@@ -2033,6 +2043,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *     gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *     twig_component?: TwigComponentConfig,
+ *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     scheb_two_factor?: SchebTwoFactorConfig,
  *     symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     "when@dev"?: array{
@@ -2057,6 +2068,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
+ *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     },
@@ -2080,6 +2092,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
  *         sentry?: SentryConfig,
+ *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     },
@@ -2103,6 +2116,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
  *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
+ *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     },

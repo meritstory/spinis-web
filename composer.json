@@ -31,6 +31,7 @@
         "symfony/flex": "^2.11.0",
         "symfony/form": "7.4.*",
         "symfony/framework-bundle": "7.4.*",
+        "symfony/html-sanitizer": "7.4.*",
         "symfony/http-client": "7.4.*",
         "symfony/intl": "7.4.*",
         "symfony/mailer": "7.4.*",
@@ -52,6 +53,7 @@
         "symfony/web-link": "7.4.*",
         "symfony/yaml": "7.4.*",
         "symfonycasts/reset-password-bundle": "^1.25",
+        "symfonycasts/tailwind-bundle": "^0.14.0",
         "twig/extra-bundle": "^2.12|^3.24",
         "twig/twig": "^2.12|^3.28.0"
     },

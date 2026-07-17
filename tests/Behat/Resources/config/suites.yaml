@@ -11,6 +11,7 @@ default:
                 - 'App\Tests\Behat\Context\Hook\DoctrineORMContext'
                 - 'App\Tests\Behat\Context\Transform\AdminContext'
                 - 'App\Tests\Behat\Context\FeatureContext'
+                - 'App\Tests\Behat\Context\HomeContext'
                 - 'App\Tests\Behat\Context\AdminContext'
                 - 'Behat\MinkExtension\Context\MinkContext'
 

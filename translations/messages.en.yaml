@@ -77,6 +77,57 @@ admin:
     role:
         admin: Administrator
 
+layout:
+    logo:
+        accent: COMPLAINT
+        rest: HANDLING SYSTEM
+
+nav:
+    about: About the System
+    faq: FAQ
+    privacy: Privacy Policy
+    contacts: Contacts
+
+header:
+    user_menu_label: User menu
+    login: Log in via the e-Government Portal
+
+footer:
+    social:
+        facebook: Facebook
+        twitter: Twitter
+        linkedin: LinkedIn
+    org_code:
+        label: Budgetary institution code
+    address:
+        label: Address
+    email:
+        label: Email
+    phone:
+        label: Phone number
+
+home:
+    title: Complaint Handling System
+    hero:
+        heading: Complaint Handling System
+        description: 'Submit a complaint about the quality of healthcare services or violations of patient rights. It is a fast, simple, and clear process.'
+        cta: Submit a complaint
+    how_it_works:
+        heading: How does it work?
+        step1:
+            title: Log in
+            description: 'Log in through the e-government gateway using your identity verification tools.'
+        step2:
+            title: Fill in the form
+            description: 'Choose the complaint type, specify the institution, describe the situation, and attach the required documents.'
+        step3:
+            title: Get a response
+            description: 'Track the progress of your complaint in the system and receive an official response from the authority.'
+    faq:
+        heading: Frequently Asked Questions
+        intro: 'Find answers to the main questions about submitting and handling complaints.'
+        more: More
+
 faq:
     label:
         singular: FAQ

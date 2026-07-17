@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'home.title'|trans }}{% endblock %}
+
+{% block body %}
+    <main>
+        <section class="py-18 bg-page">
+            <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 xl:flex-row xl:items-center xl:gap-16">
+                <div class="xl:flex-[1_1_420px]">
+                    <h1 class="mb-5 text-[56px] font-bold leading-[64px]">{{ 'home.hero.heading'|trans }}</h1>
+                    <p class="mb-8 max-w-[440px] text-[22px] leading-[34px] text-text-secondary">
+                        {{ 'home.hero.description'|trans }}
+                    </p>
+                    <a href="#" class="inline-block rounded-[2px] bg-primary px-12 py-4 text-body-lg text-white hover:bg-primary-dark">{{ 'home.hero.cta'|trans }}</a>
+                </div>
+
+                <div class="relative mx-auto h-[270px] w-[278px] overflow-hidden sm:h-[540px] sm:w-[556px] xl:mx-0 xl:flex-[1_1_556px]">
+                    <div class="absolute left-0 top-0 h-[540px] w-[556px] origin-top-left scale-50 sm:scale-100" data-controller="hero-collage" aria-hidden="true">
+                        <div class="absolute left-0 top-0 h-[329px] w-[349px] overflow-hidden rounded-2xl bg-icon-bg">
+                            <video class="pointer-events-none absolute left-[-150px] top-0 h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                            <div class="absolute inset-0"></div>
+                        </div>
+                        <div class="absolute left-[365px] top-[55px] h-[412px] w-[191px] overflow-hidden rounded-2xl bg-icon-bg">
+                            <video class="pointer-events-none absolute left-[-515px] top-[-55px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                            <div class="absolute inset-0"></div>
+                        </div>
+                        <div class="absolute left-[90px] top-[350px] h-[190px] w-[259px] overflow-hidden rounded-2xl bg-icon-bg">
+                            <video class="pointer-events-none absolute left-[-240px] top-[-350px] h-[540px] w-[960px] max-w-none" data-hero-collage-target="video" src="{{ asset('images/hero-video.mp4') }}" autoplay muted playsinline preload="auto" disablepictureinpicture></video>
+                            <div class="absolute inset-0"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-subtle py-18">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <h2 class="mb-10 text-heading-h1 font-bold">{{ 'home.how_it_works.heading'|trans }}</h2>
+
+                <div class="grid grid-cols-3 gap-6">
+                    <article class="rounded-md border border-border-default bg-white px-6 py-8 text-center">
+                        <div class="mx-auto mb-6 flex items-center justify-center">
+                            <img class="object-contain" src="{{ asset('images/how-it-works-1.svg') }}" alt="">
+                        </div>
+                        <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'home.how_it_works.step1.title'|trans }}</h3>
+                        <p class="text-body-lg text-gray-600">{{ 'home.how_it_works.step1.description'|trans }}</p>
+                    </article>
+
+                    <article class="rounded-md border border-border-default bg-white px-6 py-8 text-center">
+                        <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'home.how_it_works.step2.title'|trans }}</h3>
+                        <p class="text-body-lg text-gray-600">{{ 'home.how_it_works.step2.description'|trans }}</p>
+                        <div class="mx-auto mb-6 mt-6 flex items-center justify-center">
+                            <img class="object-contain" src="{{ asset('images/how-it-works-2.svg') }}" alt="">
+                        </div>
+                    </article>
+
+                    <article class="rounded-md border border-border-default bg-white px-6 py-8 text-center">
+                        <div class="mx-auto mb-6 flex items-center justify-center">
+                            <img class="object-contain" src="{{ asset('images/how-it-works-3.svg') }}" alt="">
+                        </div>
+                        <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'home.how_it_works.step3.title'|trans }}</h3>
+                        <p class="text-body-lg text-gray-600">{{ 'home.how_it_works.step3.description'|trans }}</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-18 bg-page">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <h2 class="mb-3 text-heading-h1 font-bold">{{ 'home.faq.heading'|trans }}</h2>
+                <p class="mb-8 text-body-lg text-text-secondary">{{ 'home.faq.intro'|trans }}</p>
+
+                <div class="border-t border-border-default">
+                    {% for faq in faqs %}
+                        <details name="faq-accordion" class="group border-b border-border-default py-5">
+                            <summary class="flex list-none items-center justify-between text-[15px] font-semibold [&::-webkit-details-marker]:hidden">
+                                {{ faq.question }}
+                                <img src="{{ asset('images/chevron.svg') }}" class="h-6 w-6 shrink-0 transition-transform duration-150 group-open:rotate-180" alt="">
+                            </summary>
+                            <div class="mt-3 text-body-md text-gray-600">{{ faq.answer|sanitize_html }}</div>
+                        </details>
+                    {% endfor %}
+                </div>
+
+                <a href="#" class="mt-6 inline-block text-body-md font-semibold text-primary-dark underline">{{ 'home.faq.more'|trans }}</a>
+            </div>
+        </section>
+    </main>
+{% endblock %}

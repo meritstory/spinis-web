@@ -77,6 +77,57 @@ admin:
     role:
         admin: Administratorius
 
+layout:
+    logo:
+        accent: SKUNDŲ
+        rest: NAGRINĖJIMO SISTEMA
+
+nav:
+    about: Apie sistemą
+    faq: D.U.K.
+    privacy: Privatumo politika
+    contacts: Kontaktai
+
+header:
+    user_menu_label: Vartotojo meniu
+    login: Prisijungti per el. valdžios vartus
+
+footer:
+    social:
+        facebook: Facebook
+        twitter: Twitter
+        linkedin: LinkedIn
+    org_code:
+        label: Biudžetinės įstaigos kodas
+    address:
+        label: Adresas
+    email:
+        label: 'El. paštas'
+    phone:
+        label: 'Tel. numeris'
+
+home:
+    title: Skundų nagrinėjimo sistema
+    hero:
+        heading: Skundų nagrinėjimo sistema
+        description: 'Pateikite skundą dėl sveikatos priežiūros paslaugų kokybės ar pacientų teisių pažeidimų. Tai greitas, paprastas ir aiškus procesas.'
+        cta: Teikti skundą
+    how_it_works:
+        heading: 'Kaip tai veikia?'
+        step1:
+            title: Prisijunkite
+            description: 'Prisijunkite per el. valdžios vartus naudodami savo asmens tapatybę patvirtinančias priemones.'
+        step2:
+            title: Užpildykite formą
+            description: 'Pasirinkite skundo tipą, nurodykite įstaigą, aprašykite situaciją bei pridėkite reikalingus dokumentus.'
+        step3:
+            title: Gaukite atsakymą
+            description: 'Sekite skundo nagrinėjimo eigą sistemoje ir gaukite oficialų tarnybos atsakymą.'
+    faq:
+        heading: Dažniausiai užduodami klausimai
+        intro: 'Raskite atsakymus į pagrindinius klausimus apie skundų teikimą ir nagrinėjimą.'
+        more: Daugiau
+
 faq:
     label:
         singular: DUK
