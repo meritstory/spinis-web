@@ -2,3 +2,44 @@
     border: none;
     box-shadow: none;
 }
+
+.user-menu-wrapper .user-details .user-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    line-height: 1.25;
+    margin-inline-start: 6px;
+    min-width: 0;
+}
+
+.user-menu-wrapper .user-details .user-identity .user-name,
+.user-menu-wrapper .dropdown-menu .dropdown-user-details .user-identity .user-name {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-color, #212529);
+    margin-inline-start: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu-wrapper .user-details .user-identity .user-role,
+.user-menu-wrapper .dropdown-menu .dropdown-user-details .user-identity .user-role {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--text-muted, #6c757d);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu-wrapper .dropdown-menu .dropdown-user-details > div:last-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-menu-wrapper .dropdown-menu .dropdown-user-details .user-identity {
+    margin-block-start: 0.125rem;
+}

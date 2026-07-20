@@ -90,4 +90,62 @@ final readonly class LabelledEnumHelper
 
         return $enum !== null ? $this->translator->trans($enum->getLabelKey()) : $value;
     }
+
+    /**
+     * @param class-string       $enumClass
+     * @param array<string>|null $values
+     *
+     * @return array<string, string>
+     */
+    public function getChoicesForEnum(string $enumClass, ?array $values = null): array
+    {
+        $choices = [];
+
+        foreach ($enumClass::cases() as $case) {
+            if ($values !== null && !in_array($case->value, $values, true)) {
+                continue;
+            }
+
+            $choices[$this->translator->trans($case->getLabelKey())] = (string) $case->value;
+        }
+
+        return $choices;
+    }
+
+    /**
+     * @param class-string       $enumClass
+     * @param array<string>|null $values
+     */
+    public function applyLabelSortByJsonValue(
+        QueryBuilder $queryBuilder,
+        string $jsonFieldPath,
+        string $direction,
+        string $enumClass,
+        ?array $values = null,
+    ): void {
+        $caseParts = ['CASE'];
+        $index = 0;
+
+        foreach ($enumClass::cases() as $case) {
+            if ($values !== null && !in_array($case->value, $values, true)) {
+                continue;
+            }
+
+            $valueParameter = 'labelSortJsonValue'.$index;
+            $labelParameter = 'labelSortJsonLabel'.$index;
+            $caseParts[] = sprintf('WHEN %s = :%s THEN :%s', $jsonFieldPath, $valueParameter, $labelParameter);
+            $queryBuilder
+                ->setParameter($valueParameter, json_encode([$case->value], JSON_THROW_ON_ERROR))
+                ->setParameter($labelParameter, $this->translator->trans($case->getLabelKey()));
+            ++$index;
+        }
+
+        $caseParts[] = 'ELSE \'\' END';
+        $rootAlias = str_contains($jsonFieldPath, '.') ? explode('.', $jsonFieldPath, 2)[0] : 'entity';
+        $queryBuilder
+            ->resetDQLPart('orderBy')
+            ->addSelect(implode(' ', $caseParts).' AS HIDDEN json_label_sort')
+            ->addOrderBy('json_label_sort', $direction)
+            ->addOrderBy(sprintf('%s.id', $rootAlias), $direction);
+    }
 }
