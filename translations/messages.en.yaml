@@ -120,7 +120,7 @@ admin:
         resend_success: 'Invitation resent successfully.'
         resend_failed: 'The invitation could not be sent. The previous invitation link remains valid.'
         resend_not_allowed: 'Invitation cannot be resent for this account.'
-        create_send_failed: 'The account was created, but the invitation email could not be sent. Try resending the invitation.'
+        send_failed: 'The invitation email could not be sent. Try resending the invitation.'
     error:
         role_required: 'Role is required.'
         own_account_lockout: 'You cannot remove access from your own account.'

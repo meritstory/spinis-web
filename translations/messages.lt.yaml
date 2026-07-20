@@ -120,7 +120,7 @@ admin:
         resend_success: 'Pakvietimas išsiųstas iš naujo.'
         resend_failed: 'Nepavyko išsiųsti pakvietimo. Ankstesnė pakvietimo nuoroda tebegalioja.'
         resend_not_allowed: 'Šiai paskyrai negalima išsiųsti pakvietimo iš naujo.'
-        create_send_failed: 'Paskyra sukurta, tačiau nepavyko išsiųsti pakvietimo laiško. Bandykite išsiųsti pakvietimą iš naujo.'
+        send_failed: 'Nepavyko išsiųsti pakvietimo laiško. Bandykite išsiųsti pakvietimą iš naujo.'
     error:
         role_required: 'Rolė yra privaloma.'
         own_account_lockout: 'Negalite panaikinti savo paskyros prieigos.'

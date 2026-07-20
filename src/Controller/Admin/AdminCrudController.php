@@ -343,7 +343,7 @@ class AdminCrudController extends AbstractCrudController
         try {
             $this->invitationService->createAndSend($entityInstance);
         } catch (TransportExceptionInterface) {
-            $this->addFlash('warning', $this->translator->trans('admin.invitation.create_send_failed'));
+            $this->addFlash('warning', $this->translator->trans('admin.invitation.send_failed'));
         }
     }
 
@@ -374,7 +374,7 @@ class AdminCrudController extends AbstractCrudController
         try {
             $this->invitationService->createAndSend($entityInstance);
         } catch (TransportExceptionInterface) {
-            $this->addFlash('warning', $this->translator->trans('admin.invitation.create_send_failed'));
+            $this->addFlash('warning', $this->translator->trans('admin.invitation.send_failed'));
         }
     }
 
