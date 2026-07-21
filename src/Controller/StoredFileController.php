@@ -31,13 +31,7 @@ final class StoredFileController extends AbstractController
     ): Response {
         // TODO: implement file access voter when roles and complaints exist
         try {
-            if (!$this->storage->fileExists($file->getFileName())) {
-                throw $this->createNotFoundException();
-            }
-
             $stream = $this->storage->readStream($file->getFileName());
-            $mimeType = $this->storage->mimeType($file->getFileName());
-            $fileSize = $this->storage->fileSize($file->getFileName());
         } catch (FilesystemException) {
             throw $this->createNotFoundException();
         }
@@ -49,8 +43,8 @@ final class StoredFileController extends AbstractController
                 fclose($stream);
             }
         });
-        $response->headers->set('Content-Type', $mimeType);
-        $response->headers->set('Content-Length', (string) $fileSize);
+        $response->headers->set('Content-Type', $file->getMimeType());
+        $response->headers->set('Content-Length', (string) $file->getFileSize());
         $response->headers->set('Cache-Control', 'private, no-store');
         $response->headers->set(
             'Content-Disposition',

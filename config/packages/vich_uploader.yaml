@@ -3,7 +3,7 @@ vich_uploader:
     storage: flysystem
     mappings:
         files:
-            uri_prefix: /files
+            uri_prefix: /uploads
             upload_destination: s3.storage
             namer: App\Naming\SluggedSmartUniqueNamer
             delete_on_remove: true
