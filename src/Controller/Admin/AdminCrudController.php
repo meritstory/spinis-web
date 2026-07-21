@@ -152,7 +152,7 @@ class AdminCrudController extends AbstractCrudController
         return parent::delete($context);
     }
 
-    #[AdminRoute(path: '/{entityId}/resend-invitation', options: ['methods' => ['POST']])]
+    #[AdminRoute(path: '/{entityId}/resend-invitation', options: ['methods' => [Request::METHOD_POST]])]
     public function resendInvitation(Request $request, #[MapEntity(id: 'entityId')] Admin $admin): RedirectResponse
     {
         if (!$this->isCsrfTokenValid($this->getResendInvitationCsrfTokenId($admin), $request->query->getString('token'))) {
@@ -420,7 +420,7 @@ class AdminCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn): Admin
     {
-        return (new Admin())
+        return new Admin()
             ->setActive(true)
             ->setEmailTwoFactorEnabled(true);
     }

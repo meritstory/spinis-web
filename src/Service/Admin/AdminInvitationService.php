@@ -65,19 +65,15 @@ final readonly class AdminInvitationService
             }
             $this->entityManager->flush();
             $connection->commit();
-        } catch (TransportExceptionInterface $exception) {
-            if ($connection->isTransactionActive()) {
-                $connection->rollBack();
-            }
-            $this->entityManager->clear();
-
-            $this->preservePendingInvitationAfterInitialFailure($adminId, $invitation);
-            throw $exception;
         } catch (\Throwable $exception) {
             if ($connection->isTransactionActive()) {
                 $connection->rollBack();
             }
             $this->entityManager->clear();
+
+            if ($exception instanceof TransportExceptionInterface) {
+                $this->preservePendingInvitationAfterInitialFailure($adminId, $invitation);
+            }
 
             throw $exception;
         }
