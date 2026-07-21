@@ -27,3 +27,14 @@ services:
 
     Scheb\TwoFactorBundle\Controller\FormController: '@scheb_two_factor.form_controller'
     Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGenerator: '@scheb_two_factor.security.email.default_code_generator'
+
+    Aws\S3\S3Client:
+        arguments:
+            -
+                version: 'latest'
+                region: '%env(AWS_DEFAULT_REGION)%'
+                endpoint: '%env(AWS_ENDPOINT_URL)%'
+                use_path_style_endpoint: true
+                credentials:
+                    key: '%env(AWS_ACCESS_KEY_ID)%'
+                    secret: '%env(AWS_SECRET_ACCESS_KEY)%'
