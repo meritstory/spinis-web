@@ -124,7 +124,10 @@ readonly class ViispSigner
         // Keyed by a hash of the key path (not a fixed key) so the primary/rotation
         // key fallback in ViispClient doesn't reuse the wrong cached key on retry.
         $privateKeyContent = $this->runtimeCache->get('viisp_private_key_content.'.md5($privateKey), static function () use ($privateKey): string {
-            return file_get_contents($privateKey);
+            /** @var string $privateKeyContent */
+            $privateKeyContent = file_get_contents($privateKey);
+
+            return $privateKeyContent;
         });
 
         /** @var OpenSSLAsymmetricKey $opensslKey */
