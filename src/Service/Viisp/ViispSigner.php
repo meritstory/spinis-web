@@ -119,16 +119,17 @@ readonly class ViispSigner
 
     private function getPrivateKeyId(string $privateKey): OpenSSLAsymmetricKey
     {
+        // Cache the raw PEM content, not the parsed OpenSSLAsymmetricKey - PHP disallows
+        // serializing that object, which breaks the default filesystem-backed cache pool.
         // Keyed by a hash of the key path (not a fixed key) so the primary/rotation
         // key fallback in ViispClient doesn't reuse the wrong cached key on retry.
-        return $this->runtimeCache->get('viisp_private_key_id.'.md5($privateKey), static function () use ($privateKey): OpenSSLAsymmetricKey {
-            /** @var string $privateKeyContent */
-            $privateKeyContent = file_get_contents($privateKey);
-
-            /** @var OpenSSLAsymmetricKey $opensslKey */
-            $opensslKey = openssl_pkey_get_private($privateKeyContent);
-
-            return $opensslKey;
+        $privateKeyContent = $this->runtimeCache->get('viisp_private_key_content.'.md5($privateKey), static function () use ($privateKey): string {
+            return file_get_contents($privateKey);
         });
+
+        /** @var OpenSSLAsymmetricKey $opensslKey */
+        $opensslKey = openssl_pkey_get_private($privateKeyContent);
+
+        return $opensslKey;
     }
 }
