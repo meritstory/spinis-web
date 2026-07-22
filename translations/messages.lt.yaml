@@ -208,3 +208,7 @@ duk:
         current: D.U.K
     heading: Dažniausiai užduodami klausimai
     description: 'Raskite atsakymus į dažniausiai užduodamus klausimus apie skundų teikimą ir nagrinėjimą sistemoje.'
+    still_questions:
+        heading: Vis dar turite klausimų?
+        description: 'Jei neradote atsakymo į savo klausimą, susisiekite su mūsų specialistu ir gaukite pagalbą.'
+        cta: Skambinti specialistui

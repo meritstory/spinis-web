@@ -47,3 +47,8 @@ Feature: D.U.K. (FAQ) page
     Then I should see "Ar tai saugu?"
     And the response should not contain "<script>"
     And the response should not contain "onerror"
+
+  Scenario: "Still have questions" section is shown
+    When I visit "/duk"
+    Then I should see "Vis dar turite klausimų?"
+    And I should see "Skambinti specialistui"
