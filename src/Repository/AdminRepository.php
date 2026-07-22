@@ -43,7 +43,6 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
     {
         return $this->findOneBy([
             'email' => mb_strtolower(trim($email)),
-            'deletedAt' => null,
         ]);
     }
 
@@ -62,9 +61,8 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
         return (int) $this->createQueryBuilder('admin')
             ->select('COUNT(admin.id)')
             ->andWhere('admin.active = true')
-            ->andWhere('admin.deletedAt IS NULL')
-            ->andWhere('admin.roles = :roles')
-            ->setParameter('roles', json_encode([$role->value], JSON_THROW_ON_ERROR))
+            ->andWhere('JSONB_CONTAINS(admin.roles, :role) = true')
+            ->setParameter('role', json_encode($role->value, JSON_THROW_ON_ERROR))
             ->getQuery()
             ->getSingleScalarResult();
     }

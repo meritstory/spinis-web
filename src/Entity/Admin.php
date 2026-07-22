@@ -8,6 +8,8 @@ use App\Repository\AdminRepository;
 use App\Security\AdminAuthCode;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation\SoftDeleteable;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -25,8 +27,10 @@ use Symfony\Component\Validator\Constraints as Assert;
     repositoryMethod: 'findOneByEmailForUniqueValidation',
     message: 'admin.error.email_unique',
 )]
+#[SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: false)]
 class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, EquatableInterface
 {
+    use SoftDeleteableEntity;
     use TimestampableEntity;
 
     #[ORM\Id]
@@ -73,9 +77,6 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $authCodeExpiresAt = null;
-
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $deletedAt = null;
 
     public function getId(): ?int
     {
@@ -177,23 +178,6 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         return $this;
     }
 
-    public function getDeletedAt(): ?\DateTimeImmutable
-    {
-        return $this->deletedAt;
-    }
-
-    public function setDeletedAt(?\DateTimeImmutable $deletedAt): static
-    {
-        $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    public function isDeleted(): bool
-    {
-        return $this->deletedAt !== null;
-    }
-
     public function getLastActiveAt(): ?\DateTimeImmutable
     {
         return $this->lastActiveAt;
@@ -257,7 +241,7 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         return $this->isActive() && $this->emailTwoFactorEnabled;
     }
 
-    public function getDisplayName(): string
+    public function getFullName(): string
     {
         $name = trim($this->firstName.' '.$this->lastName);
 

@@ -7,7 +7,7 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20260720120721 extends AbstractMigration
+final class Version20260722133803 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -28,7 +28,6 @@ final class Version20260720120721 extends AbstractMigration
         $this->addSql('ALTER TABLE admin ALTER first_name DROP DEFAULT');
         $this->addSql('ALTER TABLE admin ALTER last_name DROP DEFAULT');
         $this->addSql('ALTER TABLE admin ALTER roles TYPE JSONB USING roles::jsonb');
-        $this->addSql('COMMENT ON COLUMN admin.deleted_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER INDEX uniq_d8698a76a6a25ae RENAME TO UNIQ_D8698A76593A594D');
         $this->addSql('ALTER INDEX uniq_36ac99f1e5beaf45 RENAME TO UNIQ_36AC99F1C6EB2692');
         $this->addSql('ALTER INDEX uniq_9f74b8986a6a25ae RENAME TO UNIQ_9F74B8985FA1E697');

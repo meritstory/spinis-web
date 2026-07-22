@@ -7,9 +7,7 @@ namespace App\Service\Admin;
 use App\Entity\Admin;
 use App\Entity\AdminInvitation;
 use App\Repository\AdminInvitationRepository;
-use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class AdminInvitationService
@@ -25,10 +23,9 @@ final readonly class AdminInvitationService
     ) {
     }
 
-    public function createAndSend(Admin $admin): void
+    public function invite(Admin $admin): void
     {
-        $adminId = $admin->getId();
-        if ($adminId === null) {
+        if ($admin->getId() === null) {
             throw new \LogicException('Admin must be persisted before creating an invitation.');
         }
 
@@ -39,44 +36,21 @@ final readonly class AdminInvitationService
             new \DateTimeImmutable('+'.self::LIFETIME_SECONDS.' seconds'),
         );
 
-        $connection = $this->entityManager->getConnection();
-        $connection->beginTransaction();
-
-        try {
-            $this->entityManager->lock($admin, LockMode::PESSIMISTIC_WRITE);
-            $previousInvitations = $this->invitationRepository->findBy(['admin' => $admin]);
-
-            $this->entityManager->persist($invitation);
-            $this->entityManager->flush();
-
-            $this->adminMailer->sendAccountInvitationLink(
-                $admin->getEmail(),
-                $this->urlGenerator->generate(
-                    'admin_invitation_link',
-                    ['token' => $plainToken],
-                    UrlGeneratorInterface::ABSOLUTE_URL,
-                ),
-            );
-
-            if ($previousInvitations !== []) {
-                foreach ($previousInvitations as $previousInvitation) {
-                    $this->entityManager->remove($previousInvitation);
-                }
-            }
-            $this->entityManager->flush();
-            $connection->commit();
-        } catch (\Throwable $exception) {
-            if ($connection->isTransactionActive()) {
-                $connection->rollBack();
-            }
-            $this->entityManager->clear();
-
-            if ($exception instanceof TransportExceptionInterface) {
-                $this->preservePendingInvitationAfterInitialFailure($adminId, $invitation);
-            }
-
-            throw $exception;
+        foreach ($this->invitationRepository->findBy(['admin' => $admin]) as $previousInvitation) {
+            $this->entityManager->remove($previousInvitation);
         }
+
+        $this->entityManager->persist($invitation);
+        $this->entityManager->flush();
+
+        $this->adminMailer->sendAccountInvitationLink(
+            $admin->getEmail(),
+            $this->urlGenerator->generate(
+                'admin_invitation_link',
+                ['token' => $plainToken],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            ),
+        );
     }
 
     public function hasInvitation(Admin $admin): bool
@@ -134,23 +108,5 @@ final readonly class AdminInvitationService
         $admin = $invitation->getAdmin();
 
         return !$admin->isDeleted() && $admin->isActive();
-    }
-
-    private function preservePendingInvitationAfterInitialFailure(int $adminId, AdminInvitation $invitation): void
-    {
-        $admin = $this->entityManager->find(Admin::class, $adminId);
-        if (
-            !$admin instanceof Admin
-            || $this->invitationRepository->findOneBy(['admin' => $admin]) !== null
-        ) {
-            return;
-        }
-
-        $this->entityManager->persist(new AdminInvitation(
-            $admin,
-            $invitation->getTokenHash(),
-            $invitation->getExpiresAt(),
-        ));
-        $this->entityManager->flush();
     }
 }

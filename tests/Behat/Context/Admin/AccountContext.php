@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat\Context\Admin;
 
+use App\Entity\Admin;
 use App\Entity\AdminInvitation;
 use App\Entity\ResetPasswordRequest;
 use App\Entity\RoleEnum;
 use App\Repository\AdminInvitationRepository;
 use App\Repository\AdminRepository;
-use App\Service\Admin\AdminInvitationService;
-use App\Service\Admin\AdminMailer;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -19,13 +18,6 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Component\Mailer\Envelope;
-use Symfony\Component\Mailer\Exception\TransportException;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\RawMessage;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class AccountContext extends RawMinkContext implements Context
@@ -40,8 +32,6 @@ final class AccountContext extends RawMinkContext implements Context
         private readonly AdminRepository $adminRepository,
         private readonly AdminInvitationRepository $invitationRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly TranslatorInterface $translator,
-        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
@@ -164,9 +154,10 @@ final class AccountContext extends RawMinkContext implements Context
 
         $admin
             ->setActive(false)
-            ->setDeletedAt(new \DateTimeImmutable())
-            ->setEmail(sprintf('deleted-session-%d@deleted.invalid', $admin->getId()))
-            ->setRoles([]);
+            ->setEmail($admin->getEmail().'#'.time());
+
+        $this->entityManager->flush();
+        $this->entityManager->remove($admin);
         $this->entityManager->flush();
     }
 
@@ -393,36 +384,6 @@ final class AccountContext extends RawMinkContext implements Context
         $client->submit($formNode->form());
     }
 
-    #[When('the mail transport fails while resending the account invitation for :email')]
-    public function theMailTransportFailsWhileResendingTheAccountInvitationFor(string $email): void
-    {
-        $admin = $this->adminRepository->findOneByEmail($email);
-        Assert::notNull($admin);
-
-        $failingMailer = new class implements MailerInterface {
-            public function send(RawMessage $message, ?Envelope $envelope = null): void
-            {
-                throw new TransportException('Simulated mail transport failure.');
-            }
-        };
-
-        $invitationService = new AdminInvitationService(
-            $this->invitationRepository,
-            $this->entityManager,
-            new AdminMailer($failingMailer, $this->translator, 'noreply@example.com', 'Test'),
-            $this->urlGenerator,
-        );
-
-        $transportFailed = false;
-        try {
-            $invitationService->createAndSend($admin);
-        } catch (TransportExceptionInterface) {
-            $transportFailed = true;
-        }
-
-        Assert::true($transportFailed, 'The simulated mail transport did not fail.');
-    }
-
     #[When('I resend the account invitation for :email without a valid CSRF token')]
     public function iResendTheAccountInvitationWithoutAValidCsrfToken(string $email): void
     {
@@ -444,13 +405,6 @@ final class AccountContext extends RawMinkContext implements Context
         $newTokenHash = $this->getInvitationTokenHashForAdmin($email);
         Assert::notNull($newTokenHash);
         Assert::notSame($this->storedInvitationTokenHash, $newTokenHash);
-    }
-
-    #[Then('admin :email should retain the previous invitation')]
-    public function adminShouldRetainThePreviousInvitation(string $email): void
-    {
-        Assert::notNull($this->storedInvitationTokenHash);
-        Assert::same($this->getInvitationTokenHashForAdmin($email), $this->storedInvitationTokenHash);
     }
 
     #[Then('I should see account :email in the accounts list')]
@@ -476,7 +430,7 @@ final class AccountContext extends RawMinkContext implements Context
     public function exactlyOneActiveAdminAccountShouldExistWithEmail(string $email): void
     {
         $this->entityManager->clear();
-        Assert::count($this->adminRepository->findBy(['email' => $email, 'deletedAt' => null]), 1);
+        Assert::count($this->adminRepository->findBy(['email' => $email]), 1);
     }
 
     #[Then('admin account :email should be soft deleted')]
@@ -484,21 +438,14 @@ final class AccountContext extends RawMinkContext implements Context
     {
         $this->entityManager->clear();
 
-        Assert::null($this->adminRepository->findOneByEmail($email));
         Assert::notNull($this->lastDeletedAdminId);
 
-        $deletedAdmin = $this->adminRepository->find($this->lastDeletedAdminId);
+        $deletedAdmin = $this->findAdminBypassingSoftDelete($this->lastDeletedAdminId);
         Assert::notNull($deletedAdmin);
         Assert::true($deletedAdmin->isDeleted());
+        Assert::null($this->adminRepository->findOneByEmail($email));
         Assert::false($deletedAdmin->isActive());
-        Assert::same($deletedAdmin->getFirstName(), '');
-        Assert::same($deletedAdmin->getLastName(), '');
-        Assert::startsWith($deletedAdmin->getEmail(), 'deleted-');
-        Assert::endsWith($deletedAdmin->getEmail(), '@deleted.invalid');
-        Assert::null($deletedAdmin->getPrimaryRole());
-        Assert::false($deletedAdmin->isEmailTwoFactorEnabled());
-        Assert::null($deletedAdmin->getAuthCode());
-        Assert::null($deletedAdmin->getLastActiveAt());
+        Assert::true(str_contains($deletedAdmin->getEmail(), '#'));
         Assert::count($this->invitationRepository->findBy(['admin' => $deletedAdmin]), 0);
         Assert::same(
             $this->entityManager->getRepository(ResetPasswordRequest::class)->count(['user' => $deletedAdmin]),
@@ -512,6 +459,24 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::isInstanceOf($client, KernelBrowser::class);
 
         return $client;
+    }
+
+    private function findAdminBypassingSoftDelete(int $id): ?Admin
+    {
+        $filters = $this->entityManager->getFilters();
+        $softDeleteableFilterEnabled = $filters->isEnabled('softdeleteable');
+
+        if ($softDeleteableFilterEnabled) {
+            $filters->disable('softdeleteable');
+        }
+
+        try {
+            return $this->adminRepository->find($id);
+        } finally {
+            if ($softDeleteableFilterEnabled) {
+                $filters->enable('softdeleteable');
+            }
+        }
     }
 
     private function getInvitationTokenHashForAdmin(string $email): ?string

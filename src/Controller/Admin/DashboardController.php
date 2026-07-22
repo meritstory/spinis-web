@@ -69,6 +69,6 @@ class DashboardController extends AbstractDashboardController
             return parent::configureUserMenu($user);
         }
 
-        return parent::configureUserMenu($user)->setName($user->getDisplayName());
+        return parent::configureUserMenu($user)->setName($user->getFullName());
     }
 }

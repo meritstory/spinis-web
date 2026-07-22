@@ -40,7 +40,9 @@ class CreateAdminCommand extends Command
     {
         $this
             ->addArgument('email', InputArgument::REQUIRED, 'Admin email')
-            ->addArgument('password', InputArgument::REQUIRED, 'Admin password');
+            ->addArgument('password', InputArgument::REQUIRED, 'Admin password')
+            ->addArgument('first-name', InputArgument::OPTIONAL, 'First name', 'Admin')
+            ->addArgument('last-name', InputArgument::OPTIONAL, 'Last name', 'Admin');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -49,6 +51,16 @@ class CreateAdminCommand extends Command
 
         $email = trim((string) $input->getArgument('email'));
         $password = (string) $input->getArgument('password');
+        $firstName = trim((string) $input->getArgument('first-name'));
+        $lastName = trim((string) $input->getArgument('last-name'));
+
+        if ($firstName === '') {
+            $firstName = 'Admin';
+        }
+
+        if ($lastName === '') {
+            $lastName = 'Admin';
+        }
 
         if ($email === '') {
             $io->error('Email is required.');
@@ -74,12 +86,10 @@ class CreateAdminCommand extends Command
             return Command::SUCCESS;
         }
 
-        $localPart = strstr($email, '@', true) ?: 'admin';
-
         $admin = new Admin()
             ->setEmail($email)
-            ->setFirstName(ucfirst($localPart))
-            ->setLastName('Admin')
+            ->setFirstName($firstName)
+            ->setLastName($lastName)
             ->setRoles([RoleEnum::SYSTEM_ADMIN->value])
             ->setActive(true);
 

@@ -160,12 +160,6 @@ Feature: Admin account management
     When I edit admin account "old-invite@example.com" setting email to "new-invite@example.com" and active to "active"
     Then admin "new-invite@example.com" should have a renewed invitation
 
-  Scenario: Failed invitation resend preserves the previous invitation
-    When I create an admin account with email "failed-resend@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
-    And I remember the invitation token hash for admin "failed-resend@example.com"
-    When the mail transport fails while resending the account invitation for "failed-resend@example.com"
-    Then admin "failed-resend@example.com" should retain the previous invitation
-
   Scenario: Resending an invitation requires a valid CSRF token
     When I create an admin account with email "csrf@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
     And I resend the account invitation for "csrf@example.com" without a valid CSRF token

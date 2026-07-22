@@ -41,7 +41,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -169,13 +168,7 @@ class AdminCrudController extends AbstractCrudController
             return $this->redirectToAdminPage(self::class, Action::INDEX);
         }
 
-        try {
-            $this->invitationService->createAndSend($admin);
-        } catch (TransportExceptionInterface) {
-            $this->addFlash('warning', $this->translator->trans('admin.invitation.resend_failed'));
-
-            return $this->redirectToAdminPage(self::class, Action::DETAIL, $admin->getId());
-        }
+        $this->invitationService->invite($admin);
 
         $this->addFlash('success', $this->translator->trans('admin.invitation.resend_success'));
 
@@ -285,11 +278,9 @@ class AdminCrudController extends AbstractCrudController
         foreach ($this->labelledEnumHelper->findMatchingValues(trim($searchDto->getQuery()), RoleEnum::class) as $index => $role) {
             $parameter = 'adminRoleSearch'.$index;
             $queryBuilder
-                ->orWhere(sprintf('entity.roles = :%s', $parameter))
-                ->setParameter($parameter, json_encode([$role], JSON_THROW_ON_ERROR));
+                ->orWhere(sprintf('JSONB_CONTAINS(entity.roles, :%s) = true', $parameter))
+                ->setParameter($parameter, json_encode($role, JSON_THROW_ON_ERROR));
         }
-
-        $queryBuilder->andWhere('entity.deletedAt IS NULL');
 
         $sort = $searchDto->getSort();
         if (isset($sort['roleLabel'])) {
@@ -340,11 +331,7 @@ class AdminCrudController extends AbstractCrudController
         $this->setUnusablePassword($entityInstance);
         parent::persistEntity($entityManager, $entityInstance);
 
-        try {
-            $this->invitationService->createAndSend($entityInstance);
-        } catch (TransportExceptionInterface) {
-            $this->addFlash('warning', $this->translator->trans('admin.invitation.send_failed'));
-        }
+        $this->invitationService->invite($entityInstance);
     }
 
     public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
@@ -361,21 +348,13 @@ class AdminCrudController extends AbstractCrudController
             && $originalEmail !== $entityInstance->getEmail()
             && $this->invitationService->hasInvitation($entityInstance);
 
-        if ($renewInvitation) {
-            $this->invitationService->removeInvitationsFor($entityInstance);
-        }
-
         parent::updateEntity($entityManager, $entityInstance);
 
         if (!$renewInvitation) {
             return;
         }
 
-        try {
-            $this->invitationService->createAndSend($entityInstance);
-        } catch (TransportExceptionInterface) {
-            $this->addFlash('warning', $this->translator->trans('admin.invitation.send_failed'));
-        }
+        $this->invitationService->invite($entityInstance);
     }
 
     public function deleteEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
@@ -395,26 +374,12 @@ class AdminCrudController extends AbstractCrudController
         $this->invitationService->removeInvitationsFor($entityInstance);
         $this->resetPasswordRequestRepository->removeRequests($entityInstance);
 
-        $anonymizedEmail = sprintf(
-            'deleted-%d-%s@deleted.invalid',
-            $entityInstance->getId(),
-            bin2hex(random_bytes(8)),
-        );
-
         $entityInstance
             ->setActive(false)
-            ->setDeletedAt(new \DateTimeImmutable())
-            ->setFirstName('')
-            ->setLastName('')
-            ->setEmail($anonymizedEmail)
-            ->setRoles([])
-            ->setEmailTwoFactorEnabled(false)
-            ->setAuthCode(null)
-            ->setLastActiveAt(null);
+            ->setEmail($entityInstance->getEmail().'#'.time());
 
-        $this->setUnusablePassword($entityInstance);
-
-        $entityManager->persist($entityInstance);
+        $entityManager->flush();
+        $entityManager->remove($entityInstance);
         $entityManager->flush();
     }
 

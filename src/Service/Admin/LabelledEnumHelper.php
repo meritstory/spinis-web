@@ -133,9 +133,14 @@ final readonly class LabelledEnumHelper
 
             $valueParameter = 'labelSortJsonValue'.$index;
             $labelParameter = 'labelSortJsonLabel'.$index;
-            $caseParts[] = sprintf('WHEN %s = :%s THEN :%s', $jsonFieldPath, $valueParameter, $labelParameter);
+            $caseParts[] = sprintf(
+                'WHEN JSONB_CONTAINS(%s, :%s) = true THEN :%s',
+                $jsonFieldPath,
+                $valueParameter,
+                $labelParameter,
+            );
             $queryBuilder
-                ->setParameter($valueParameter, json_encode([$case->value], JSON_THROW_ON_ERROR))
+                ->setParameter($valueParameter, json_encode($case->value, JSON_THROW_ON_ERROR))
                 ->setParameter($labelParameter, $this->translator->trans($case->getLabelKey()));
             ++$index;
         }
