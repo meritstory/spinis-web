@@ -9,9 +9,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 readonly class ViispHttpClient
 {
-    // Fixed platform constant from VIISP's own WSDL (soapAction on each operation
-    // binding) - not integrator-specific, unlike VIISP_SOAP_ACTION_BASE_URL (which
-    // is the unrelated portal URL the browser posts the ticket to).
     private const string SOAP_ACTION_BASE = 'http://www.epaslaugos.lt/services/authenticationServiceProvider/';
 
     public function __construct(
