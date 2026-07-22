@@ -89,6 +89,10 @@ nav:
     privacy: Privacy Policy
     contacts: Contacts
 
+breadcrumb:
+    home: Home
+    label: 'Breadcrumb'
+
 header:
     user_menu_label: User menu
     login: Log in via the e-Government Portal
@@ -197,3 +201,10 @@ document:
     key:
         privacy_policy: 'Privacy policy'
         about_system: 'About the system'
+
+duk:
+    title: Frequently Asked Questions
+    breadcrumb:
+        current: FAQ
+    heading: Frequently Asked Questions
+    description: 'Find answers to the most frequently asked questions about submitting and handling complaints in the system.'

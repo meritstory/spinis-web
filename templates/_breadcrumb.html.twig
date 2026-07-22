@@ -1,0 +1,21 @@
+{# `crumbs`: ordered list of {label, url?} - omit `url` (or leave it
+   null) on the last one to render it as the current, non-linked page.
+   `includeHome` (default true): set false to start the trail from
+   `crumbs` directly, skipping the fixed "Pagrindinis" root. #}
+<nav aria-label="{{ 'breadcrumb.label'|trans }}" class="text-body-md text-text-secondary">
+    <ol class="flex items-center gap-2">
+        {% if includeHome|default(true) %}
+            <li><a href="{{ path('home') }}" class="hover:text-text-primary">{{ 'breadcrumb.home'|trans }}</a></li>
+        {% endif %}
+        {% for crumb in crumbs %}
+            {% if not (loop.first and not includeHome|default(true)) %}
+                <li aria-hidden="true">&gt;</li>
+            {% endif %}
+            {% if crumb.url is defined and crumb.url is not null %}
+                <li><a href="{{ crumb.url }}" class="hover:text-text-primary">{{ crumb.label }}</a></li>
+            {% else %}
+                <li aria-current="page" class="text-text-primary">{{ crumb.label }}</li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>
