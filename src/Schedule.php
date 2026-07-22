@@ -16,13 +16,7 @@ class Schedule implements ScheduleProviderInterface
     public function getSchedule(): SymfonySchedule
     {
         return new SymfonySchedule()
-            ->add(
-                RecurringMessage::cron(
-                    '0 1 * * *',
-                    new ImportInstitutionsMessage(),
-                    new \DateTimeZone('Europe/Vilnius'),
-                ),
-            )
+            ->add(RecurringMessage::cron('0 1 * * *', new ImportInstitutionsMessage()))
         ;
     }
 }
