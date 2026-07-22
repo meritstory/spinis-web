@@ -15,7 +15,6 @@ use Vich\UploaderBundle\Mapping\Attribute as Vich;
 
 #[ORM\Entity(repositoryClass: StoredFileRepository::class)]
 #[ORM\Table(name: 'stored_file')]
-#[ORM\Index(name: 'idx_stored_file_uploaded_by_admin', fields: ['uploadedByAdmin'])]
 #[Vich\Uploadable]
 class StoredFile
 {
