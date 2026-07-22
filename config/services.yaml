@@ -41,7 +41,6 @@ services:
     App\Service\Viisp\ViispHttpClient:
         arguments:
             $viispSoapEndpointUrl: '%env(VIISP_SOAP_ENDPOINT_URL)%'
-            $viispSoapActionBaseUrl: '%env(VIISP_SOAP_ACTION_BASE_URL)%'
             $viispAuthUrl: '%env(VIISP_AUTH_URL)%'
 
     App\Service\Viisp\ViispClient:

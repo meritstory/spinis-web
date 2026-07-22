@@ -9,15 +9,19 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 readonly class ViispHttpClient
 {
+    // Fixed platform constant from VIISP's own WSDL (soapAction on each operation
+    // binding) - not integrator-specific, unlike VIISP_SOAP_ACTION_BASE_URL (which
+    // is the unrelated portal URL the browser posts the ticket to).
+    private const string SOAP_ACTION_BASE = 'http://www.epaslaugos.lt/services/authenticationServiceProvider/';
+
     public function __construct(
         private HttpClientInterface $httpClient,
         private string $viispSoapEndpointUrl,
-        private string $viispSoapActionBaseUrl,
         private string $viispAuthUrl,
     ) {
     }
 
-    public function doRequest(DOMDocument $dom): ?string
+    public function doRequest(DOMDocument $dom, string $operation): ?string
     {
         $soapRequest = str_replace(
             '{xml}',
@@ -35,7 +39,7 @@ readonly class ViispHttpClient
                 'Connection' => 'Keep-Alive',
                 'Accept-Encoding' => 'gzip,deflate',
                 'Content-Type' => 'text/xml;charset=UTF-8',
-                'SOAPAction' => $this->viispSoapActionBaseUrl.'authenticationServiceProvider/initAuthentication',
+                'SOAPAction' => self::SOAP_ACTION_BASE.$operation,
                 'Content-Length' => strlen($soapRequest),
                 'User-Agent' => 'Apache-HttpClient/4.1.1 (java 1.5)',
             ],

@@ -27,7 +27,7 @@ readonly class ViispIdentity
         $firstChild = $identityDom->firstChild;
 
         $this->viispSigner->signDomElement($firstChild, $privateKey);
-        $resp = $this->viispHttpClient->doRequest($identityDom);
+        $resp = $this->viispHttpClient->doRequest($identityDom, 'getAuthenticationData');
 
         $dom = new DOMDocument();
         $dom->loadXML($resp);

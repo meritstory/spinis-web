@@ -25,7 +25,7 @@ readonly class ViispTicket
         $firstChild = $ticketDom->firstChild;
 
         $this->viispSigner->signDomElement($firstChild, $privateKey);
-        $resp = $this->viispHttpClient->doRequest($ticketDom);
+        $resp = $this->viispHttpClient->doRequest($ticketDom, 'initAuthentication');
 
         /** @var SimpleXMLElement $respXml */
         $respXml = simplexml_load_string((string) $resp);
