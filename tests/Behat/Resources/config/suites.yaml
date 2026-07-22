@@ -5,6 +5,7 @@ default:
                 # the list must be in alphabetical order for easier conflict resolution
                 - 'App\Tests\Behat\Context\Admin\DocumentContext'
                 - 'App\Tests\Behat\Context\Admin\FaqContext'
+                - 'App\Tests\Behat\Context\Admin\FileContext'
                 - 'App\Tests\Behat\Context\Admin\LinkContext'
                 - 'App\Tests\Behat\Context\Admin\LoginContext'
                 - 'App\Tests\Behat\Context\Admin\SettingsContext'
