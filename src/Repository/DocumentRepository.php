@@ -4,25 +4,25 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Setting;
+use App\Entity\Document;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Setting>
+ * @extends ServiceEntityRepository<Document>
  */
-class SettingRepository extends ServiceEntityRepository
+class DocumentRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Setting::class);
+        parent::__construct($registry, Document::class);
     }
 
     /** @return array<string> */
     public function findUsedKeys(): array
     {
-        $keys = $this->createQueryBuilder('setting')
-            ->select('setting.key')
+        $keys = $this->createQueryBuilder('document')
+            ->select('document.key')
             ->getQuery()
             ->getSingleColumnResult();
 

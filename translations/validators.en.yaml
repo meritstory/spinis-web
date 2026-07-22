@@ -18,6 +18,17 @@ link:
 setting:
     key:
         not_blank: 'Select a setting.'
+        invalid: 'Select a valid setting.'
         unique: 'This setting already exists.'
     value:
         not_blank: 'Enter a value.'
+
+document:
+    title:
+        not_blank: 'Enter a title.'
+    key:
+        not_blank: 'Select a key.'
+        invalid: 'Select a valid key.'
+        unique: 'This key is already in use.'
+    description:
+        not_blank: 'Enter a description.'

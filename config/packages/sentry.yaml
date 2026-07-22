@@ -5,3 +5,6 @@ when@prod:
             ignore_exceptions:
                 - 'Symfony\Component\ErrorHandler\Error\FatalError'
                 - 'Symfony\Component\Debug\Exception\FatalErrorException'
+                - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+                - 'Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException'
+                - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'

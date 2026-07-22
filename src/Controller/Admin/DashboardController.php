@@ -51,6 +51,7 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkTo(AdminCrudController::class, 'menu.admins', 'fa fa-users');
         yield MenuItem::linkTo(FaqCrudController::class, 'menu.faq', 'fa fa-question-circle');
+        yield MenuItem::linkTo(DocumentCrudController::class, 'menu.documents', 'fa fa-file-text');
         yield MenuItem::linkTo(LinkCrudController::class, 'menu.links', 'fa fa-link');
         yield MenuItem::linkTo(SettingCrudController::class, 'menu.settings', 'fa fa-cog');
     }

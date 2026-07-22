@@ -5,6 +5,7 @@ app:
 menu:
     admins: Paskyros
     faq: DUK
+    documents: Dokumentai
     links: Nuorodos
     settings: Nustatymai
 
@@ -177,3 +178,22 @@ viisp:
 mano_skundai:
     title: Mano skundai
     greeting: 'Sveiki, %name%'
+
+document:
+    label:
+        singular: Dokumentas
+    field:
+        title: Pavadinimas
+        key: Raktas
+        description: Aprašymas
+        key_placeholder: 'Pasirinkite raktą'
+    page:
+        create: 'Sukurti dokumentą'
+        edit: 'Redaguoti dokumentą'
+        detail: Dokumentas
+    action:
+        create: 'Sukurti dokumentą'
+    all_keys_used: 'Visi galimi raktai jau panaudoti.'
+    key:
+        privacy_policy: 'Privatumo politika'
+        about_system: 'Apie sistemą'

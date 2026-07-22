@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\SettingKeyEnum;
 use App\Repository\SettingRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -24,7 +25,10 @@ class Setting implements \Stringable
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\NotBlank(message: 'setting.key.not_blank')]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(message: 'setting.key.not_blank'),
+        new Assert\Choice(callback: [SettingKeyEnum::class, 'values'], message: 'setting.key.invalid'),
+    ])]
     #[ORM\Column(name: 'setting_key', length: 255)]
     private string $key = '';
 

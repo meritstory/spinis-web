@@ -5,6 +5,7 @@ app:
 menu:
     admins: Accounts
     faq: FAQ
+    documents: Documents
     links: Links
     settings: Settings
 
@@ -177,3 +178,22 @@ viisp:
 mano_skundai:
     title: My complaints
     greeting: 'Hello, %name%'
+
+document:
+    label:
+        singular: Document
+    field:
+        title: Title
+        key: Key
+        description: Description
+        key_placeholder: 'Select a key'
+    page:
+        create: 'Create document'
+        edit: 'Edit document'
+        detail: Document
+    action:
+        create: 'Create document'
+    all_keys_used: 'All available keys are already in use.'
+    key:
+        privacy_policy: 'Privacy policy'
+        about_system: 'About the system'
