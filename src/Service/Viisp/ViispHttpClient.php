@@ -20,9 +20,14 @@ readonly class ViispHttpClient
 
     public function doRequest(DOMDocument $dom, string $operation): ?string
     {
+        $signedXml = $dom->saveXML($dom->documentElement);
+        if ($signedXml === false) {
+            throw new \RuntimeException('VIISP: failed to serialize signed XML request.');
+        }
+
         $soapRequest = str_replace(
             '{xml}',
-            (string) $dom->saveHTML(),
+            $signedXml,
             "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'
                   xmlns:ns2='$this->viispAuthUrl'
                   xmlns:exc='http://www.w3.org/2001/10/xml-exc-c14n#'>

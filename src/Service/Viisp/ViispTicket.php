@@ -6,7 +6,6 @@ namespace App\Service\Viisp;
 
 use DOMDocument;
 use DOMElement;
-use SimpleXMLElement;
 
 readonly class ViispTicket
 {
@@ -27,11 +26,16 @@ readonly class ViispTicket
         $this->viispSigner->signDomElement($firstChild, $privateKey);
         $resp = $this->viispHttpClient->doRequest($ticketDom, 'initAuthentication');
 
-        /** @var SimpleXMLElement $respXml */
         $respXml = simplexml_load_string((string) $resp);
+        if ($respXml === false) {
+            throw new \RuntimeException('VIISP: received malformed XML in authentication ticket response.');
+        }
+
         $respXml->registerXPathNamespace('ns2', $this->viispAuthUrl);
-        /** @var SimpleXMLElement[] $elements */
         $elements = $respXml->xpath('//ns2:ticket');
+        if ($elements === false || !isset($elements[0])) {
+            throw new \RuntimeException('VIISP: authentication ticket response did not contain a ticket.');
+        }
 
         return (string) $elements[0];
     }

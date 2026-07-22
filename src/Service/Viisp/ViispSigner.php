@@ -83,19 +83,25 @@ readonly class ViispSigner
 
     private function canonicalize(DOMElement $node): string
     {
-        return $node->C14N(true);
+        $canonical = $node->C14N(true);
+        if ($canonical === false) {
+            throw new \RuntimeException('VIISP: failed to canonicalize XML for digest calculation.');
+        }
+        return $canonical;
     }
 
     private function getSignatureValue(DOMElement $signInfo, string $privateKey): DOMElement
     {
         $dom = $signInfo->ownerDocument;
         $privateKeyId = $this->getPrivateKeyId($privateKey);
-        openssl_sign($signInfo->C14N(), $signature, $privateKeyId);
-        $signatureValue = base64_encode((string) $signature);
-        $signatureValueElement = $dom->createElement('SignatureValue', $signatureValue);
-        $dom->appendChild($signatureValueElement);
 
-        return $signatureValueElement;
+        if (!openssl_sign($signInfo->C14N(), $signature, $privateKeyId)) {
+            throw new \RuntimeException('VIISP: failed to sign SOAP request: '.openssl_error_string());
+        }
+
+        $signatureValue = base64_encode((string) $signature);
+
+        return $dom->createElement('SignatureValue', $signatureValue);
     }
 
     private function getKeyInfo(DOMElement $signInfo, string $privateKey): DOMElement

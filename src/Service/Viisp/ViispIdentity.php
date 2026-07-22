@@ -43,6 +43,10 @@ readonly class ViispIdentity
         $codeQuery = $xpath->query('//authentication:authenticationAttribute/authentication:value');
         $personalCode = (string) $codeQuery->item(0)?->nodeValue;
 
+        if ($personalCode === '') {
+            throw new \RuntimeException('VIISP: identity response did not contain a personal code.');
+        }
+
         $firstName = '';
         $lastName = '';
 

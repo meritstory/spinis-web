@@ -3,7 +3,7 @@
 {% block title %}{{ 'viisp.login_submit.title'|trans }}{% endblock %}
 
 {% block body %}
-    <form id="login" action="{{ action }}">
+    <form id="login" action="{{ action }}" method="post">
         <input type="hidden" name="ticket" value="{{ ticket }}">
     </form>
 
