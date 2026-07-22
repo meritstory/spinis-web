@@ -9,7 +9,6 @@ RUN apt-get update && \
           libicu-dev \
           netcat-traditional libxml2-dev libpq-dev libzip-dev wget \
           nginx \
-          openssh-server \
           supervisor
 
 RUN pecl install apcu
@@ -48,13 +47,6 @@ COPY docker/app/php-fpm.conf /usr/local/etc/php-fpm.d/www.custom.conf
 COPY docker/app/nginx.conf /etc/nginx/nginx.conf
 COPY docker/app/site.conf /etc/nginx/conf.d/site.conf
 COPY docker/app/supervisord.conf /etc/supervisor/conf.d/app.conf
-
-# Setup SSH
-COPY docker/app/sshd_config /etc/ssh/sshd_config
-RUN mkdir -p /root/.ssh/
-COPY docker/app/authorized_keys /root/.ssh/authorized_keys
-RUN chown -R root:root /root/.ssh && chmod -R 600 /root/.ssh
-RUN mkdir -p /var/run/sshd
 
 # Everything is done by default, unless forced otherwise (docker-compose forces to skip these steps for local dev)
 ARG ENABLE_PHP_PRELOAD="1"
