@@ -1,5 +1,8 @@
 FROM php:8.5-fpm
 
+ENV ASYNC_AUTOSTART=true \
+    SCHEDULER_AUTOSTART=true
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libssl-dev zlib1g-dev curl gnupg unzip git \
           libfreetype6-dev \

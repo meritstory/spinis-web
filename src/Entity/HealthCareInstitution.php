@@ -28,8 +28,8 @@ class HealthCareInstitution implements \Stringable
     #[ORM\Column]
     private int $code;
 
-    #[ORM\Column]
-    private bool $licensed = false;
+    #[ORM\Column(name: 'source', length: 255, enumType: HealthCareInstitutionSourceEnum::class)]
+    private HealthCareInstitutionSourceEnum $source;
 
     public function getId(): ?int
     {
@@ -60,14 +60,14 @@ class HealthCareInstitution implements \Stringable
         return $this;
     }
 
-    public function isLicensed(): bool
+    public function getSource(): HealthCareInstitutionSourceEnum
     {
-        return $this->licensed;
+        return $this->source;
     }
 
-    public function setLicensed(bool $licensed): static
+    public function setSource(HealthCareInstitutionSourceEnum $source): static
     {
-        $this->licensed = $licensed;
+        $this->source = $source;
 
         return $this;
     }

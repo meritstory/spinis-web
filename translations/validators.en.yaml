@@ -22,6 +22,7 @@ setting:
         unique: 'This setting already exists.'
     value:
         not_blank: 'Enter a value.'
+        invalid_date: 'Enter a valid date.'
 
 document:
     title:

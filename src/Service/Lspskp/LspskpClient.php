@@ -17,7 +17,7 @@ class LspskpClient
     }
 
     /**
-     * @return array{count: int, items: list<array<string, mixed>>}
+     * @return array{count: int, items: list<array{code: int, title: string}>}
      */
     public function fetchInstitutions(DateTimeInterface $dateTimeFrom, int $limit, int $offset): array
     {
@@ -29,12 +29,7 @@ class LspskpClient
             ],
         ]);
 
-        /** @var array{count?: int, items?: list<array<string, mixed>>} $data */
-        $data = $response->toArray();
-
-        return [
-            'count' => (int) ($data['count'] ?? 0),
-            'items' => array_values($data['items'] ?? []),
-        ];
+        /** @var array{count: int, items: list<array{code: int, title: string}>} */
+        return $response->toArray();
     }
 }

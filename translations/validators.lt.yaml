@@ -22,6 +22,7 @@ setting:
         unique: 'Šis nustatymas jau sukurtas.'
     value:
         not_blank: 'Įveskite reikšmę.'
+        invalid_date: 'Įveskite teisingą datą.'
 
 document:
     title:

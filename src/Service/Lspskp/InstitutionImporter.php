@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Service\Lspskp;
 
 use App\Entity\HealthCareInstitution;
+use App\Entity\HealthCareInstitutionSourceEnum;
+use App\Entity\Setting;
+use App\Enum\SettingKeyEnum;
 use App\Repository\HealthCareInstitutionRepository;
+use App\Repository\SettingRepository;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 use function count;
@@ -20,13 +25,15 @@ class InstitutionImporter
     public function __construct(
         private readonly LspskpClient $client,
         private readonly HealthCareInstitutionRepository $institutions,
+        private readonly SettingRepository $settings,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function import(): void
     {
-        $from = $this->resolveLastUpdatedAt()->modify(self::OVERLAP);
+        $importStartedAt = new DateTimeImmutable();
+        $from = $this->resolveImportFrom()->modify(self::OVERLAP);
         $offset = 0;
 
         do {
@@ -42,6 +49,8 @@ class InstitutionImporter
 
             $offset += self::PAGE_SIZE;
         } while (count($items) === self::PAGE_SIZE);
+
+        $this->updateImportFrom($importStartedAt);
     }
 
     /**
@@ -49,7 +58,7 @@ class InstitutionImporter
      */
     private function upsert(array $item): void
     {
-        $code = (int) $item['code'];
+        $code = $item['code'];
         $institution = $this->institutions->findOneBy(['code' => $code]);
 
         if ($institution === null) {
@@ -60,11 +69,32 @@ class InstitutionImporter
         $institution
             ->setTitle($item['title'])
             ->setCode($code)
-            ->setLicensed(true);
+            ->setSource(HealthCareInstitutionSourceEnum::LSPSKP);
     }
 
-    private function resolveLastUpdatedAt(): DateTimeImmutable
+    private function resolveImportFrom(): DateTimeImmutable
     {
-        return $this->institutions->findLatestUpdatedAt() ?? new DateTimeImmutable(self::DEFAULT_SINCE);
+        $setting = $this->settings->findOneBy([
+            'key' => SettingKeyEnum::HEALTH_CARE_INSTITUTION_IMPORT_FROM->value,
+        ]);
+
+        return new DateTimeImmutable($setting?->getValue() ?: self::DEFAULT_SINCE);
+    }
+
+    private function updateImportFrom(DateTimeImmutable $importStartedAt): void
+    {
+        $setting = $this->settings->findOneBy([
+            'key' => SettingKeyEnum::HEALTH_CARE_INSTITUTION_IMPORT_FROM->value,
+        ]);
+
+        if ($setting === null) {
+            $setting = new Setting()
+                ->setKey(SettingKeyEnum::HEALTH_CARE_INSTITUTION_IMPORT_FROM->value);
+
+            $this->entityManager->persist($setting);
+        }
+
+        $setting->setValue($importStartedAt->format(DateTimeInterface::ATOM));
+        $this->entityManager->flush();
     }
 }

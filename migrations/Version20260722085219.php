@@ -19,7 +19,7 @@ final class Version20260722085219 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('CREATE TABLE health_care_institution (id SERIAL NOT NULL, title VARCHAR(255) NOT NULL, code INT NOT NULL, licensed BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE health_care_institution (id SERIAL NOT NULL, title VARCHAR(255) NOT NULL, code INT NOT NULL, source VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_7D60423477153098 ON health_care_institution (code)');
     }
 
