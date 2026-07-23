@@ -9,6 +9,19 @@ menu:
     links: Links
     settings: Settings
 
+password:
+    policy:
+        empty: 'Enter a new password.'
+        too_short: 'Password must be at least %min% characters.'
+        missing_uppercase: 'Password must contain at least one uppercase letter.'
+        missing_lowercase: 'Password must contain at least one lowercase letter.'
+        missing_digit: 'Password must contain at least one digit.'
+        missing_special: 'Password must contain at least one special character.'
+        mismatch: 'Passwords do not match.'
+        requirements: 'Password must be at least %min% characters and include uppercase and lowercase letters, digits, and special characters.'
+        show: Show
+        hide: Hide
+
 login:
     email: Email
     password: Password
@@ -36,8 +49,6 @@ login:
         submit: 'Save password'
         success: 'Password changed successfully. You can now sign in.'
         invalid_token: 'The password reset link is invalid or has expired.'
-        empty_password: 'Enter a new password.'
-        password_mismatch: 'Passwords do not match.'
 
 email:
     auth_code:
@@ -50,6 +61,11 @@ email:
         greeting: 'Hello,'
         body: 'To reset your password, click this link:'
         expiry: 'The link is valid for 1 hour.'
+    account_invitation:
+        subject: 'Account activation'
+        greeting: 'Hello,'
+        body: 'To create your password and activate your account, click this link:'
+        expiry: 'The link is valid for 24 hours.'
 
 link:
     label:
@@ -66,17 +82,49 @@ link:
 
 admin:
     label:
-        singular: Administrator
-        plural: Administrators
+        singular: Account
     field:
         first_name: 'First name'
         last_name: 'Last name'
         email: Email
-        password: Password
-        roles: Roles
+        role: Role
+        role_placeholder: 'Select a role'
+        email_two_factor: 'Email two-factor authentication (2FA)'
         active: Active
+        created_at: 'Created at'
+        updated_at: 'Updated at'
     role:
-        admin: Administrator
+        user: User
+        department_head: 'Department head'
+        specialist: Specialist
+        institution_admin: 'Institution administrator'
+        commission_member: 'Commission member'
+        expert: Expert
+        system_admin: 'System administrator'
+    page:
+        create: 'Create account'
+        edit: 'Edit account'
+        detail: Account
+    action:
+        create: 'Create account'
+        submit_create: Create
+        resend_invitation: 'Resend invitation'
+    delete:
+        confirmation: 'Are you sure you want to delete this account?'
+    invitation:
+        page_title: 'Create password'
+        new_password: 'New password'
+        new_password_confirm: 'Confirm password'
+        submit: 'Save password'
+        invalid_token: 'The account activation link is invalid or has expired.'
+        resend_success: 'Invitation resent successfully.'
+        resend_failed: 'The invitation could not be sent. The previous invitation link remains valid.'
+        resend_not_allowed: 'Invitation cannot be resent for this account.'
+        send_failed: 'The invitation email could not be sent. Try resending the invitation.'
+    error:
+        role_required: 'Role is required.'
+        own_account_lockout: 'You cannot remove access from your own account.'
+        last_system_admin_lockout: 'You cannot remove access from the last active system administrator account.'
 
 layout:
     logo:
