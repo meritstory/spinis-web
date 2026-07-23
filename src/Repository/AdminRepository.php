@@ -62,7 +62,7 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
             ->select('COUNT(admin.id)')
             ->andWhere('admin.active = true')
             ->andWhere('JSONB_CONTAINS(admin.roles, :role) = true')
-            ->setParameter('role', json_encode($role->value, JSON_THROW_ON_ERROR))
+            ->setParameter('role', json_encode([$role->value], JSON_THROW_ON_ERROR))
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -80,7 +80,7 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
             ->andWhere('admin.active = true')
             ->andWhere('JSONB_CONTAINS(admin.roles, :role) = true')
             ->setParameter('id', $admin->getId())
-            ->setParameter('role', json_encode(RoleEnum::SYSTEM_ADMIN->value, JSON_THROW_ON_ERROR))
+            ->setParameter('role', json_encode([RoleEnum::SYSTEM_ADMIN->value], JSON_THROW_ON_ERROR))
             ->getQuery()
             ->getSingleScalarResult() > 0;
     }

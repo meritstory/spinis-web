@@ -140,7 +140,7 @@ final readonly class LabelledEnumHelper
                 $labelParameter,
             );
             $queryBuilder
-                ->setParameter($valueParameter, json_encode($case->value, JSON_THROW_ON_ERROR))
+                ->setParameter($valueParameter, json_encode([$case->value], JSON_THROW_ON_ERROR))
                 ->setParameter($labelParameter, $this->translator->trans($case->getLabelKey()));
             ++$index;
         }

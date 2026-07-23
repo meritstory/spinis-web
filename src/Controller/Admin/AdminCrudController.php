@@ -279,7 +279,7 @@ class AdminCrudController extends AbstractCrudController
             $parameter = 'adminRoleSearch'.$index;
             $queryBuilder
                 ->orWhere(sprintf('JSONB_CONTAINS(entity.roles, :%s) = true', $parameter))
-                ->setParameter($parameter, json_encode($role, JSON_THROW_ON_ERROR));
+                ->setParameter($parameter, json_encode([$role], JSON_THROW_ON_ERROR));
         }
 
         $sort = $searchDto->getSort();
