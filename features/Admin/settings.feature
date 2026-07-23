@@ -27,7 +27,7 @@ Feature: Admin settings
     Given I create a setting with key "health_care_institution_import_from"
     Given I submit the admin setting value "2026-07-23T00:00"
     Given the admin settings list is open
-    Given a setting with key "health_care_institution_import_from" and value "2026-07-23T00:00:00+03:00" should exist in the database
+    Given a setting with key "health_care_institution_import_from" and value "2026-07-23T00:00:00+00:00" should exist in the database
     And I should see "Sveikatos priežiūros įstaigų importavimo data"
     And I should see "2026-07-23 00:00"
 
