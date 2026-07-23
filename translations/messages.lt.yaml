@@ -9,6 +9,19 @@ menu:
     links: Nuorodos
     settings: Nustatymai
 
+password:
+    policy:
+        empty: 'Įveskite naują slaptažodį.'
+        too_short: 'Slaptažodis turi būti bent %min% simbolių.'
+        missing_uppercase: 'Slaptažodyje turi būti bent viena didžioji raidė.'
+        missing_lowercase: 'Slaptažodyje turi būti bent viena mažoji raidė.'
+        missing_digit: 'Slaptažodyje turi būti bent vienas skaitmuo.'
+        missing_special: 'Slaptažodyje turi būti bent vienas specialusis simbolis.'
+        mismatch: 'Slaptažodžiai nesutampa.'
+        requirements: 'Slaptažodis turi būti bent %min% simbolių ir sudarytas iš didžiųjų bei mažųjų raidžių, skaičių ir specialiųjų simbolių.'
+        show: Rodyti
+        hide: Slėpti
+
 login:
     email: 'El. paštas'
     password: Slaptažodis
@@ -36,8 +49,6 @@ login:
         submit: 'Išsaugoti slaptažodį'
         success: 'Slaptažodis sėkmingai pakeistas. Galite prisijungti.'
         invalid_token: 'Slaptažodžio atkūrimo nuoroda negalioja arba pasibaigė.'
-        empty_password: 'Įveskite naują slaptažodį.'
-        password_mismatch: 'Slaptažodžiai nesutampa.'
 
 email:
     auth_code:
@@ -50,6 +61,11 @@ email:
         greeting: 'Sveiki,'
         body: 'Norėdami atkurti slaptažodį, paspauskite šią nuorodą:'
         expiry: 'Nuoroda galioja 1 valandą.'
+    account_invitation:
+        subject: 'Paskyros aktyvavimas'
+        greeting: 'Sveiki,'
+        body: 'Norėdami susikurti slaptažodį ir aktyvuoti paskyrą, paspauskite šią nuorodą:'
+        expiry: 'Nuoroda galioja 24 valandas.'
 
 link:
     label:
@@ -66,17 +82,49 @@ link:
 
 admin:
     label:
-        singular: Administratorius
-        plural: Administratoriai
+        singular: Paskyra
     field:
         first_name: Vardas
         last_name: Pavardė
         email: 'El. paštas'
-        password: Slaptažodis
-        roles: Rolės
+        role: Rolė
+        role_placeholder: 'Pasirinkite rolę'
+        email_two_factor: 'Dviguba autentifikacija el. paštu (2FA)'
         active: Aktyvus
+        created_at: 'Sukūrimo data'
+        updated_at: 'Atnaujinimo data'
     role:
-        admin: Administratorius
+        user: Vartotojas
+        department_head: 'Skyriaus vedėjas'
+        specialist: Specialistas
+        institution_admin: 'Įstaigos administratorius'
+        commission_member: 'Komisijos narys'
+        expert: Ekspertas
+        system_admin: 'Sistemos administratorius'
+    page:
+        create: 'Sukurti paskyrą'
+        edit: 'Redaguoti paskyrą'
+        detail: Paskyra
+    action:
+        create: 'Sukurti paskyrą'
+        submit_create: Sukurti
+        resend_invitation: 'Siųsti pakvietimą iš naujo'
+    delete:
+        confirmation: 'Ar tikrai norite ištrinti šią paskyrą?'
+    invitation:
+        page_title: 'Susikurti slaptažodį'
+        new_password: 'Naujas slaptažodis'
+        new_password_confirm: 'Pakartokite slaptažodį'
+        submit: 'Išsaugoti slaptažodį'
+        invalid_token: 'Paskyros aktyvavimo nuoroda negalioja arba pasibaigė.'
+        resend_success: 'Pakvietimas išsiųstas iš naujo.'
+        resend_failed: 'Nepavyko išsiųsti pakvietimo. Ankstesnė pakvietimo nuoroda tebegalioja.'
+        resend_not_allowed: 'Šiai paskyrai negalima išsiųsti pakvietimo iš naujo.'
+        send_failed: 'Nepavyko išsiųsti pakvietimo laiško. Bandykite išsiųsti pakvietimą iš naujo.'
+    error:
+        role_required: 'Rolė yra privaloma.'
+        own_account_lockout: 'Negalite panaikinti savo paskyros prieigos.'
+        last_system_admin_lockout: 'Negalite panaikinti paskutinės aktyvios sistemos administratoriaus paskyros prieigos.'
 
 layout:
     logo:

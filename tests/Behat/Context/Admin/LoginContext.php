@@ -52,6 +52,12 @@ final class LoginContext extends RawMinkContext implements Context
         $this->submitVerificationCode($code);
     }
 
+    #[Given('I visit the admin two-factor login page')]
+    public function iVisitTheAdminTwoFactorLoginPage(): void
+    {
+        $this->getClient()->request('GET', '/admin/login/2fa');
+    }
+
     #[Given('I cancel admin two-factor authentication')]
     public function iCancelAdminTwoFactorAuthentication(): void
     {
@@ -67,7 +73,7 @@ final class LoginContext extends RawMinkContext implements Context
     {
         $client = $this->getClient();
         $client->request('GET', '/admin/login/2fa');
-        $csrfToken = $this->getCsrfToken($client->getCrawler(), 'two_factor');
+        $csrfToken = $this->getCsrfToken($client->getCrawler());
 
         $client->request('POST', '/admin/login/2fa/resend', [
             '_csrf_token' => $csrfToken,
@@ -192,7 +198,7 @@ final class LoginContext extends RawMinkContext implements Context
     {
         $client = $this->getClient();
         $client->request('GET', '/admin/login/2fa');
-        $csrfToken = $this->getCsrfToken($client->getCrawler(), 'two_factor');
+        $csrfToken = $this->getCsrfToken($client->getCrawler());
 
         $client->request('POST', '/admin/login/2fa_check', [
             '_csrf_token' => $csrfToken,
@@ -213,7 +219,7 @@ final class LoginContext extends RawMinkContext implements Context
         return $code;
     }
 
-    private function getCsrfToken(\Symfony\Component\DomCrawler\Crawler $crawler, string $intention = 'authenticate'): string
+    private function getCsrfToken(\Symfony\Component\DomCrawler\Crawler $crawler): string
     {
         $token = $crawler->filter('input[name="_csrf_token"]')->attr('value');
         Assert::string($token);

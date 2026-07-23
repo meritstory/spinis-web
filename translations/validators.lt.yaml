@@ -1,3 +1,12 @@
+admin:
+    error:
+        email_unique: 'Paskyra su šiuo el. paštu jau egzistuoja.'
+        email_required: 'El. paštas yra privalomas.'
+        email_invalid: 'Neteisingas el. pašto formatas.'
+        role_required: 'Rolė yra privaloma.'
+        first_name_required: 'Vardas yra privalomas.'
+        last_name_required: 'Pavardė yra privaloma.'
+
 faq:
     validation:
         question_required: 'Pavadinimas yra privalomas.'
