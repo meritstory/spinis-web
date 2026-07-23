@@ -491,7 +491,7 @@ class AdminCrudController extends AbstractCrudController
         }
 
         if (
-            in_array(RoleEnum::SYSTEM_ADMIN->value, $admin->getRoles(), true)
+            $this->adminRepository->isPersistedActiveSystemAdministrator($admin)
             && $this->adminRepository->countActiveByRole(RoleEnum::SYSTEM_ADMIN) <= 1
         ) {
             return 'admin.error.last_system_admin_lockout';

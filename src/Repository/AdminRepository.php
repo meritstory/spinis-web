@@ -66,4 +66,22 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function isPersistedActiveSystemAdministrator(Admin $admin): bool
+    {
+        if ($admin->getId() === null) {
+            return $admin->isActive()
+                && in_array(RoleEnum::SYSTEM_ADMIN->value, $admin->getRoles(), true);
+        }
+
+        return (int) $this->createQueryBuilder('admin')
+            ->select('COUNT(admin.id)')
+            ->andWhere('admin.id = :id')
+            ->andWhere('admin.active = true')
+            ->andWhere('JSONB_CONTAINS(admin.roles, :role) = true')
+            ->setParameter('id', $admin->getId())
+            ->setParameter('role', json_encode(RoleEnum::SYSTEM_ADMIN->value, JSON_THROW_ON_ERROR))
+            ->getQuery()
+            ->getSingleScalarResult() > 0;
+    }
 }
