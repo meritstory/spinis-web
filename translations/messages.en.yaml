@@ -175,7 +175,7 @@ viisp:
         identity_exchange_failed: 'Failed to verify your identity. Please try again or contact support if the problem persists.'
         failed_to_login: 'Failed to log in via the e-Government Gateway. Please try again.'
 
-mano_skundai:
+my_complaints:
     title: My complaints
     greeting: 'Hello, %name%'
 

@@ -12,4 +12,5 @@ enum RoleEnum: string
 
     case USER = 'ROLE_USER';
     case ADMIN = 'ROLE_ADMIN';
+    case COMPLAINANT = 'ROLE_COMPLAINANT';
 }

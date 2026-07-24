@@ -1,9 +1,9 @@
 Feature: VIISP login
 
-  Scenario: Successful login lands on Mano skundai with a greeting
+  Scenario: Successful login lands on My complaints with a greeting
     Given VIISP will successfully authenticate personal code "38001010000" as "Jonas" "Jonaitis"
     When I complete VIISP login via login-submit
-    Then I should be on "/mano-skundai"
+    Then I should be on "/my-complaints"
     And I should see "Sveiki, Jonas"
     And a complainant with personal code "38001010000" should exist
 
@@ -14,13 +14,13 @@ Feature: VIISP login
     And I should see "Nepavyko prisijungti"
     And I should see "Bandyti dar kartą"
 
-  Scenario: Unauthenticated direct access to Mano skundai redirects to login
-    When I visit "/mano-skundai"
+  Scenario: Unauthenticated direct access to My complaints redirects to login
+    When I visit "/my-complaints"
     Then I should be on "/viisp/login-submit"
 
   Scenario: Logout invalidates the session
     Given VIISP will successfully authenticate personal code "38001010000" as "Jonas" "Jonaitis"
     And I complete VIISP login via login-submit
-    When I visit "/logout"
-    And I visit "/mano-skundai"
+    When I follow "Atsijungti"
+    And I visit "/my-complaints"
     Then I should be on "/viisp/login-submit"

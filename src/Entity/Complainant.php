@@ -19,18 +19,16 @@ class Complainant implements UserInterface, \Stringable
 {
     use TimestampableEntity;
 
-    public const string ROLE_COMPLAINANT = 'ROLE_COMPLAINANT';
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
-    private string $personKind = '';
+    #[ORM\Column]
+    private bool $legalEntity = false;
 
     #[Assert\NotBlank(message: 'complainant.personal_code.not_blank')]
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(type: 'encrypted_personal_code')]
     private string $personalCode = '';
 
     #[ORM\Column(length: 20, nullable: true)]
@@ -61,14 +59,14 @@ class Complainant implements UserInterface, \Stringable
         return $this->id;
     }
 
-    public function getPersonKind(): string
+    public function isLegalEntity(): bool
     {
-        return $this->personKind;
+        return $this->legalEntity;
     }
 
-    public function setPersonKind(string $personKind): static
+    public function setLegalEntity(bool $legalEntity): static
     {
-        $this->personKind = $personKind;
+        $this->legalEntity = $legalEntity;
 
         return $this;
     }
@@ -179,7 +177,7 @@ class Complainant implements UserInterface, \Stringable
      */
     public function getRoles(): array
     {
-        return [self::ROLE_COMPLAINANT];
+        return [RoleEnum::COMPLAINANT->value];
     }
 
     public function eraseCredentials(): void

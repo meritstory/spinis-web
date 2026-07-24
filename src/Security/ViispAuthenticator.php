@@ -8,7 +8,9 @@ use App\Entity\Complainant;
 use App\Repository\ComplainantRepository;
 use App\Service\Viisp\ViispClientInterface;
 use App\Service\Viisp\ViispIdentityData;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
@@ -23,12 +25,11 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 
 final class ViispAuthenticator extends AbstractAuthenticator
 {
-    private const string PERSON_KIND_INDIVIDUAL = 'individual';
-
     public function __construct(
         private readonly ViispClientInterface $viispClient,
         private readonly ComplainantRepository $complainantRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ManagerRegistry $managerRegistry,
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
@@ -49,6 +50,8 @@ final class ViispAuthenticator extends AbstractAuthenticator
         try {
             $identity = $this->viispClient->getIdentity($ticket);
         } catch (\Throwable $exception) {
+            \Sentry\captureException($exception);
+
             throw new CustomUserMessageAuthenticationException('viisp.error.identity_exchange_failed', previous: $exception);
         }
 
@@ -61,34 +64,49 @@ final class ViispAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): RedirectResponse
     {
-        return new RedirectResponse($this->urlGenerator->generate('mano_skundai'));
+        return new RedirectResponse($this->urlGenerator->generate('my_complaints'));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): RedirectResponse
     {
+        /** @var FlashBagAwareSessionInterface $session */
         $session = $request->getSession();
-
-        if ($session instanceof FlashBagAwareSessionInterface) {
-            $session->getFlashBag()->add('viisp_error', $exception->getMessageKey());
-        }
+        $session->getFlashBag()->add('viisp_error', $exception->getMessageKey());
 
         return new RedirectResponse($this->urlGenerator->generate('home'));
     }
 
     private function findOrCreateComplainant(string $personalCode, ViispIdentityData $identity): Complainant
     {
+        $entityManager = $this->entityManager;
         $complainant = $this->complainantRepository->findOneByPersonalCode($personalCode);
 
         if ($complainant === null) {
             $complainant = new Complainant();
             $complainant->setPersonalCode($personalCode);
-            $complainant->setPersonKind(self::PERSON_KIND_INDIVIDUAL);
-            $this->entityManager->persist($complainant);
+            $entityManager->persist($complainant);
+
+            try {
+                $entityManager->flush();
+            } catch (UniqueConstraintViolationException) {
+                // A concurrent first-login for the same person raced us and won.
+                // Doctrine closes the EntityManager on any flush exception, so a
+                // fresh one is needed before it can be used again.
+                /** @var EntityManagerInterface $entityManager */
+                $entityManager = $this->managerRegistry->resetManager();
+                /** @var ComplainantRepository $complainantRepository */
+                $complainantRepository = $entityManager->getRepository(Complainant::class);
+                $complainant = $complainantRepository->findOneByPersonalCode($personalCode);
+
+                if ($complainant === null) {
+                    throw new \RuntimeException('VIISP: complainant lookup failed after a concurrent insert conflict.');
+                }
+            }
         }
 
         $complainant->setFirstName($identity->firstName);
         $complainant->setLastName($identity->lastName);
-        $this->entityManager->flush();
+        $entityManager->flush();
 
         return $complainant;
     }

@@ -175,7 +175,7 @@ viisp:
         identity_exchange_failed: 'Nepavyko patvirtinti tapatybės. Bandykite dar kartą arba kreipkitės į pagalbos tarnybą, jei problema kartojasi.'
         failed_to_login: 'Nepavyko prisijungti per el. valdžios vartus. Bandykite dar kartą.'
 
-mano_skundai:
+my_complaints:
     title: Mano skundai
     greeting: 'Sveiki, %name%'
 
