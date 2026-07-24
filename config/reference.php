@@ -1106,9 +1106,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             filter?: scalar|Param|null, // Default: "({uid_key}={user_identifier})"
  *             password_attribute?: scalar|Param|null, // Default: null
  *         },
- *         lexik_jwt?: array{
- *             class?: scalar|Param|null, // Default: "Lexik\\Bundle\\JWTAuthenticationBundle\\Security\\User\\JWTUser"
- *         },
  *     }>,
  *     firewalls?: array<string, array{ // Default: []
  *         pattern?: scalar|Param|null,
@@ -1166,10 +1163,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         remote_user?: array{
  *             provider?: scalar|Param|null,
  *             user?: scalar|Param|null, // Default: "REMOTE_USER"
- *         },
- *         jwt?: array{
- *             provider?: scalar|Param|null, // Default: null
- *             authenticator?: scalar|Param|null, // Default: "lexik_jwt_authentication.security.jwt_authenticator"
  *         },
  *         login_link?: array{
  *             check_route?: scalar|Param|null, // Route that will validate the login link - e.g. "app_login_link_verify".
@@ -1353,12 +1346,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *             samesite?: null|"lax"|"strict"|"none"|Param, // Default: null
  *             always_remember_me?: bool|Param, // Default: false
  *             remember_me_parameter?: scalar|Param|null, // Default: "_remember_me"
- *         },
- *         refresh_jwt?: array{
- *             check_path?: scalar|Param|null, // Default: null
- *             provider?: scalar|Param|null,
- *             success_handler?: scalar|Param|null,
- *             failure_handler?: scalar|Param|null,
  *         },
  *         two_factor?: array{
  *             check_path?: scalar|Param|null, // Default: "/2fa_check"
@@ -1571,242 +1558,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     generate_final_classes?: bool|Param, // Default: true
  *     generate_final_entities?: bool|Param, // Default: false
  * }
- * @psalm-type FosRestConfig = array{
- *     disable_csrf_role?: scalar|Param|null, // Default: null
- *     unauthorized_challenge?: scalar|Param|null, // Default: null
- *     param_fetcher_listener?: bool|string|array{
- *         enabled?: bool|Param, // Default: false
- *         force?: bool|Param, // Default: false
- *         service?: scalar|Param|null, // Default: null
- *     },
- *     cache_dir?: scalar|Param|null, // Default: "%kernel.cache_dir%/fos_rest"
- *     allowed_methods_listener?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         service?: scalar|Param|null, // Default: null
- *     },
- *     routing_loader?: bool|Param, // Default: false
- *     body_converter?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         validate?: scalar|Param|null, // Default: false
- *         validation_errors_argument?: scalar|Param|null, // Default: "validationErrors"
- *     },
- *     service?: array{
- *         serializer?: scalar|Param|null, // Default: null
- *         view_handler?: scalar|Param|null, // Default: "fos_rest.view_handler.default"
- *         validator?: scalar|Param|null, // Default: "validator"
- *     },
- *     serializer?: array{
- *         version?: scalar|Param|null, // Default: null
- *         groups?: list<scalar|Param|null>,
- *         serialize_null?: bool|Param, // Default: false
- *     },
- *     zone?: list<array{ // Default: []
- *         path?: scalar|Param|null, // use the urldecoded format // Default: null
- *         host?: scalar|Param|null, // Default: null
- *         methods?: string|list<scalar|Param|null>,
- *         ips?: string|list<scalar|Param|null>,
- *     }>,
- *     view?: array{
- *         mime_types?: bool|array{
- *             enabled?: bool|Param, // Default: false
- *             service?: scalar|Param|null, // Default: null
- *             formats?: array<string, string|list<scalar|Param|null>>,
- *         },
- *         formats?: array<string, bool|Param>,
- *         view_response_listener?: bool|string|array{
- *             enabled?: bool|Param, // Default: false
- *             force?: bool|Param, // Default: false
- *             service?: scalar|Param|null, // Default: null
- *         },
- *         failed_validation?: scalar|Param|null, // Default: 400
- *         empty_content?: scalar|Param|null, // Default: 204
- *         serialize_null?: bool|Param, // Default: false
- *         jsonp_handler?: array{
- *             callback_param?: scalar|Param|null, // Default: "callback"
- *             mime_type?: scalar|Param|null, // Default: "application/javascript+jsonp"
- *         },
- *     },
- *     exception?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         map_exception_codes?: bool|Param, // Enables an event listener that maps exception codes to response status codes based on the map configured with the "fos_rest.exception.codes" option. // Default: false
- *         exception_listener?: bool|Param, // Default: false
- *         serialize_exceptions?: bool|Param, // Default: false
- *         flatten_exception_format?: "legacy"|"rfc7807"|Param, // Default: "legacy"
- *         serializer_error_renderer?: bool|Param, // Default: false
- *         codes?: array<string, int|Param>,
- *         messages?: array<string, bool|Param>,
- *         debug?: bool|Param, // Default: true
- *     },
- *     body_listener?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         service?: scalar|Param|null, // Default: null
- *         default_format?: scalar|Param|null, // Default: null
- *         throw_exception_on_unsupported_content_type?: bool|Param, // Default: false
- *         decoders?: array<string, scalar|Param|null>,
- *         array_normalizer?: string|array{
- *             service?: scalar|Param|null, // Default: null
- *             forms?: bool|Param, // Default: false
- *         },
- *     },
- *     format_listener?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         service?: scalar|Param|null, // Default: null
- *         rules?: list<array{ // Default: []
- *             path?: scalar|Param|null, // URL path info // Default: null
- *             host?: scalar|Param|null, // URL host name // Default: null
- *             methods?: mixed, // Method for URL // Default: null
- *             attributes?: array<string, mixed>,
- *             stop?: bool|Param, // Default: false
- *             prefer_extension?: bool|Param, // Default: true
- *             fallback_format?: scalar|Param|null, // Default: "html"
- *             priorities?: string|list<scalar|Param|null>,
- *         }>,
- *     },
- *     versioning?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         default_version?: scalar|Param|null, // Default: null
- *         resolvers?: array{
- *             query?: bool|array{
- *                 enabled?: bool|Param, // Default: true
- *                 parameter_name?: scalar|Param|null, // Default: "version"
- *             },
- *             custom_header?: bool|array{
- *                 enabled?: bool|Param, // Default: true
- *                 header_name?: scalar|Param|null, // Default: "X-Accept-Version"
- *             },
- *             media_type?: bool|array{
- *                 enabled?: bool|Param, // Default: true
- *                 regex?: scalar|Param|null, // Default: "/(v|version)=(?P<version>[0-9\\.]+)/"
- *             },
- *         },
- *         guessing_order?: list<scalar|Param|null>,
- *     },
- * }
- * @psalm-type NelmioApiDocConfig = array{
- *     type_info?: bool|Param, // Use the symfony/type-info component for determining types. // Default: false
- *     use_validation_groups?: bool|Param, // If true, `groups` passed to @Model annotations will be used to limit validation constraints // Default: false
- *     cache?: array{
- *         pool?: scalar|Param|null, // define cache pool to use // Default: null
- *         item_id?: scalar|Param|null, // define cache item id // Default: null
- *     },
- *     documentation?: array<string, mixed>,
- *     media_types?: list<scalar|Param|null>,
- *     html_config?: array{ // UI configuration options
- *         assets_mode?: scalar|Param|null, // Default: "cdn"
- *         swagger_ui_config?: array<mixed>,
- *         redocly_config?: array<mixed>,
- *         stoplight_config?: array<mixed>,
- *     },
- *     areas?: array<string, array{ // Default: {"default":{"path_patterns":[],"host_patterns":[],"with_annotation":false,"with_attribute":false,"documentation":[],"name_patterns":[],"disable_default_routes":false,"cache":[]}}
- *         path_patterns?: list<scalar|Param|null>,
- *         host_patterns?: list<scalar|Param|null>,
- *         name_patterns?: list<scalar|Param|null>,
- *         with_annotation?: bool|Param, // Deprecated: The "with_annotation" option is deprecated. Use "with_attribute" instead. // whether to filter by annotation // Default: false
- *         with_attribute?: bool|Param, // whether to filter by attribute // Default: false
- *         disable_default_routes?: bool|Param, // if set disables default routes without annotations // Default: false
- *         documentation?: array<string, mixed>,
- *         cache?: array{
- *             pool?: scalar|Param|null, // define cache pool to use // Default: null
- *             item_id?: scalar|Param|null, // define cache item id // Default: null
- *         },
- *     }>,
- *     models?: array{
- *         use_jms?: bool|Param, // Default: false
- *         names?: list<array{ // Default: []
- *             alias?: scalar|Param|null,
- *             type?: scalar|Param|null,
- *             groups?: mixed, // Default: null
- *             options?: mixed, // Default: null
- *             serializationContext?: list<mixed>,
- *             areas?: list<scalar|Param|null>,
- *         }>,
- *     },
- * }
- * @psalm-type LexikJwtAuthenticationConfig = array{
- *     public_key?: scalar|Param|null, // The key used to sign tokens (useless for HMAC). If not set, the key will be automatically computed from the secret key. // Default: null
- *     additional_public_keys?: list<scalar|Param|null>,
- *     secret_key?: scalar|Param|null, // The key used to sign tokens. It can be a raw secret (for HMAC), a raw RSA/ECDSA key or the path to a file itself being plaintext or PEM. // Default: null
- *     pass_phrase?: scalar|Param|null, // The key passphrase (useless for HMAC) // Default: ""
- *     token_ttl?: scalar|Param|null, // Default: 3600
- *     allow_no_expiration?: bool|Param, // Allow tokens without "exp" claim (i.e. indefinitely valid, no lifetime) to be considered valid. Caution: usage of this should be rare. // Default: false
- *     clock_skew?: scalar|Param|null, // Default: 0
- *     encoder?: array{
- *         service?: scalar|Param|null, // Default: "lexik_jwt_authentication.encoder.lcobucci"
- *         signature_algorithm?: scalar|Param|null, // Default: "RS256"
- *     },
- *     user_id_claim?: scalar|Param|null, // Default: "username"
- *     token_extractors?: array{
- *         authorization_header?: bool|array{
- *             enabled?: bool|Param, // Default: true
- *             prefix?: scalar|Param|null, // Default: "Bearer"
- *             name?: scalar|Param|null, // Default: "Authorization"
- *         },
- *         cookie?: bool|array{
- *             enabled?: bool|Param, // Default: false
- *             name?: scalar|Param|null, // Default: "BEARER"
- *         },
- *         query_parameter?: bool|array{
- *             enabled?: bool|Param, // Default: false
- *             name?: scalar|Param|null, // Default: "bearer"
- *         },
- *         split_cookie?: bool|array{
- *             enabled?: bool|Param, // Default: false
- *             cookies?: list<scalar|Param|null>,
- *         },
- *     },
- *     remove_token_from_body_when_cookies_used?: scalar|Param|null, // Default: true
- *     set_cookies?: array<string, array{ // Default: []
- *         lifetime?: scalar|Param|null, // The cookie lifetime. If null, the "token_ttl" option value will be used // Default: null
- *         samesite?: "none"|"lax"|"strict"|Param, // Default: "lax"
- *         path?: scalar|Param|null, // Default: "/"
- *         domain?: scalar|Param|null, // Default: null
- *         secure?: scalar|Param|null, // Default: true
- *         httpOnly?: scalar|Param|null, // Default: true
- *         partitioned?: scalar|Param|null, // Default: false
- *         split?: list<scalar|Param|null>,
- *     }>,
- *     api_platform?: bool|array{ // API Platform compatibility: add check_path in OpenAPI documentation.
- *         enabled?: bool|Param, // Default: false
- *         check_path?: scalar|Param|null, // The login check path to add in OpenAPI. // Default: null
- *         username_path?: scalar|Param|null, // The path to the username in the JSON body. // Default: null
- *         password_path?: scalar|Param|null, // The path to the password in the JSON body. // Default: null
- *     },
- *     access_token_issuance?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         signature?: array{
- *             algorithm?: scalar|Param|null, // The algorithm use to sign the access tokens.
- *             key?: scalar|Param|null, // The signature key. It shall be JWK encoded.
- *         },
- *         encryption?: bool|array{
- *             enabled?: bool|Param, // Default: false
- *             key_encryption_algorithm?: scalar|Param|null, // The key encryption algorithm is used to encrypt the token.
- *             content_encryption_algorithm?: scalar|Param|null, // The key encryption algorithm is used to encrypt the token.
- *             key?: scalar|Param|null, // The encryption key. It shall be JWK encoded.
- *         },
- *     },
- *     access_token_verification?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         signature?: array{
- *             header_checkers?: list<scalar|Param|null>,
- *             claim_checkers?: list<scalar|Param|null>,
- *             mandatory_claims?: list<scalar|Param|null>,
- *             allowed_algorithms?: list<scalar|Param|null>,
- *             keyset?: scalar|Param|null, // The signature keyset. It shall be JWKSet encoded.
- *         },
- *         encryption?: bool|array{
- *             enabled?: bool|Param, // Default: false
- *             continue_on_decryption_failure?: bool|Param, // If enable, non-encrypted tokens or tokens that failed during decryption or verification processes are accepted. // Default: false
- *             header_checkers?: list<scalar|Param|null>,
- *             allowed_key_encryption_algorithms?: list<scalar|Param|null>,
- *             allowed_content_encryption_algorithms?: list<scalar|Param|null>,
- *             keyset?: scalar|Param|null, // The encryption keyset. It shall be JWKSet encoded.
- *         },
- *     },
- *     blocklist_token?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         cache?: scalar|Param|null, // Storage to track blocked tokens // Default: "cache.app"
- *     },
- * }
  * @psalm-type StofDoctrineExtensionsConfig = array{
  *     orm?: array<string, array{ // Default: []
  *         translatable?: scalar|Param|null, // Default: false
@@ -1860,35 +1611,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     persist_default_translation?: bool|Param, // Default: false
  *     skip_translation_on_load?: bool|Param, // Default: false
  *     metadata_cache_pool?: scalar|Param|null, // Default: null
- * }
- * @psalm-type GesdinetJwtRefreshTokenConfig = array{
- *     ttl?: int|Param, // The default TTL for all authenticators. // Default: 2592000
- *     ttl_update?: bool|Param, // The default update TTL flag for all authenticators. // Default: false
- *     firewall?: scalar|Param|null, // Deprecated: The "firewall" node is deprecated without replacement. // Default: "api"
- *     user_provider?: scalar|Param|null, // Deprecated: The "user_provider" node is deprecated without replacement. // Default: null
- *     user_identity_field?: scalar|Param|null, // Deprecated: The "user_identity_field" node is deprecated without replacement. // Default: "username"
- *     manager_type?: scalar|Param|null, // Set the type of object manager to use (default: orm) // Default: "orm"
- *     refresh_token_class?: scalar|Param|null, // Set the refresh token class to use (default: Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken) // Default: null
- *     object_manager?: scalar|Param|null, // Set the object manager to use (default: doctrine.orm.entity_manager) // Default: null
- *     user_checker?: scalar|Param|null, // Deprecated: The "user_checker" node is deprecated without replacement. // Default: "security.user_checker"
- *     refresh_token_entity?: scalar|Param|null, // Deprecated: The "refresh_token_entity" node is deprecated, use the "refresh_token_class" node instead. // Set the refresh token class to use (default: Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken) // Default: null
- *     entity_manager?: scalar|Param|null, // Deprecated: The "entity_manager" node is deprecated, use the "object_manager" node instead. // Set the entity manager to use // Default: null
- *     single_use?: scalar|Param|null, // When true, generate a new refresh token on consumption (deleting the old one) // Default: false
- *     token_parameter_name?: scalar|Param|null, // The default request parameter name containing the refresh token for all authenticators. // Default: "refresh_token"
- *     doctrine_mappings?: bool|Param, // Deprecated: The "doctrine_mappings" node is deprecated without replacement. // When true, resolving of Doctrine mapping is done automatically to use either ORM or ODM object manager // Default: true
- *     cookie?: bool|array{
- *         enabled?: bool|Param, // Default: false
- *         same_site?: "none"|"lax"|"strict"|Param, // Default: "lax"
- *         path?: scalar|Param|null, // Default: "/"
- *         domain?: scalar|Param|null, // Default: null
- *         http_only?: scalar|Param|null, // Default: true
- *         secure?: scalar|Param|null, // Default: true
- *         partitioned?: scalar|Param|null, // Default: false
- *         remove_token_from_body?: scalar|Param|null, // Default: true
- *     },
- *     logout_firewall?: scalar|Param|null, // Name of the firewall that triggers the logout event to hook into (default: api) // Default: "api"
- *     return_expiration?: scalar|Param|null, // When true, the response will include the token expiration timestamp // Default: false
- *     return_expiration_parameter_name?: scalar|Param|null, // The default response parameter name containing the refresh token expiration timestamp // Default: "refresh_token_expiration"
  * }
  * @psalm-type TwigComponentConfig = array{
  *     defaults?: array<string, string|array{ // Default: []
@@ -2037,11 +1759,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     twig_extra?: TwigExtraConfig,
  *     security?: SecurityConfig,
  *     monolog?: MonologConfig,
- *     fos_rest?: FosRestConfig,
- *     nelmio_api_doc?: NelmioApiDocConfig,
- *     lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *     stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *     gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *     twig_component?: TwigComponentConfig,
  *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     scheb_two_factor?: SchebTwoFactorConfig,
@@ -2062,11 +1780,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
  *         maker?: MakerConfig,
- *         fos_rest?: FosRestConfig,
- *         nelmio_api_doc?: NelmioApiDocConfig,
- *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,
@@ -2085,11 +1799,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
- *         fos_rest?: FosRestConfig,
- *         nelmio_api_doc?: NelmioApiDocConfig,
- *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
  *         sentry?: SentryConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
@@ -2110,11 +1820,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
- *         fos_rest?: FosRestConfig,
- *         nelmio_api_doc?: NelmioApiDocConfig,
- *         lexik_jwt_authentication?: LexikJwtAuthenticationConfig,
  *         stof_doctrine_extensions?: StofDoctrineExtensionsConfig,
- *         gesdinet_jwt_refresh_token?: GesdinetJwtRefreshTokenConfig,
  *         twig_component?: TwigComponentConfig,
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         scheb_two_factor?: SchebTwoFactorConfig,

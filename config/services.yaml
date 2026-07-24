@@ -27,3 +27,5 @@ services:
 
     Scheb\TwoFactorBundle\Controller\FormController: '@scheb_two_factor.form_controller'
     Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGenerator: '@scheb_two_factor.security.email.default_code_generator'
+
+    App\Service\Viisp\ViispClientInterface: '@App\Service\Viisp\ViispClient'

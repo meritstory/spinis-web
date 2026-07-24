@@ -3,6 +3,19 @@
 {% block title %}{{ 'home.title'|trans }}{% endblock %}
 
 {% block body %}
+    {% for messageKey in app.flashes('viisp_error') %}
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" data-controller="modal" data-action="click->modal#closeOnBackdropClick keydown->modal#keydown">
+            <div class="w-full max-w-[400px] rounded-sm border border-border-default bg-white p-6 shadow-[0_2px_20px_rgba(99,115,129,0.10)]" role="dialog" aria-modal="true" aria-labelledby="viisp-error-heading" aria-describedby="viisp-error-message" tabindex="-1" data-modal-target="panel">
+                <h2 id="viisp-error-heading" class="mb-2 text-heading-h4 font-bold">{{ 'viisp.login_error.heading'|trans }}</h2>
+                <p id="viisp-error-message" class="mb-6 text-body-md text-text-secondary">{{ messageKey|trans }}</p>
+                <div class="flex justify-end gap-3">
+                    <button type="button" class="cursor-pointer text-body-md text-text-secondary" data-action="modal#close">{{ 'viisp.login_error.dismiss'|trans }}</button>
+                    <a href="{{ path('viisp_login_submit') }}" class="rounded-[2px] bg-primary px-4 py-2 text-body-md text-white hover:bg-primary-dark">{{ 'viisp.login_error.retry'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
     <main>
         <section class="py-18 bg-page">
             <div class="mx-auto flex max-w-[1200px] flex-col gap-10 px-6 xl:flex-row xl:items-center xl:gap-16">

@@ -11,3 +11,5 @@ services:
 
     App\Tests\Service\:
         resource: '../tests/Service/*'
+
+    App\Service\Viisp\ViispClientInterface: '@App\Tests\Behat\Support\FakeViispClient'

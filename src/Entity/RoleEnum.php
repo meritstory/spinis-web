@@ -11,6 +11,7 @@ enum RoleEnum: string
     use EnumFromNameTrait;
 
     case USER = 'ROLE_USER';
+    case COMPLAINANT = 'ROLE_COMPLAINANT';
     case DEPARTMENT_HEAD = 'ROLE_DEPARTMENT_HEAD';
     case SPECIALIST = 'ROLE_SPECIALIST';
     case INSTITUTION_ADMIN = 'ROLE_INSTITUTION_ADMIN';
@@ -45,6 +46,7 @@ enum RoleEnum: string
     {
         return match ($this) {
             self::USER => 'admin.role.user',
+            self::COMPLAINANT => 'admin.role.complainant',
             self::DEPARTMENT_HEAD => 'admin.role.department_head',
             self::SPECIALIST => 'admin.role.specialist',
             self::INSTITUTION_ADMIN => 'admin.role.institution_admin',

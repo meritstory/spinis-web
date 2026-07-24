@@ -95,6 +95,7 @@ admin:
         updated_at: 'Updated at'
     role:
         user: User
+        complainant: Complainant
         department_head: 'Department head'
         specialist: Specialist
         institution_admin: 'Institution administrator'
@@ -140,6 +141,8 @@ nav:
 header:
     user_menu_label: User menu
     login: Log in via the e-Government Portal
+    profile: Profile
+    logout: Log out
 
 footer:
     social:
@@ -211,6 +214,21 @@ setting:
         create: 'Create setting'
         continue: 'Continue'
     all_created: 'All available settings have already been created.'
+
+viisp:
+    login_submit:
+        title: 'Redirecting to the e-Government Gateway...'
+    login_error:
+        heading: Login failed
+        dismiss: Dismiss
+        retry: Try again
+    error:
+        identity_exchange_failed: 'Failed to verify your identity. Please try again or contact support if the problem persists.'
+        failed_to_login: 'Failed to log in via the e-Government Gateway. Please try again.'
+
+my_complaints:
+    title: My complaints
+    greeting: 'Hello, %name%'
 
 document:
     label:
