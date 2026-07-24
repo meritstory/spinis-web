@@ -30,6 +30,9 @@ services:
                 ENABLE_PHP_PRELOAD: 0
         volumes:
             - ./:/var/www/symfony
+        environment:
+            ASYNC_AUTOSTART: "false"
+            SCHEDULER_AUTOSTART: "false"
         ports:
             - "8080:80"
 
