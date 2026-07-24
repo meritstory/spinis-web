@@ -46,6 +46,7 @@ enum RoleEnum: string
     {
         return match ($this) {
             self::USER => 'admin.role.user',
+            self::COMPLAINANT => 'admin.role.complainant',
             self::DEPARTMENT_HEAD => 'admin.role.department_head',
             self::SPECIALIST => 'admin.role.specialist',
             self::INSTITUTION_ADMIN => 'admin.role.institution_admin',

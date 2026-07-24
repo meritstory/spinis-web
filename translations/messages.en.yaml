@@ -95,6 +95,7 @@ admin:
         updated_at: 'Updated at'
     role:
         user: User
+        complainant: Complainant
         department_head: 'Department head'
         specialist: Specialist
         institution_admin: 'Institution administrator'

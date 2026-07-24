@@ -95,6 +95,7 @@ admin:
         updated_at: 'Atnaujinimo data'
     role:
         user: Vartotojas
+        complainant: Pareiškėjas
         department_head: 'Skyriaus vedėjas'
         specialist: Specialistas
         institution_admin: 'Įstaigos administratorius'
