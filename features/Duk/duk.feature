@@ -19,13 +19,14 @@ Feature: D.U.K. (FAQ) page
     When I follow "Daugiau"
     Then I should be on "/duk"
 
-  Scenario: First FAQ answer is visible on load
+  Scenario: First FAQ entry is expanded on load
     Given faqs exist:
       | question           | answer              | position |
       | Pirmas klausimas   | <p>Atsakymas A.</p> | 1        |
       | Antras klausimas   | <p>Atsakymas B.</p> | 2        |
     When I am on "/duk"
-    Then the response should contain "Atsakymas A."
+    Then the first FAQ answer should be expanded
+    And the response should contain "Atsakymas A."
 
   Scenario: FAQ entries render ordered by position
     Given faqs exist:

@@ -38,6 +38,16 @@ final class HomeContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
+    #[Then('the first FAQ answer should be expanded')]
+    public function theFirstFaqAnswerShouldBeExpanded(): void
+    {
+        $firstDetails = $this->getClient()->getCrawler()
+            ->filter('details[name="faq-accordion"]')
+            ->first();
+
+        Assert::true($firstDetails->matches('[open]'), 'Expected the first FAQ entry to have the "open" attribute.');
+    }
+
     #[Then('the FAQ questions should appear in this order:')]
     public function theFaqQuestionsShouldAppearInThisOrder(TableNode $table): void
     {
