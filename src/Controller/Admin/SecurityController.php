@@ -6,6 +6,9 @@ namespace App\Controller\Admin;
 
 use App\Entity\Admin;
 use App\Repository\AdminRepository;
+use App\Security\AdminAuthenticationHelper;
+use App\Security\AdminPasswordPolicy;
+use App\Service\Admin\AdminInvitationService;
 use App\Service\Admin\AdminMailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Scheb\TwoFactorBundle\Controller\FormController;
@@ -17,6 +20,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
@@ -39,6 +43,9 @@ class SecurityController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly FormController $twoFactorFormController,
         private readonly CodeGenerator $twoFactorCodeGenerator,
+        private readonly AdminInvitationService $invitationService,
+        private readonly AdminAuthenticationHelper $authenticationHelper,
+        private readonly AdminPasswordPolicy $passwordPolicy,
     ) {
     }
 
@@ -171,12 +178,9 @@ class SecurityController extends AbstractController
             $password = $request->request->getString('password');
             $passwordConfirm = $request->request->getString('password_confirm');
 
-            if ($password === '') {
-                return $this->renderResetPasswordForm($this->translator->trans('login.reset.empty_password'));
-            }
-
-            if ($password !== $passwordConfirm) {
-                return $this->renderResetPasswordForm($this->translator->trans('login.reset.password_mismatch'));
+            $passwordError = $this->validateSubmittedPassword($password, $passwordConfirm);
+            if ($passwordError !== null) {
+                return $this->renderResetPasswordForm($passwordError);
             }
 
             try {
@@ -204,6 +208,66 @@ class SecurityController extends AbstractController
         return $this->renderResetPasswordForm();
     }
 
+    #[Route(
+        '/admin/invitation/{token}',
+        name: 'admin_invitation_link',
+        requirements: ['token' => '[a-f0-9]{64}'],
+        methods: [Request::METHOD_GET, Request::METHOD_POST],
+    )]
+    public function invitation(Request $request, string $token): Response
+    {
+        if ($this->getUser() instanceof Admin) {
+            return $this->redirectToRoute('admin');
+        }
+
+        $invitation = $this->invitationService->validateToken($token);
+        if ($invitation === null) {
+            return $this->renderInvitationSetPasswordInvalidToken();
+        }
+
+        if ($request->isMethod(Request::METHOD_POST)) {
+            if (!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->request->getString('_csrf_token'))) {
+                return $this->renderInvitationSetPasswordForm($token, $this->translator->trans('login.error.invalid_request'));
+            }
+
+            $password = $request->request->getString('password');
+            $passwordConfirm = $request->request->getString('password_confirm');
+
+            $passwordError = $this->validateSubmittedPassword($password, $passwordConfirm);
+            if ($passwordError !== null) {
+                return $this->renderInvitationSetPasswordForm($token, $passwordError);
+            }
+
+            $admin = $this->invitationService->consumeValidToken(
+                $token,
+                function (Admin $admin) use ($password): void {
+                    $admin->setPassword($this->passwordHasher->hashPassword($admin, $password));
+                },
+            );
+            if ($admin === null) {
+                return $this->renderInvitationSetPasswordInvalidToken();
+            }
+
+            try {
+                $authenticationResponse = $this->authenticationHelper->authenticateAfterPasswordSetup($admin);
+            } catch (CustomUserMessageAccountStatusException) {
+                return $this->renderInvitationSetPasswordInvalidToken();
+            }
+
+            if ($authenticationResponse !== null) {
+                return $authenticationResponse;
+            }
+
+            if ($admin->isEmailAuthEnabled()) {
+                return $this->redirectToRoute('admin_2fa_login');
+            }
+
+            return $this->redirectToRoute('admin');
+        }
+
+        return $this->renderInvitationSetPasswordForm($token);
+    }
+
     /**
      * @param array<string, mixed> $extra
      */
@@ -223,6 +287,7 @@ class SecurityController extends AbstractController
             'csrf_token_intention' => self::CSRF_TOKEN_ID,
             'error' => $error,
             'show_form' => true,
+            'password_min_length' => $this->passwordPolicy->getMinLength(),
         ]);
     }
 
@@ -234,6 +299,47 @@ class SecurityController extends AbstractController
             'page_title' => $this->translator->trans('app.name'),
             'csrf_token_intention' => self::CSRF_TOKEN_ID,
             'error' => $this->translator->trans('login.reset.invalid_token'),
+            'show_form' => false,
+        ]);
+    }
+
+    private function renderInvitationSetPasswordForm(string $token, ?string $error = null): Response
+    {
+        return $this->render('admin/invitation_set_password.html.twig', [
+            'page_title' => $this->translator->trans('admin.invitation.page_title'),
+            'csrf_token_intention' => self::CSRF_TOKEN_ID,
+            'error' => $error,
+            'show_form' => true,
+            'password_min_length' => $this->passwordPolicy->getMinLength(),
+            'invitation_token' => $token,
+        ]);
+    }
+
+    private function validateSubmittedPassword(string $password, string $passwordConfirm): ?string
+    {
+        $policyErrorKeys = $this->passwordPolicy->validateAll($password);
+        if ($policyErrorKeys !== []) {
+            return implode(' ', array_map(
+                fn (string $errorKey): string => $this->translator->trans($errorKey, [
+                    '%min%' => $this->passwordPolicy->getMinLength(),
+                ]),
+                $policyErrorKeys,
+            ));
+        }
+
+        if ($password !== $passwordConfirm) {
+            return $this->translator->trans('password.policy.mismatch');
+        }
+
+        return null;
+    }
+
+    private function renderInvitationSetPasswordInvalidToken(): Response
+    {
+        return $this->render('admin/invitation_set_password.html.twig', [
+            'page_title' => $this->translator->trans('admin.invitation.page_title'),
+            'csrf_token_intention' => self::CSRF_TOKEN_ID,
+            'error' => $this->translator->trans('admin.invitation.invalid_token'),
             'show_form' => false,
         ]);
     }
