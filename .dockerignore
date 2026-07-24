@@ -6,3 +6,4 @@ vendor
 .github
 .idea
 .platform
+config/viisp/*.pem

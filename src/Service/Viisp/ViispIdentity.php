@@ -9,13 +9,16 @@ use DOMElement;
 use DOMNode;
 use DOMNodeList;
 use DOMXPath;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 readonly class ViispIdentity
 {
     public function __construct(
+        #[Autowire(env: 'VIISP_PID')]
         private string $pid,
         private ViispSigner $viispSigner,
         private ViispHttpClient $viispHttpClient,
+        #[Autowire(env: 'VIISP_AUTH_URL')]
         private string $viispAuthUrl,
     ) {
     }
@@ -30,17 +33,47 @@ readonly class ViispIdentity
         $resp = $this->viispHttpClient->doRequest($identityDom, 'getAuthenticationData');
 
         $dom = new DOMDocument();
-        $dom->loadXML($resp);
+        if (!$dom->loadXML((string) $resp, LIBXML_NONET)) {
+            throw new \RuntimeException('VIISP: received malformed XML in identity response.');
+        }
+        if ($dom->doctype !== null) {
+            throw new \RuntimeException('VIISP: identity response contained a disallowed DOCTYPE declaration.');
+        }
+
         $xpath = new DOMXPath($dom);
+        $xpath->registerNamespace('soapenv', ViispHttpClient::SOAP_ENVELOPE_NS);
         $xpath->registerNamespace('authentication', $this->viispAuthUrl);
 
+        $this->assertNoSoapFault($xpath);
+
         return $this->generateIdentity($xpath);
+    }
+
+    private function assertNoSoapFault(DOMXPath $xpath): void
+    {
+        /** @var DOMNodeList<DOMNode> $faultQuery */
+        $faultQuery = $xpath->query('//soapenv:Envelope/soapenv:Body/soapenv:Fault');
+        $fault = $faultQuery->item(0);
+
+        if ($fault !== null) {
+            /** @var DOMNodeList<DOMNode> $faultStringQuery */
+            $faultStringQuery = $xpath->query('faultstring', $fault);
+            $faultString = (string) $faultStringQuery->item(0)?->nodeValue;
+            if ($faultString === '') {
+                $faultString = 'unknown fault';
+            }
+
+            throw new \RuntimeException('VIISP: identity request returned a SOAP fault: '.$faultString);
+        }
     }
 
     private function generateIdentity(DomXPath $xpath): ViispIdentityData
     {
         /** @var DOMNodeList<DOMNode> $codeQuery */
-        $codeQuery = $xpath->query('//authentication:authenticationAttribute/authentication:value');
+        $codeQuery = $xpath->query('//soapenv:Envelope/soapenv:Body//authentication:authenticationAttribute/authentication:value');
+        if ($codeQuery->length > 1) {
+            throw new \RuntimeException('VIISP: identity response contained more than one authentication attribute value.');
+        }
         $personalCode = (string) $codeQuery->item(0)?->nodeValue;
 
         if ($personalCode === '') {
@@ -51,7 +84,7 @@ readonly class ViispIdentity
         $lastName = '';
 
         /** @var DOMNodeList<DOMNode> $userInfoNodes */
-        $userInfoNodes = $xpath->query('//authentication:userInformation');
+        $userInfoNodes = $xpath->query('//soapenv:Envelope/soapenv:Body//authentication:userInformation');
         foreach ($userInfoNodes as $userNode) {
             /** @var DOMNodeList<DOMNode> $userInformationQuery */
             $userInformationQuery = $xpath->query('authentication:information', $userNode);

@@ -56,9 +56,6 @@ jobs:
             -   name: Create database schema
                 run: php bin/console doctrine:schema:create
 
-            -   name: Generate JWT keys
-                run: php bin/console lexik:jwt:generate-keypair
-
             -   name: Build Tailwind CSS
                 run: php bin/console tailwind:build
 

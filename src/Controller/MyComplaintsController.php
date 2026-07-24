@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class ManoSkundaiController extends AbstractController
+class MyComplaintsController extends AbstractController
 {
-    #[Route('/mano-skundai', name: 'mano_skundai', methods: [Request::METHOD_GET])]
+    #[Route('/my-complaints', name: 'my_complaints', methods: [Request::METHOD_GET])]
     public function index(): Response
     {
-        return $this->render('mano_skundai/index.html.twig');
+        return $this->render('my_complaints/index.html.twig');
     }
 }

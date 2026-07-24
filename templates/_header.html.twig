@@ -29,7 +29,7 @@
                     <a href="#" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
                         {{ 'header.profile'|trans }}
                     </a>
-                    <a href="{{ path('logout') }}" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
+                    <a href="{{ path('logout', {'_csrf_token': csrf_token('logout')}) }}" class="flex items-center gap-2 rounded-sm px-3 py-2 text-body-lg text-text-secondary hover:bg-[#f3f5f4]">
                         <img src="{{ asset('images/login.svg') }}" width="24" height="24" alt="">
                         {{ 'header.logout'|trans }}
                     </a>

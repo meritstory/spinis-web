@@ -5,39 +5,13 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         app_user_provider:
-            entity:
-                class: App\Entity\Admin
-                property: email
+            id: App\Security\AdminUserProvider
         app_complainant_provider:
             entity:
                 class: App\Entity\Complainant
                 property: personalCode
 
     firewalls:
-        login:
-            pattern: ^/api/auth/login
-            provider: app_user_provider
-            user_checker: App\Security\AdminUserChecker
-            stateless: true
-            json_login:
-                check_path: /api/auth/login
-                username_path: email
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-
-        api_token_refresh:
-            pattern: ^/api/auth/refresh
-            provider: app_user_provider
-            stateless: true
-            refresh_jwt:
-                check_path: gesdinet_jwt_refresh_token
-
-        api:
-            pattern: ^/api(?!/doc)
-            provider: app_user_provider
-            stateless: true
-            jwt: ~
-
         admin:
             pattern: ^/admin
             provider: app_user_provider
@@ -74,16 +48,6 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-            #        main:
-            #            lazy: true
-            #            provider: users_in_memory
-
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
         # Must stay last: no `pattern` means it matches everything not already
         # claimed by an earlier firewall, so anything placed after it is dead config.
         public:
@@ -96,13 +60,20 @@ security:
                 path: /logout
                 target: home
                 invalidate_session: true
+                enable_csrf: true
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        ROLE_SYSTEM_ADMIN: ROLE_ADMIN
+        ROLE_DEPARTMENT_HEAD: ROLE_ADMIN
+        ROLE_SPECIALIST: ROLE_ADMIN
+        ROLE_INSTITUTION_ADMIN: ROLE_ADMIN
+        ROLE_COMMISSION_MEMBER: ROLE_ADMIN
+        ROLE_EXPERT: ROLE_ADMIN
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/auth/refresh, roles: PUBLIC_ACCESS }
-        - { path: ^/api/doc, roles: PUBLIC_ACCESS }
         - { path: ^/admin/login_check, roles: PUBLIC_ACCESS }
         - { path: ^/admin/login/2fa/resend, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         - { path: ^/admin/login/2fa, roles: IS_AUTHENTICATED_2FA_IN_PROGRESS }
@@ -110,12 +81,12 @@ security:
         - { path: ^/admin/forgot-password, roles: PUBLIC_ACCESS }
         - { path: ^/admin/logout, roles: PUBLIC_ACCESS }
         - { path: ^/admin/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/invitation, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/viisp/login-submit, roles: PUBLIC_ACCESS }
         - { path: ^/viisp/login-postback, roles: PUBLIC_ACCESS }
         - { path: ^/logout, roles: PUBLIC_ACCESS }
-        - { path: ^/mano-skundai, roles: ROLE_COMPLAINANT }
+        - { path: ^/my-complaints, roles: ROLE_COMPLAINANT }
 
 when@test:
     security:

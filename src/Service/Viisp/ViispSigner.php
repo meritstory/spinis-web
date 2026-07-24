@@ -6,15 +6,9 @@ namespace App\Service\Viisp;
 
 use DOMElement;
 use OpenSSLAsymmetricKey;
-use Symfony\Contracts\Cache\CacheInterface;
 
 readonly class ViispSigner
 {
-    public function __construct(
-        private CacheInterface $runtimeCache,
-    ) {
-    }
-
     public function signDomElement(DOMElement $node, string $privateKey): DOMElement
     {
         $signInfoElement = $this->getSignInfo($node);
@@ -125,15 +119,15 @@ readonly class ViispSigner
 
     private function getPrivateKeyId(string $privateKey): OpenSSLAsymmetricKey
     {
-        $privateKeyContent = $this->runtimeCache->get('viisp_private_key_content.'.md5($privateKey), static function () use ($privateKey): string {
-            /** @var string $privateKeyContent */
-            $privateKeyContent = file_get_contents($privateKey);
+        $privateKeyContent = file_get_contents($privateKey);
+        if ($privateKeyContent === false) {
+            throw new \RuntimeException('VIISP: failed to read private key file: '.$privateKey);
+        }
 
-            return $privateKeyContent;
-        });
-
-        /** @var OpenSSLAsymmetricKey $opensslKey */
         $opensslKey = openssl_pkey_get_private($privateKeyContent);
+        if ($opensslKey === false) {
+            throw new \RuntimeException('VIISP: failed to load private key: '.openssl_error_string());
+        }
 
         return $opensslKey;
     }

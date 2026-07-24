@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\Viisp\ViispClientInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ViispAuthController extends AbstractController
 {
     public function __construct(
         private readonly ViispClientInterface $viispClient,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        #[Target('viisp')]
-        private readonly LoggerInterface $logger,
+        #[Autowire(env: 'VIISP_SOAP_ACTION_BASE_URL')]
         private readonly string $viispSoapActionBaseUrl,
+        #[Autowire(env: 'VIISP_POSTBACK_URL')]
+        private readonly string $viispPostbackUrl,
     ) {
     }
 
@@ -28,11 +26,9 @@ class ViispAuthController extends AbstractController
     public function loginSubmit(): Response
     {
         try {
-            $ticket = $this->viispClient->getAuthenticationTicket(
-                $this->urlGenerator->generate('viisp_login_postback', [], UrlGeneratorInterface::ABSOLUTE_URL),
-            );
+            $ticket = $this->viispClient->getAuthenticationTicket($this->viispPostbackUrl);
         } catch (\Throwable $exception) {
-            $this->logger->error('VIISP: failed to obtain authentication ticket.', ['exception' => $exception]);
+            \Sentry\captureException($exception);
             $this->addFlash('viisp_error', 'viisp.error.failed_to_login');
 
             return $this->redirectToRoute('home');
