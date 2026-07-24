@@ -205,12 +205,14 @@ setting:
         key_placeholder: 'Pasirinkite nustatymą'
     key:
         version: Versija
+        health_care_institution_import_from: 'Sveikatos priežiūros įstaigų importavimo data'
     page:
         create: 'Sukurti nustatymą'
         edit: 'Redaguoti nustatymą'
         detail: Nustatymas
     action:
         create: 'Sukurti nustatymą'
+        continue: 'Tęsti'
     all_created: 'Visi galimi nustatymai jau sukurti.'
 
 viisp:

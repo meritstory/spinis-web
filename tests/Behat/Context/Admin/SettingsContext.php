@@ -43,13 +43,36 @@ final class SettingsContext extends RawMinkContext implements Context
     #[Given('I submit the admin setting form without data')]
     public function iSubmitTheAdminSettingFormWithoutData(): void
     {
-        $this->submitSettingForm('', '');
+        $this->createSettingWithKey('');
     }
 
-    #[Given('I submit the admin setting form with key :key and value :value')]
-    public function iSubmitTheAdminSettingFormWithData(string $key, string $value): void
+    #[Given('I create a setting with key :key')]
+    public function iCreateASettingWithKey(string $key): void
     {
-        $this->submitSettingForm($key, $value);
+        $this->createSettingWithKey($key);
+    }
+
+    #[Given('I submit the admin setting value :value')]
+    public function iSubmitTheAdminSettingValue(string $value): void
+    {
+        $client = $this->getClient();
+        $formNode = $client->getCrawler()->filter('form.ea-edit-form');
+        Assert::greaterThan($formNode->count(), 0, 'Setting edit form was not found on the page.');
+
+        $form = $formNode->form();
+        $token = $form['Setting[_token]']->getValue();
+
+        $client->request('POST', $form->getUri(), [
+            'Setting' => [
+                'value' => $value,
+                '_token' => $token,
+            ],
+            'ea' => [
+                'newForm' => [
+                    'btn' => 'saveAndReturn',
+                ],
+            ],
+        ]);
     }
 
     #[Given('the admin settings list is open')]
@@ -70,12 +93,18 @@ final class SettingsContext extends RawMinkContext implements Context
         Assert::same($value, $setting->getValue());
     }
 
-    #[Given('the admin setting form has required field validation errors')]
-    public function theAdminSettingFormHasRequiredFieldValidationErrors(): void
+    #[Given('the admin setting form has a key validation error')]
+    public function theAdminSettingFormHasAKeyValidationError(): void
     {
         $this->assertUnprocessableFormResponse();
         $this->assertSession()->pageTextContains('Pasirinkite nustatymą.');
-        $this->assertSession()->pageTextContains('Įveskite reikšmę.');
+    }
+
+    #[Given('the admin setting form has an invalid date validation error')]
+    public function theAdminSettingFormHasAnInvalidDateValidationError(): void
+    {
+        $this->assertLastResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertSession()->pageTextContains('Įveskite teisingą datą.');
     }
 
     #[Given('the admin create setting form should not show key :label')]
@@ -94,12 +123,11 @@ final class SettingsContext extends RawMinkContext implements Context
         Assert::false(in_array($label, $labels, true));
     }
 
-    private function submitSettingForm(string $key, string $value): void
+    private function createSettingWithKey(string $key): void
     {
         $client = $this->getClient();
         $client->request('GET', '/admin/setting/new');
-        $crawler = $client->getCrawler();
-        $formNode = $crawler->filter('form.ea-new-form');
+        $formNode = $client->getCrawler()->filter('form.ea-new-form');
         Assert::greaterThan($formNode->count(), 0, 'Setting create form was not found on the page.');
 
         $form = $formNode->form();
@@ -108,12 +136,11 @@ final class SettingsContext extends RawMinkContext implements Context
         $client->request('POST', '/admin/setting/new', [
             'Setting' => [
                 'key' => $key,
-                'value' => $value,
                 '_token' => $token,
             ],
             'ea' => [
                 'newForm' => [
-                    'btn' => 'saveAndReturn',
+                    'btn' => 'saveAndContinue',
                 ],
             ],
         ]);

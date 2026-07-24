@@ -205,12 +205,14 @@ setting:
         key_placeholder: 'Select a setting'
     key:
         version: Version
+        health_care_institution_import_from: 'Health care institution import date'
     page:
         create: 'Create setting'
         edit: 'Edit setting'
         detail: Setting
     action:
         create: 'Create setting'
+        continue: 'Continue'
     all_created: 'All available settings have already been created.'
 
 viisp:
