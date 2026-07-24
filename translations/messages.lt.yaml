@@ -138,6 +138,10 @@ nav:
     privacy: Privatumo politika
     contacts: Kontaktai
 
+breadcrumb:
+    home: Pagrindinis
+    label: 'Naršymo kelias'
+
 header:
     user_menu_label: Vartotojo meniu
     login: Prisijungti per el. valdžios vartus
@@ -248,3 +252,14 @@ document:
     key:
         privacy_policy: 'Privatumo politika'
         about_system: 'Apie sistemą'
+
+duk:
+    title: Dažniausiai užduodami klausimai
+    breadcrumb:
+        current: D.U.K
+    heading: Dažniausiai užduodami klausimai
+    description: 'Raskite atsakymus į dažniausiai užduodamus klausimus apie skundų teikimą ir nagrinėjimą sistemoje.'
+    still_questions:
+        heading: Vis dar turite klausimų?
+        description: 'Jei neradote atsakymo į savo klausimą, susisiekite su mūsų specialistu ir gaukite pagalbą.'
+        cta: Skambinti specialistui
