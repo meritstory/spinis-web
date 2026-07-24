@@ -5,16 +5,16 @@
 <nav aria-label="{{ 'breadcrumb.label'|trans }}" class="text-body-md text-text-secondary">
     <ol class="flex items-center gap-2">
         {% if includeHome|default(true) %}
-            <li><a href="{{ path('home') }}" class="hover:text-text-primary">{{ 'breadcrumb.home'|trans }}</a></li>
+            <li><a href="{{ path('home') }}" class="text-primary-dark underline hover:text-primary">{{ 'breadcrumb.home'|trans }}</a></li>
         {% endif %}
         {% for crumb in crumbs %}
             {% if not (loop.first and not includeHome|default(true)) %}
-                <li aria-hidden="true">&gt;</li>
+                <li aria-hidden="true"><img src="{{ asset('images/breadcrumb-chevron.svg') }}" width="24" height="24" alt=""></li>
             {% endif %}
             {% if crumb.url is defined and crumb.url is not null %}
-                <li><a href="{{ crumb.url }}" class="hover:text-text-primary">{{ crumb.label }}</a></li>
+                <li><a href="{{ crumb.url }}" class="text-primary-dark underline hover:text-primary">{{ crumb.label }}</a></li>
             {% else %}
-                <li aria-current="page" class="text-text-primary">{{ crumb.label }}</li>
+                <li aria-current="page">{{ crumb.label }}</li>
             {% endif %}
         {% endfor %}
     </ol>
