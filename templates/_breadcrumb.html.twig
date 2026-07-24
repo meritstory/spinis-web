@@ -1,7 +1,3 @@
-{# `crumbs`: ordered list of {label, url?} - omit `url` (or leave it
-   null) on the last one to render it as the current, non-linked page.
-   `includeHome` (default true): set false to start the trail from
-   `crumbs` directly, skipping the fixed "Pagrindinis" root. #}
 <nav aria-label="{{ 'breadcrumb.label'|trans }}" class="text-body-md text-text-secondary">
     <ol class="flex items-center gap-2">
         {% if includeHome|default(true) %}
