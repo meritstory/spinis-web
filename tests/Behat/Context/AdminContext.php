@@ -6,28 +6,19 @@ namespace App\Tests\Behat\Context;
 
 use App\Entity\Admin;
 use App\Entity\RoleEnum;
-use App\Tests\Service\Sylius\SharedStorageInterface;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AdminContext extends RawMinkContext implements Context
 {
-    public const string SS_AUTH_TOKEN = self::class.':authToken';
-    public const string SS_CURRENT_ADMIN = self::class.':currentAdmin';
     public const string ADMIN_DEFAULT_PASSWORD = 'test';
 
     public function __construct(
         private readonly UserPasswordHasherInterface $userPasswordHasher,
         private readonly EntityManagerInterface $entityManager,
-        private readonly JWTTokenManagerInterface $tokenManager,
-        private readonly TokenStorageInterface $tokenStorage,
-        private readonly SharedStorageInterface $sharedStorage,
     ) {
     }
 
@@ -76,19 +67,5 @@ class AdminContext extends RawMinkContext implements Context
 
         $this->entityManager->persist($admin);
         $this->entityManager->flush();
-    }
-
-    #[Given('/^(admin with email "[^"]*") is authenticated$/')]
-    public function adminIsAuthenticated(Admin $admin): void
-    {
-        $this->sharedStorage->set(FeatureContext::SS_BASIC_AUTH, null);
-
-        $token = $this->tokenManager->create($admin);
-
-        $this->tokenStorage->setToken(new JWTPostAuthenticationToken($admin, 'api', $admin->getRoles(), $token));
-        $this->sharedStorage->set(self::SS_AUTH_TOKEN, $token);
-
-        $this->getSession()->setRequestHeader('Authorization', "Bearer {$token}");
-        $this->sharedStorage->set(self::SS_CURRENT_ADMIN, $admin);
     }
 }
