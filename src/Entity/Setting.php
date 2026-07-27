@@ -32,7 +32,7 @@ class Setting implements \Stringable
     #[ORM\Column(name: 'setting_key', length: 255)]
     private string $key = '';
 
-    #[Assert\NotBlank(message: 'setting.value.not_blank')]
+    #[Assert\NotBlank(message: 'setting.value.not_blank', groups: ['value'])]
     #[ORM\Column(type: Types::TEXT)]
     private string $value = '';
 

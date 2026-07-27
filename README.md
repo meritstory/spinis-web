@@ -21,7 +21,7 @@
     1. Run this command `composer install`
     2. Run this command `bin/console lexik:jwt:generate-keypair` to generate the SSL keys for LexikJWTAuthenticationBundle
     3. Run this command `bin/console doctrine:migrations:migrate`
-    4. Run this command `bin/console app:create-admin <email> <password>` to create an admin user
+    4. Run this command `bin/console app:create-admin <email> <password> <first-name> <last-name>` to create an admin user (`first-name` and `last-name` are optional and default to `Admin`)
     5. Run this command `bin/console assets:install --symlink`
     6. Run this command `bin/console tailwind:build` to build the Tailwind CSS output (re-run after editing templates/CSS, or use `--watch` during active work — it isn't compiled live per-request)
 6. PhpStorm only

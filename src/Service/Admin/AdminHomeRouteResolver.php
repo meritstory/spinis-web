@@ -5,24 +5,19 @@ declare(strict_types=1);
 namespace App\Service\Admin;
 
 use App\Entity\Admin;
-use App\Entity\RoleEnum;
 
 final class AdminHomeRouteResolver
 {
-    private const array HOME_ROUTES_BY_ROLE = [
-        RoleEnum::ADMIN->value => 'admin_admin_index',
-    ];
-
-    private const string DEFAULT_ROUTE = 'admin_admin_index';
-
     public function resolve(Admin $admin): string
     {
-        foreach ($admin->getRoles() as $role) {
-            if (isset(self::HOME_ROUTES_BY_ROLE[$role])) {
-                return self::HOME_ROUTES_BY_ROLE[$role];
+        $roles = $admin->getRoles();
+
+        foreach (AdminMenuRegistry::items() as $menuItem) {
+            if ($menuItem['role'] === null || in_array($menuItem['role'], $roles, true)) {
+                return $menuItem['route'];
             }
         }
 
-        return self::DEFAULT_ROUTE;
+        return AdminMenuRegistry::defaultRoute();
     }
 }

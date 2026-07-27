@@ -23,6 +23,11 @@ Feature: Admin login
     And I should see "Negavote kodo?"
     And I should see "Siųsti kodą iš naujo"
 
+  Scenario: Login email is case-insensitive
+    Given admin with email "admin@example.com" and password "secret" is created
+    When I submit the admin login form with email "ADMIN@EXAMPLE.COM" and password "secret"
+    Then I should see "Autentifikacijos kodas"
+
   Scenario: Successful two-factor authentication logs in to admin
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
@@ -79,8 +84,8 @@ Feature: Admin login
   Scenario: Password reset allows login with new password
     Given admin with email "admin@example.com" and password "secret" is created
     And a password reset token was issued for admin "admin@example.com"
-    When I reset admin password using the stored reset token to "newsecret"
-    And I submit the admin login form with email "admin@example.com" and password "newsecret"
+    When I reset admin password using the stored reset token to "Newsecretpass1!"
+    And I submit the admin login form with email "admin@example.com" and password "Newsecretpass1!"
     And I confirm admin login with the latest authentication code for "admin@example.com"
     Then I should be on the admin accounts page
 

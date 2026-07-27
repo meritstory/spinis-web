@@ -51,4 +51,19 @@ final readonly class AdminMailer
 
         $this->mailer->send($emailMessage);
     }
+
+    public function sendAccountInvitationLink(string $email, string $invitationUrl): void
+    {
+        $emailMessage = new TemplatedEmail()
+            ->from(new Address($this->mailerFrom, $this->shortName))
+            ->to($email)
+            ->subject($this->translator->trans('email.account_invitation.subject'))
+            ->htmlTemplate('emails/account_invitation.html.twig')
+            ->context([
+                'invitationUrl' => $invitationUrl,
+            ])
+        ;
+
+        $this->mailer->send($emailMessage);
+    }
 }

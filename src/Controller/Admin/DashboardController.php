@@ -6,12 +6,15 @@ namespace App\Controller\Admin;
 
 use App\Entity\Admin;
 use App\Service\Admin\AdminHomeRouteResolver;
+use App\Service\Admin\AdminMenuRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
@@ -49,10 +52,23 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkTo(AdminCrudController::class, 'menu.admins', 'fa fa-users');
-        yield MenuItem::linkTo(FaqCrudController::class, 'menu.faq', 'fa fa-question-circle');
-        yield MenuItem::linkTo(DocumentCrudController::class, 'menu.documents', 'fa fa-file-text');
-        yield MenuItem::linkTo(LinkCrudController::class, 'menu.links', 'fa fa-link');
-        yield MenuItem::linkTo(SettingCrudController::class, 'menu.settings', 'fa fa-cog');
+        foreach (AdminMenuRegistry::items() as $menuItem) {
+            $item = MenuItem::linkTo($menuItem['controller'], $menuItem['label'], $menuItem['icon']);
+
+            if ($menuItem['role'] !== null) {
+                $item->setPermission($menuItem['role']);
+            }
+
+            yield $item;
+        }
+    }
+
+    public function configureUserMenu(UserInterface $user): UserMenu
+    {
+        if (!$user instanceof Admin) {
+            return parent::configureUserMenu($user);
+        }
+
+        return parent::configureUserMenu($user)->setName($user->getFullName());
     }
 }

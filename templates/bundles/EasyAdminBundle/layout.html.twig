@@ -1,0 +1,62 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block header_custom_menu %}
+    <twig:ea:ActionMenu class="user-menu-wrapper {{ is_granted(impersonator_permission) ? 'user-is-impersonated' }}">
+        <twig:ea:ActionMenu:Button class="user-details" withoutDropdownToggleMarker>
+            {{ user_menu_avatar }}
+            {% if ea.userMenu.isNameDisplayed %}
+                {% include 'admin/_user_identity.html.twig' %}
+            {% endif %}
+        </twig:ea:ActionMenu:Button>
+        <twig:ea:ActionMenu:Overlay>
+            <twig:ea:ActionMenu:ActionList>
+                <twig:ea:ActionMenu:ActionList:Content class="dropdown-user-details">
+                    <div>{{ user_menu_avatar }}</div>
+                    <div>
+                        <span class="user-label">{{ 'user.logged_in_as'|trans(domain: 'EasyAdminBundle') }}</span>
+                        {% include 'admin/_user_identity.html.twig' %}
+                    </div>
+                </twig:ea:ActionMenu:ActionList:Content>
+
+                {{ user_menu }}
+            </twig:ea:ActionMenu:ActionList>
+        </twig:ea:ActionMenu:Overlay>
+    </twig:ea:ActionMenu>
+{% endblock %}
+
+{% block responsive_header %}
+    <twig:ea:Button type="button" isInvisible icon="internal:menu-bars" id="navigation-toggler" aria-label="Toggle navigation"></twig:ea:Button>
+
+    <div id="responsive-header-logo" class="text-truncate ms-auto">
+        {% block responsive_header_logo %}
+            <a class="responsive-logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
+                {{ ea.dashboardTitle|raw }}
+            </a>
+        {% endblock responsive_header_logo %}
+    </div>
+
+    <twig:ea:ActionMenu class="ms-auto user-menu-wrapper {{ is_granted(impersonator_permission) ? 'user-is-impersonated' }}">
+        <twig:ea:ActionMenu:Button class="user-details" data-bs-offset="0,5" withoutDropdownToggleMarker>
+            {% if ea.userMenu.avatarDisplayed %}
+                {{ user_menu_avatar }}
+            {% else %}
+                <twig:ea:Icon class="user-avatar" name="{{ ea.user is not null ? 'internal:user' : 'internal:user-xmark' }}" />
+            {% endif %}
+        </twig:ea:ActionMenu:Button>
+        <twig:ea:ActionMenu:Overlay>
+            <twig:ea:ActionMenu:ActionList>
+                <twig:ea:ActionMenu:ActionList:Content class="dropdown-user-details">
+                    <div>{{ user_menu_avatar }}</div>
+                    <div>
+                        <span class="user-label">{{ 'user.logged_in_as'|trans(domain: 'EasyAdminBundle') }}</span>
+                        {% include 'admin/_user_identity.html.twig' %}
+                    </div>
+                </twig:ea:ActionMenu:ActionList:Content>
+
+                {{ user_menu }}
+            </twig:ea:ActionMenu:ActionList>
+        </twig:ea:ActionMenu:Overlay>
+    </twig:ea:ActionMenu>
+
+    {{ settings_dropdown }}
+{% endblock %}

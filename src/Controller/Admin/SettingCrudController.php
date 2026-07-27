@@ -8,6 +8,7 @@ use App\Entity\Setting;
 use App\Enum\SettingKeyEnum;
 use App\Repository\SettingRepository;
 use App\Service\Admin\LabelledEnumHelper;
+use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -22,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -63,7 +65,11 @@ class SettingCrudController extends AbstractCrudController
             })
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->remove(Crud::PAGE_NEW, Action::SAVE_AND_ADD_ANOTHER)
+            ->remove(Crud::PAGE_NEW, Action::SAVE_AND_RETURN)
             ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE)
+            ->update(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE, static function (Action $action): Action {
+                return $action->setLabel('setting.action.continue');
+            })
             ->disable(Action::DELETE);
 
         return $actions;
@@ -103,10 +109,39 @@ class SettingCrudController extends AbstractCrudController
                 ->setFormTypeOption('mapped', false);
         }
 
-        yield TextField::new('value')
+        if ($pageName === Crud::PAGE_NEW) {
+            return;
+        }
+
+        $valueField = TextField::new('value')
             ->setLabel('setting.field.value')
             ->setRequired(true)
             ->setEmptyData('');
+
+        if ($pageName === Crud::PAGE_INDEX || $pageName === Crud::PAGE_DETAIL) {
+            $valueField->formatValue(function (?string $value, Setting $setting): ?string {
+                if ($value === null || !$this->isDateSetting($setting)) {
+                    return $value;
+                }
+
+                $date = date_create_immutable($value);
+
+                return $date !== false ? $date->format('Y-m-d H:i') : $value;
+            });
+        }
+
+        if ($pageName === Crud::PAGE_EDIT && $this->isDateSetting()) {
+            $valueField
+                ->setFormType(DateTimeType::class)
+                ->setFormTypeOptions([
+                    'input' => 'string',
+                    'input_format' => DateTimeInterface::ATOM,
+                    'widget' => 'single_text',
+                    'invalid_message' => 'setting.value.invalid_date',
+                ]);
+        }
+
+        yield $valueField;
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -133,6 +168,8 @@ class SettingCrudController extends AbstractCrudController
      */
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
     {
+        $formOptions->set('validation_groups', ['Default', 'value']);
+
         $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
 
         $entity = $entityDto->getInstance();
@@ -150,5 +187,13 @@ class SettingCrudController extends AbstractCrudController
             SettingKeyEnum::class,
             $this->settingRepository->findUsedKeys(),
         );
+    }
+
+    private function isDateSetting(?Setting $setting = null): bool
+    {
+        $setting ??= $this->getContext()?->getEntity()?->getInstance();
+
+        return $setting instanceof Setting
+            && $setting->getKey() === SettingKeyEnum::HEALTH_CARE_INSTITUTION_IMPORT_FROM->value;
     }
 }
