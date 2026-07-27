@@ -31,7 +31,7 @@ security:
             jwt: ~
 
         admin:
-            pattern: ^/admin
+            pattern: ^/(admin|files)
             provider: app_user_provider
             user_checker: App\Security\AdminUserChecker
             lazy: true
@@ -100,6 +100,7 @@ security:
         - { path: ^/admin/reset-password, roles: PUBLIC_ACCESS }
         - { path: ^/admin/invitation, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/files, roles: ROLE_ADMIN }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

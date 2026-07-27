@@ -25,9 +25,21 @@ jobs:
                     --health-interval 10s
                     --health-timeout 5s
                     --health-retries 5
+            localstack:
+                image: localstack/localstack:4.11.0
+                ports:
+                    - 4566:4566
+                env:
+                    SERVICES: s3
+                    S3_ENDPOINT_STRATEGY: path
         env:
             DATABASE_URL: postgresql://sf-test:sf-test@localhost:5432/sf?serverVersion=17&charset=utf8
             APP_ENV: test
+            AWS_ENDPOINT_URL: http://localhost:4566
+            AWS_S3_BUCKET: dev
+            AWS_DEFAULT_REGION: us-east-1
+            AWS_ACCESS_KEY_ID: test
+            AWS_SECRET_ACCESS_KEY: test
         steps:
             -   uses: actions/checkout@v6
 
@@ -62,5 +74,12 @@ jobs:
             -   name: Build Tailwind CSS
                 run: php bin/console tailwind:build
 
+            -   name: Wait for LocalStack and create S3 bucket
+                run: |
+                    for i in {1..30}; do
+                      aws --endpoint-url=http://localhost:4566 s3 ls >/dev/null 2>&1 && break || sleep 2
+                    done
+                    aws --endpoint-url=http://localhost:4566 s3 mb s3://dev || true
+
             -   name: Run Behat tests
-                run: vendor/bin/behat
+                run: vendor/bin/behat --colors
