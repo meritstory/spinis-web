@@ -103,7 +103,7 @@ class ComplainantCrudController extends AbstractCrudController
         $queryBuilder->resetDQLPart('orderBy');
 
         foreach ($fieldsToSort as $field) {
-            $direction = strtoupper((string) $sort[$field]) === 'DESC' ? 'DESC' : 'ASC';
+            $direction = strtoupper((string) ($sort[$field] ?? 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
             $alias = 'lithuanian_'.$field.'_sort';
 
             $queryBuilder

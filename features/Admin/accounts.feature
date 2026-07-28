@@ -91,7 +91,7 @@ Feature: Admin account management
     When I submit the admin login form with email "active-rolechange@example.com" and password "secret"
     And I confirm admin login with the latest authentication code for "active-rolechange@example.com"
     Given I should be on the admin home page
-    And I should see "Skyriaus vedėjas"
+    And admin "active-rolechange@example.com" should have role "department_head"
 
   Scenario: Deactivated account during two-factor login is kicked out
     When I visit the logout page

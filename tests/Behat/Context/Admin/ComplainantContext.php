@@ -106,7 +106,7 @@ final class ComplainantContext extends RawMinkContext implements Context
     #[Given('the admin complainants list is open')]
     public function theAdminComplainantsListIsOpen(): void
     {
-        Assert::same(Response::HTTP_OK, $this->getClient()->getResponse()->getStatusCode());
+        Assert::same($this->getClient()->getResponse()->getStatusCode(), Response::HTTP_OK);
         $this->assertSession()->addressMatches('#/admin/complainant($|\\?)#');
         $this->assertSession()->pageTextContains('Pareiškėjai');
         $this->assertSession()->pageTextContains('Peržiūrėti');
@@ -157,7 +157,7 @@ final class ComplainantContext extends RawMinkContext implements Context
         Assert::notNull($complainant);
         Assert::notNull($complainant->getId());
 
-        Assert::same(Response::HTTP_OK, $this->getClient()->getResponse()->getStatusCode());
+        Assert::same($this->getClient()->getResponse()->getStatusCode(), Response::HTTP_OK);
         $this->assertSession()->addressMatches('#/admin/complainant/'.$complainant->getId().'#');
         $this->assertSession()->pageTextContains($firstName);
         $this->assertSession()->pageTextContains($lastName);
