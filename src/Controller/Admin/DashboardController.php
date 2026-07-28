@@ -9,6 +9,7 @@ use App\Service\Admin\AdminHomeRouteResolver;
 use App\Service\Admin\AdminMenuRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
@@ -44,19 +45,28 @@ class DashboardController extends AbstractDashboardController
             ->setTranslationDomain('messages');
     }
 
+    public function configureCrud(): Crud
+    {
+        return Crud::new()
+            ->overrideTemplate('crud/paginator', 'admin/paginator.html.twig');
+    }
+
     public function configureAssets(): Assets
     {
         return Assets::new()
-            ->addCssFile('styles/admin-forms.css');
+            ->addCssFile('styles/admin.css');
     }
 
     public function configureMenuItems(): iterable
     {
-        foreach (AdminMenuRegistry::items() as $menuItem) {
+        $user = $this->getUser();
+        $roles = $user instanceof Admin ? $user->getRoles() : [];
+
+        foreach (AdminMenuRegistry::visibleItemsForRoles($roles) as $menuItem) {
             $item = MenuItem::linkTo($menuItem['controller'], $menuItem['label'], $menuItem['icon']);
 
             if ($menuItem['role'] !== null) {
-                $item->setPermission($menuItem['role']);
+                $item = $item->setPermission($menuItem['role']);
             }
 
             yield $item;

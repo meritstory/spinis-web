@@ -1,9 +1,17 @@
 app:
     name: 'Complaint intake and processing information system'
     short_name: SPINIS
+    admin_logo:
+        accent: Complaint
+        line2: intake and processing
+        line3: information system
+
+paginator:
+    counter: '<strong>%start%–%end%</strong> of %total% entries'
 
 menu:
     admins: Accounts
+    complaints: Complaints
     faq: FAQ
     documents: Documents
     links: Links
@@ -252,6 +260,42 @@ document:
     key:
         privacy_policy: 'Privacy policy'
         about_system: 'About the system'
+
+complaint:
+    label:
+        singular: Complaint
+    page:
+        detail: Complaint
+    field:
+        number: 'Complaint no.'
+        institution: Institution
+        type: 'Complaint type'
+        created_at: Created
+        term: Deadline
+        status: Status
+        specialist: Specialist
+    number:
+        not_blank: 'Enter the complaint number.'
+        unique: 'This complaint number is already in use.'
+    institution:
+        not_blank: 'Enter the institution name.'
+    type:
+        invalid: 'Invalid complaint type.'
+        patient_rights: 'Patient rights'
+        damage_compensation: 'Damage compensation'
+    status:
+        invalid: 'Invalid complaint status.'
+        submitted: Submitted
+        returned: 'Returned for clarification'
+        updated: Updated
+        in_review: In review
+        awaiting_expert: 'Awaiting expert opinions'
+        resolved: Reviewed
+    term:
+        invalid: 'Invalid deadline status.'
+        on_time: On time
+        overdue: Overdue
+        approaching: 'Approaching deadline'
 
 faq_page:
     title: Frequently Asked Questions

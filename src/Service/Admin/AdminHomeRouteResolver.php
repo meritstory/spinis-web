@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Admin;
 
 use App\Entity\Admin;
+use App\Entity\RoleEnum;
 
 final class AdminHomeRouteResolver
 {
@@ -12,9 +13,15 @@ final class AdminHomeRouteResolver
     {
         $roles = $admin->getRoles();
 
-        foreach (AdminMenuRegistry::items() as $menuItem) {
-            if ($menuItem['role'] === null || in_array($menuItem['role'], $roles, true)) {
-                return $menuItem['route'];
+        foreach ([RoleEnum::SYSTEM_ADMIN->value, RoleEnum::DEPARTMENT_HEAD->value] as $role) {
+            if (!in_array($role, $roles, true)) {
+                continue;
+            }
+
+            foreach (AdminMenuRegistry::items() as $menuItem) {
+                if ($menuItem['role'] === $role) {
+                    return $menuItem['route'];
+                }
             }
         }
 
