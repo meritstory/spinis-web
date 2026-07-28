@@ -19,7 +19,7 @@
     ```
 5. Connect to php container by running this command: `./backend.sh` and run next steps inside the connected php container
     1. Run this command `composer install`
-    2. Run this command `bin/console lexik:jwt:generate-keypair` to generate the SSL keys for LexikJWTAuthenticationBundle
+    2. Generate a value for `COMPLAINANT_PERSONAL_CODE_ENCRYPTION_KEY` with `openssl rand -base64 32` and put it in `.env.local`
     3. Run this command `bin/console doctrine:migrations:migrate`
     4. Run this command `bin/console app:create-admin <email> <password> <first-name> <last-name>` to create an admin user (`first-name` and `last-name` are optional and default to `Admin`)
     5. Run this command `bin/console assets:install --symlink`

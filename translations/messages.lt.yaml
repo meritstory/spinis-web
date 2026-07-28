@@ -95,6 +95,7 @@ admin:
         updated_at: 'Atnaujinimo data'
     role:
         user: Vartotojas
+        complainant: Pareiškėjas
         department_head: 'Skyriaus vedėjas'
         specialist: Specialistas
         institution_admin: 'Įstaigos administratorius'
@@ -137,9 +138,15 @@ nav:
     privacy: Privatumo politika
     contacts: Kontaktai
 
+breadcrumb:
+    home: Pagrindinis
+    label: 'Naršymo kelias'
+
 header:
     user_menu_label: Vartotojo meniu
     login: Prisijungti per el. valdžios vartus
+    profile: Profilis
+    logout: Atsijungti
 
 footer:
     social:
@@ -212,6 +219,21 @@ setting:
         continue: 'Tęsti'
     all_created: 'Visi galimi nustatymai jau sukurti.'
 
+viisp:
+    login_submit:
+        title: 'Nukreipiama į el. valdžios vartus...'
+    login_error:
+        heading: Nepavyko prisijungti
+        dismiss: Uždaryti
+        retry: Bandyti dar kartą
+    error:
+        identity_exchange_failed: 'Nepavyko patvirtinti tapatybės. Bandykite dar kartą arba kreipkitės į pagalbos tarnybą, jei problema kartojasi.'
+        failed_to_login: 'Nepavyko prisijungti per el. valdžios vartus. Bandykite dar kartą.'
+
+my_complaints:
+    title: Mano skundai
+    greeting: 'Sveiki, %name%'
+
 document:
     label:
         singular: Dokumentas
@@ -230,3 +252,14 @@ document:
     key:
         privacy_policy: 'Privatumo politika'
         about_system: 'Apie sistemą'
+
+faq_page:
+    title: Dažniausiai užduodami klausimai
+    breadcrumb:
+        current: D.U.K
+    heading: Dažniausiai užduodami klausimai
+    description: 'Raskite atsakymus į dažniausiai užduodamus klausimus apie skundų teikimą ir nagrinėjimą sistemoje.'
+    still_questions:
+        heading: Vis dar turite klausimų?
+        description: 'Jei neradote atsakymo į savo klausimą, susisiekite su mūsų specialistu ir gaukite pagalbą.'
+        cta: Skambinti specialistui

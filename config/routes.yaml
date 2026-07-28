@@ -4,8 +4,5 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-api_login_check:
-    path: /api/auth/login
-
-gesdinet_jwt_refresh_token:
-    path: /api/auth/refresh
+logout:
+    path: /logout
