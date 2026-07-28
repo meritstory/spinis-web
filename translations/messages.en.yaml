@@ -4,6 +4,7 @@ app:
 
 menu:
     admins: Accounts
+    complainants: Complainants
     faq: FAQ
     documents: Documents
     links: Links
@@ -218,6 +219,26 @@ setting:
         create: 'Create setting'
         continue: 'Continue'
     all_created: 'All available settings have already been created.'
+
+complainant:
+    label:
+        singular: Complainant
+    field:
+        first_name: 'First name'
+        last_name: 'Last name'
+        legal_entity: 'Legal entity'
+        personal_code: 'Personal code'
+        company_code: 'Company code'
+        company_name: 'Company name'
+        email: Email
+        phone: Phone
+        address: Address
+        created_at: 'Created at'
+        updated_at: 'Updated at'
+    page:
+        detail: Complainant
+    action:
+        view: View
 
 viisp:
     login_submit:

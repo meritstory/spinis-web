@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Admin;
 
 use App\Controller\Admin\AdminCrudController;
+use App\Controller\Admin\ComplainantCrudController;
 use App\Controller\Admin\DocumentCrudController;
 use App\Controller\Admin\FaqCrudController;
 use App\Controller\Admin\LinkCrudController;
@@ -20,6 +21,13 @@ final class AdminMenuRegistry
             'label' => 'menu.admins',
             'icon' => 'fa fa-users',
             'role' => RoleEnum::SYSTEM_ADMIN->value,
+        ],
+        [
+            'controller' => ComplainantCrudController::class,
+            'route' => 'admin_complainant_index',
+            'label' => 'menu.complainants',
+            'icon' => 'fa fa-id-card',
+            'role' => null,
         ],
         [
             'controller' => FaqCrudController::class,
