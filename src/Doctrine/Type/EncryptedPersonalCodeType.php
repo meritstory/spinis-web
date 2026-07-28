@@ -33,7 +33,7 @@ final class EncryptedPersonalCodeType extends Type
     private const int NONCE_LENGTH = 12;
     private const int TAG_LENGTH = 16;
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): ?string
     {
         if ($value === null || $value === '') {
             return $value;
@@ -46,13 +46,13 @@ final class EncryptedPersonalCodeType extends Type
 
         $ciphertext = openssl_encrypt($plaintext, self::CIPHER_ALGO, $cipherKey, OPENSSL_RAW_DATA, $nonce, $tag);
         if ($ciphertext === false) {
-            throw new \RuntimeException('Failed to encrypt personal code: '.openssl_error_string());
+            throw new \RuntimeException(sprintf('Failed to encrypt personal code: %s', openssl_error_string()));
         }
 
         return base64_encode($nonce.$tag.$ciphertext);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?string
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?string
     {
         if ($value === null || $value === '') {
             return $value;
@@ -77,6 +77,9 @@ final class EncryptedPersonalCodeType extends Type
         return $plaintext;
     }
 
+    /**
+     * @param array<string, mixed> $column
+     */
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $platform->getStringTypeDeclarationSQL(['length' => 255] + $column);
@@ -85,6 +88,17 @@ final class EncryptedPersonalCodeType extends Type
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    /**
+     * Without this, schema comparison can't tell this column apart from a
+     * plain string column (both are VARCHAR at the SQL level) and every
+     * `doctrine:migrations:diff` regenerates a spurious ALTER TABLE trying
+     * to "restore" the type.
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
+    {
+        return true;
     }
 
     /**
