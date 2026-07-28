@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat\Context\Admin;
 
+use App\Entity\Admin;
 use App\Repository\AdminRepository;
+use App\Service\Admin\AdminHomeRouteResolver;
 use App\Tests\Behat\Support\PasswordResetTokenStore;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -24,6 +26,7 @@ final class LoginContext extends RawMinkContext implements Context
         private readonly EntityManagerInterface $entityManager,
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
         private readonly PasswordResetTokenStore $passwordResetTokenStore,
+        private readonly AdminHomeRouteResolver $homeRouteResolver,
     ) {
     }
 
@@ -155,6 +158,17 @@ final class LoginContext extends RawMinkContext implements Context
     public function iShouldBeOnTheAdminLoginPage(): void
     {
         $this->assertSession()->addressMatches('#/admin/login#');
+    }
+
+    #[Given('I should be on the admin home page')]
+    public function iShouldBeOnTheAdminHomePage(): void
+    {
+        $client = $this->getClient();
+        $user = $client->getContainer()->get('security.token_storage')->getToken()?->getUser();
+        Assert::isInstanceOf($user, Admin::class);
+
+        $homePath = $client->getContainer()->get('router')->generate($this->homeRouteResolver->resolve($user));
+        $this->assertSession()->addressMatches('#'.preg_quote($homePath, '#').'($|\\?)#');
     }
 
     #[Given('I visit the logout page')]
