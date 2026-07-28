@@ -10,12 +10,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class DukController extends AbstractController
+class FaqController extends AbstractController
 {
-    #[Route('/duk', name: 'duk', methods: [Request::METHOD_GET])]
+    #[Route('/faq', name: 'faq', methods: [Request::METHOD_GET])]
     public function index(FaqRepository $faqRepository): Response
     {
-        return $this->render('duk/index.html.twig', [
+        return $this->render('faq/index.html.twig', [
             'faqs' => $faqRepository->findAllOrderedByPosition(),
         ]);
     }

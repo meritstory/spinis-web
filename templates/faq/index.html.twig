@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'duk.title'|trans }}{% endblock %}
+{% block title %}{{ 'faq_page.title'|trans }}{% endblock %}
 
 {% block body %}
     <main>
         <section class="pt-8 pb-16 bg-page">
             <div class="mx-auto max-w-[1200px] px-6">
-                {% include '_breadcrumb.html.twig' with {crumbs: [{label: 'duk.breadcrumb.current'|trans}]} %}
+                {% include '_breadcrumb.html.twig' with {crumbs: [{label: 'faq_page.breadcrumb.current'|trans}]} %}
 
-                <h1 class="mt-8 mb-5 text-heading-h1 font-bold">{{ 'duk.heading'|trans }}</h1>
-                <p class="max-w-[720px] text-body-lg text-text-secondary">{{ 'duk.description'|trans }}</p>
+                <h1 class="mt-8 mb-5 text-heading-h1 font-bold">{{ 'faq_page.heading'|trans }}</h1>
+                <p class="max-w-[720px] text-body-lg text-text-secondary">{{ 'faq_page.description'|trans }}</p>
             </div>
         </section>
 
@@ -31,9 +31,9 @@
 
         <section class="py-16 bg-subtle">
             <div class="mx-auto max-w-[1200px] px-6 text-center">
-                <h2 class="mb-3 text-heading-h1 text-text-primary font-bold">{{ 'duk.still_questions.heading'|trans }}</h2>
-                <p class="mx-auto mb-8 max-w-[560px] text-body-lg text-text-secondary">{{ 'duk.still_questions.description'|trans }}</p>
-                <a href="#" class="inline-block rounded-[8px] bg-primary px-12 py-4 text-body-lg text-white hover:bg-primary-dark">{{ 'duk.still_questions.cta'|trans }}</a>
+                <h2 class="mb-3 text-heading-h1 text-text-primary font-bold">{{ 'faq_page.still_questions.heading'|trans }}</h2>
+                <p class="mx-auto mb-8 max-w-[560px] text-body-lg text-text-secondary">{{ 'faq_page.still_questions.description'|trans }}</p>
+                <a href="#" class="inline-block rounded-[8px] bg-primary px-12 py-4 text-body-lg text-white hover:bg-primary-dark">{{ 'faq_page.still_questions.cta'|trans }}</a>
             </div>
         </section>
     </main>

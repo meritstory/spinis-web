@@ -253,7 +253,7 @@ document:
         privacy_policy: 'Privacy policy'
         about_system: 'About the system'
 
-duk:
+faq_page:
     title: Frequently Asked Questions
     breadcrumb:
         current: FAQ

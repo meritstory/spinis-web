@@ -253,7 +253,7 @@ document:
         privacy_policy: 'Privatumo politika'
         about_system: 'Apie sistemą'
 
-duk:
+faq_page:
     title: Dažniausiai užduodami klausimai
     breadcrumb:
         current: D.U.K
