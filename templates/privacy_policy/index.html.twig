@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'privacy_page.title'|trans }}{% endblock %}
+
+{% block body %}
+    <main>
+        <section class="pt-8 pb-16 bg-page">
+            <div class="mx-auto max-w-[1200px] px-6">
+                {% include '_breadcrumb.html.twig' with {crumbs: [{label: 'privacy_page.breadcrumb.current'|trans}]} %}
+
+                <h1 class="mt-8 mb-5 text-heading-h1 font-bold">{{ 'privacy_page.heading'|trans }}</h1>
+                <p class="max-w-[1140px] text-body-lg text-text-secondary">{{ 'privacy_page.description'|trans }}</p>
+            </div>
+        </section>
+
+        {% if document %}
+            <section class="py-20 bg-white">
+                <div class="mx-auto max-w-[1200px] px-6">
+                    <p class="mb-8 text-body-md text-text-secondary">{{ 'privacy_page.updated_at_label'|trans }} {{ document.updatedAt|date('Y-m-d') }}</p>
+                    <div class="rich-text">{{ document.description|sanitize_html }}</div>
+                </div>
+            </section>
+        {% endif %}
+    </main>
+{% endblock %}
