@@ -1,0 +1,7 @@
+<section class="{{ sectionClass|default('py-16 bg-subtle') }}">
+    <div class="mx-auto max-w-[1200px] px-6 text-center">
+        <h2 class="mb-3 text-heading-h1 text-text-primary font-bold">{{ heading }}</h2>
+        <p class="mx-auto mb-8 max-w-[560px] text-body-lg text-text-secondary">{{ description }}</p>
+        <a href="{{ href|default('#') }}" class="inline-block rounded-[8px] bg-primary px-12 py-4 text-body-lg text-white hover:bg-primary-dark">{{ cta }}</a>
+    </div>
+</section>

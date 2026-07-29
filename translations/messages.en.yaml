@@ -263,3 +263,41 @@ faq_page:
         heading: Still have questions?
         description: 'If you haven''t found an answer to your question, contact our specialist for help.'
         cta: Call a specialist
+
+about_page:
+    title: About the System
+    breadcrumb:
+        current: About the System
+    heading: About the System
+    description: 'Learn more about the complaint handling system and how it works.'
+    who_we_are:
+        heading: Who are we?
+        description: 'This is the official complaint management platform, built to simplify interactions between citizens and government institutions. Our system lets you submit complaints securely, track their review progress in real time, and receive official responses electronically. We believe that transparent complaint handling is one of the key conditions for improving public services.'
+    how_it_works:
+        heading: How does the system work?
+        step1: Choose to submit a new complaint.
+        step2: Select the complaint type and provide your personal information.
+        step3: Describe the situation and attach related documents.
+        step4: Review the completed complaint and submit it.
+        step5: Track the progress of the complaint review.
+        step6: If needed, supplement the complaint with missing information.
+        step7: 'Receive the findings within %duration%.'
+        step7_duration: 60 working days
+    goals:
+        heading: Our goals
+        transparency:
+            title: Transparency
+            description: 'We ensure that every complaint is registered and reviewed through the prescribed legal process.'
+        efficiency:
+            title: Efficiency
+            description: 'We shorten complaint referral and review processes by using digital tools.'
+        accessibility:
+            title: Accessibility
+            description: 'We give all citizens of Lithuania the ability to submit complaints remotely.'
+    legal_basis:
+        heading: Legal basis
+        description: 'The system''s operation is based on the Law on Public Administration of the Republic of Lithuania, the Law on the Rights of Patients and Compensation of Damage to Their Health, and other legal acts governing the handling of individuals'' requests and complaints by public administration entities. All your data is processed in accordance with the General Data Protection Regulation (GDPR).'
+    cta:
+        heading: Have a complaint?
+        description: 'Start filling out the form now – it''s a simple, multi-step process.'
+        button: Submit a complaint

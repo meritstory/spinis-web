@@ -29,12 +29,10 @@
             </div>
         </section>
 
-        <section class="py-16 bg-subtle">
-            <div class="mx-auto max-w-[1200px] px-6 text-center">
-                <h2 class="mb-3 text-heading-h1 text-text-primary font-bold">{{ 'faq_page.still_questions.heading'|trans }}</h2>
-                <p class="mx-auto mb-8 max-w-[560px] text-body-lg text-text-secondary">{{ 'faq_page.still_questions.description'|trans }}</p>
-                <a href="#" class="inline-block rounded-[8px] bg-primary px-12 py-4 text-body-lg text-white hover:bg-primary-dark">{{ 'faq_page.still_questions.cta'|trans }}</a>
-            </div>
-        </section>
+        {% include '_cta_section.html.twig' with {
+            heading: 'faq_page.still_questions.heading'|trans,
+            description: 'faq_page.still_questions.description'|trans,
+            cta: 'faq_page.still_questions.cta'|trans,
+        } %}
     </main>
 {% endblock %}
