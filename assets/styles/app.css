@@ -16,6 +16,7 @@
     --color-text-primary: #212B36;
     --color-text-secondary: #637381;
     --color-border-default: #DCE0E4;
+    --color-green-light: #D4E7DF;
 
     /* Typography: --text-* pairs with --text-*--line-height to bundle
        font-size + line-height into one utility (e.g. text-body-lg),
@@ -29,6 +30,8 @@
     --text-body-md--line-height: 20px;
     --text-heading-h1: 32px;
     --text-heading-h1--line-height: 40px;
+    --text-heading-h2: 24px;
+    --text-heading-h2--line-height: 32px;
     --text-heading-h4: 18px;
     --text-heading-h4--line-height: 24px;
 }
