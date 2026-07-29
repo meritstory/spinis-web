@@ -21,4 +21,4 @@ Feature: About the system page
     And I should see "Mūsų tikslai"
     And I should see "Teisinė bazė"
     And I should see "Turite skundą?"
-    And I should see "Teikti skundą"
+    And I should see "Pateikti skundą"

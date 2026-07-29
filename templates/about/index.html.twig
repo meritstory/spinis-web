@@ -35,9 +35,9 @@
                         {% for step in 1..7 %}
                             <li class="flex items-start gap-4">
                                 <span aria-hidden="true" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-light text-body-md font-semibold text-primary">{{ step }}</span>
-                                <p class="mt-1 text-body-lg font-bold text-text-primary">
+                                <p class="mt-1 text-body-lg text-text-primary">
                                     {% if step == 7 %}
-                                        {{ 'about_page.how_it_works.step7'|trans({'%duration%': '<strong>' ~ ('about_page.how_it_works.step7_duration'|trans) ~ '</strong>'})|raw }}
+                                        {{ 'about_page.how_it_works.step7_prefix'|trans }}<strong>{{ 'about_page.how_it_works.step7_duration'|trans }}</strong>
                                     {% else %}
                                         {{ ('about_page.how_it_works.step' ~ step)|trans }}
                                     {% endif %}

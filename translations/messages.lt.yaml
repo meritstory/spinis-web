@@ -281,8 +281,8 @@ about_page:
         step4: Peržiūrėkite užpildytą skundą ir pateikite.
         step5: Sekite skundo nagrinėjimo eigą.
         step6: Esant reikalui, papildykite skundą trūkstama informacija.
-        step7: 'Gaukite išvadas per %duration%.'
-        step7_duration: 60 darbo dienų
+        step7_prefix: 'Gaukite išvadas per '
+        step7_duration: 60 darbo dienų.
     goals:
         heading: Mūsų tikslai
         transparency:

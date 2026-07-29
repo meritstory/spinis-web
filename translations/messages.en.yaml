@@ -281,8 +281,8 @@ about_page:
         step4: Review the completed complaint and submit it.
         step5: Track the progress of the complaint review.
         step6: If needed, supplement the complaint with missing information.
-        step7: 'Receive the findings within %duration%.'
-        step7_duration: 60 working days
+        step7_prefix: 'Receive the findings within '
+        step7_duration: 60 working days.
     goals:
         heading: Our goals
         transparency:
