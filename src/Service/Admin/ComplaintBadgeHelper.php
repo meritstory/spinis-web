@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
+use App\Enum\ComplaintBadgeColor;
 use App\Enum\ComplaintStatusEnum;
 use App\Enum\ComplaintTermEnum;
+use Twig\Environment;
 
 final readonly class ComplaintBadgeHelper
 {
     public function __construct(
         private LabelledEnumHelper $labelledEnumHelper,
+        private Environment $twig,
     ) {
     }
 
@@ -43,13 +46,13 @@ final readonly class ComplaintBadgeHelper
         }
 
         $badgeColor = $statusValue === ComplaintStatusEnum::RESOLVED->value
-            ? 'gray'
+            ? ComplaintBadgeColor::Gray
             : $enum->getBadgeColor();
 
         return $this->renderEnumBadge($enum, $badgeColor);
     }
 
-    private function renderEnumBadge(ComplaintStatusEnum|ComplaintTermEnum $enum, ?string $badgeColor = null): string
+    private function renderEnumBadge(ComplaintStatusEnum|ComplaintTermEnum $enum, ?ComplaintBadgeColor $badgeColor = null): string
     {
         return $this->renderBadge(
             $this->labelledEnumHelper->formatValue($enum->value, $enum::class),
@@ -57,13 +60,12 @@ final readonly class ComplaintBadgeHelper
         );
     }
 
-    private function renderBadge(string $label, string $badgeColor): string
+    private function renderBadge(string $label, ComplaintBadgeColor $badgeColor): string
     {
-        return sprintf(
-            '<span class="ea-complaint-badge ea-complaint-badge--%s">%s</span>',
-            $this->escape($badgeColor),
-            $this->escape($label),
-        );
+        return $this->twig->render('admin/field/complaint_badge.html.twig', [
+            'label' => $label,
+            'color' => $badgeColor->value,
+        ]);
     }
 
     private function escape(string $value): string

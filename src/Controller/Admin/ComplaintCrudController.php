@@ -11,7 +11,10 @@ use App\Enum\ComplaintTermEnum;
 use App\Enum\ComplaintTypeEnum;
 use App\Service\Admin\ComplaintBadgeHelper;
 use App\Service\Admin\LabelledEnumHelper;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -19,6 +22,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
@@ -50,7 +56,7 @@ class ComplaintCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('menu.complaints')
             ->setPageTitle(Crud::PAGE_INDEX, 'menu.complaints')
             ->setPageTitle(Crud::PAGE_DETAIL, 'complaint.page.detail')
-            ->setSearchFields(['number', 'institutionName', 'specialist'])
+            ->setSearchFields(['number', 'healthCareInstitution.title', 'specialist.firstName', 'specialist.lastName'])
             ->setDefaultSort(['createdAt' => 'DESC'])
             ->setDefaultRowAction(Action::DETAIL)
             ->setPaginatorPageSize(10);
@@ -109,7 +115,7 @@ class ComplaintCrudController extends AbstractCrudController
                     htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
                 )
                 : '');
-        yield TextField::new('institutionName')
+        yield AssociationField::new('healthCareInstitution')
             ->setLabel('complaint.field.institution');
         yield TextField::new('type')
             ->setLabel('complaint.field.type')
@@ -128,8 +134,21 @@ class ComplaintCrudController extends AbstractCrudController
             ->setLabel('complaint.field.status')
             ->renderAsHtml()
             ->formatValue(fn (?string $value): string => $this->complaintBadgeHelper->format($value, ComplaintStatusEnum::class));
-        yield TextField::new('specialist')
+
+        yield AssociationField::new('specialist')
             ->setLabel('complaint.field.specialist')
-            ->formatValue(fn (?string $value): string => $value !== null && $value !== '' ? $value : '—');
+            ->setTemplatePath('admin/field/plain_association.html.twig')
+            ->formatValue(static fn (mixed $value, ?Complaint $complaint): string => $complaint?->getSpecialist() !== null
+                ? (string) $complaint->getSpecialist()
+                : '—');
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
+            ->leftJoin('entity.healthCareInstitution', 'complaintHealthCareInstitution')
+            ->addSelect('complaintHealthCareInstitution')
+            ->leftJoin('entity.specialist', 'complaintSpecialist')
+            ->addSelect('complaintSpecialist');
     }
 }

@@ -27,12 +27,12 @@ enum ComplaintTermEnum: string
         };
     }
 
-    public function getBadgeColor(): string
+    public function getBadgeColor(): ComplaintBadgeColor
     {
         return match ($this) {
-            self::ON_TIME => 'blue',
-            self::APPROACHING => 'orange',
-            self::OVERDUE => 'red',
+            self::ON_TIME => ComplaintBadgeColor::Blue,
+            self::APPROACHING => ComplaintBadgeColor::Orange,
+            self::OVERDUE => ComplaintBadgeColor::Red,
         };
     }
 }

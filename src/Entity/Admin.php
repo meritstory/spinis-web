@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     message: 'admin.error.email_unique',
 )]
 #[SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: false)]
-class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, EquatableInterface
+class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, EquatableInterface, \Stringable
 {
     use SoftDeleteableEntity;
     use TimestampableEntity;
@@ -246,6 +246,16 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         $name = trim($this->firstName.' '.$this->lastName);
 
         return $name !== '' ? $name : $this->requireEmail();
+    }
+
+    public function isSpecialist(): bool
+    {
+        return in_array(RoleEnum::SPECIALIST->value, $this->getRoles(), true);
+    }
+
+    public function __toString(): string
+    {
+        return $this->getFullName();
     }
 
     public function getPrimaryRole(): ?RoleEnum

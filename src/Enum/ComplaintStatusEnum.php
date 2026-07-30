@@ -33,13 +33,13 @@ enum ComplaintStatusEnum: string
         };
     }
 
-    public function getBadgeColor(): string
+    public function getBadgeColor(): ComplaintBadgeColor
     {
         return match ($this) {
-            self::SUBMITTED => 'blue',
-            self::IN_REVIEW, self::RETURNED, self::AWAITING_EXPERT => 'green',
-            self::UPDATED => 'orange',
-            self::RESOLVED => 'gray',
+            self::SUBMITTED => ComplaintBadgeColor::Blue,
+            self::IN_REVIEW, self::RETURNED, self::AWAITING_EXPERT => ComplaintBadgeColor::Green,
+            self::UPDATED => ComplaintBadgeColor::Orange,
+            self::RESOLVED => ComplaintBadgeColor::Gray,
         };
     }
 }

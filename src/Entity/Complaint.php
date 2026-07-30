@@ -30,9 +30,10 @@ class Complaint implements \Stringable
     #[ORM\Column(length: 50)]
     private string $number = '';
 
-    #[Assert\NotBlank(message: 'complaint.institution.not_blank')]
-    #[ORM\Column(length: 255)]
-    private string $institutionName = '';
+    #[Assert\NotNull(message: 'complaint.institution.not_blank')]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?HealthCareInstitution $healthCareInstitution = null;
 
     #[Assert\Choice(callback: [ComplaintTypeEnum::class, 'values'], message: 'complaint.type.invalid')]
     #[ORM\Column(length: 50)]
@@ -46,8 +47,13 @@ class Complaint implements \Stringable
     #[ORM\Column(length: 50)]
     private string $termStatus = ComplaintTermEnum::ON_TIME->value;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $specialist = null;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Assert\Expression(
+        expression: 'this.getSpecialist() === null or this.getSpecialist().isSpecialist()',
+        message: 'complaint.specialist.invalid_role',
+    )]
+    private ?Admin $specialist = null;
 
     public function getId(): ?int
     {
@@ -66,14 +72,14 @@ class Complaint implements \Stringable
         return $this;
     }
 
-    public function getInstitutionName(): string
+    public function getHealthCareInstitution(): ?HealthCareInstitution
     {
-        return $this->institutionName;
+        return $this->healthCareInstitution;
     }
 
-    public function setInstitutionName(string $institutionName): static
+    public function setHealthCareInstitution(?HealthCareInstitution $healthCareInstitution): static
     {
-        $this->institutionName = $institutionName;
+        $this->healthCareInstitution = $healthCareInstitution;
 
         return $this;
     }
@@ -114,12 +120,12 @@ class Complaint implements \Stringable
         return $this;
     }
 
-    public function getSpecialist(): ?string
+    public function getSpecialist(): ?Admin
     {
         return $this->specialist;
     }
 
-    public function setSpecialist(?string $specialist): static
+    public function setSpecialist(?Admin $specialist): static
     {
         $this->specialist = $specialist;
 

@@ -2,9 +2,9 @@ app:
     name: 'Skundų priėmimo ir nagrinėjimo informacinė sistema'
     short_name: SPINIS
     admin_logo:
-        accent: Skundų
-        line2: priėmimo ir
-        line3: nagrinėjimo informacinė sistema
+        accent: SKUNDŲ
+        line2: NAGRINĖJIMO
+        line3: SISTEMA
 
 paginator:
     counter: '<strong>%start%–%end%</strong> iš %total% įrašų'
@@ -279,6 +279,8 @@ complaint:
         unique: 'Skundo numeris jau naudojamas.'
     institution:
         not_blank: 'Įveskite įstaigos pavadinimą.'
+    specialist:
+        invalid_role: 'Šiam skundui galima priskirti tik specialistą.'
     type:
         invalid: 'Neteisingas skundo tipas.'
         patient_rights: 'Pacientų teisės'
