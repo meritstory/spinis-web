@@ -25,6 +25,7 @@ export default class extends Controller {
 
         if (this.leader.duration && this.leader.currentTime >= this.leader.duration - END_BUFFER_SECONDS) {
             this.pauseThenRestart();
+
             return;
         }
 

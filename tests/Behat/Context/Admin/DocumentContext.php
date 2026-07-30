@@ -39,9 +39,6 @@ final class DocumentContext extends RawMinkContext implements Context
     #[Given('the document with key :key was last updated on :date')]
     public function theDocumentWithKeyWasLastUpdatedOn(string $key, string $date): void
     {
-        // Bypasses Gedmo's Timestampable listener (which only fires on ORM
-        // flush) with a raw UPDATE, so the fixture can simulate a document
-        // that hasn't been touched recently instead of always being "now".
         $this->entityManager->getConnection()->executeStatement(
             'UPDATE document SET updated_at = :date WHERE document_key = :key',
             ['date' => $date, 'key' => $key],
