@@ -63,6 +63,54 @@ Feature: Admin complainants
       | Zita     |
       | Živilė   |
 
+  Scenario: Complainants can be sorted by Lithuanian alphabet on last name
+    Given a complainant exists with first name "Test" and last name "Antanas"
+    Given a complainant exists with first name "Test" and last name "Ądomas"
+    Given a complainant exists with first name "Test" and last name "Bronius"
+    Given a complainant exists with first name "Test" and last name "Cezaris"
+    Given a complainant exists with first name "Test" and last name "Česlovas"
+    Given a complainant exists with first name "Test" and last name "Ema"
+    Given a complainant exists with first name "Test" and last name "Ęrika"
+    Given a complainant exists with first name "Test" and last name "Ėla"
+    Given a complainant exists with first name "Test" and last name "Zita"
+    Given a complainant exists with first name "Test" and last name "Živilė"
+    Given I visit the admin complainants list page
+    Given complainant last names should appear in this order:
+      | Antanas  |
+      | Ądomas   |
+      | Bronius  |
+      | Cezaris  |
+      | Česlovas |
+      | Ema      |
+      | Ęrika    |
+      | Ėla      |
+      | Zita     |
+      | Živilė   |
+    Given I sort admin complainants by last name
+    Given complainant last names should appear in this order:
+      | Živilė   |
+      | Zita     |
+      | Ėla      |
+      | Ęrika    |
+      | Ema      |
+      | Česlovas |
+      | Cezaris  |
+      | Bronius  |
+      | Ądomas   |
+      | Antanas  |
+    Given I sort admin complainants by last name
+    Given complainant last names should appear in this order:
+      | Antanas  |
+      | Ądomas   |
+      | Bronius  |
+      | Cezaris  |
+      | Česlovas |
+      | Ema      |
+      | Ęrika    |
+      | Ėla      |
+      | Zita     |
+      | Živilė   |
+
   Scenario: Complainant detail page opens from list
     Given a complainant exists with first name "Peržiūra" and last name "Testinė"
     Given I visit the admin complainants list page

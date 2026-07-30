@@ -35,7 +35,7 @@ doctrine:
         dql:
             string_functions:
                 JSONB_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Postgresql\JsonbContains
-                LITHUANIAN_SORT_KEY: App\Doctrine\Dql\LithuanianSortKeyFunction
+                LT_ALPHABET_LOWER: App\Doctrine\Dql\LtAlphabetLowerFunction
 
 when@test:
     doctrine:

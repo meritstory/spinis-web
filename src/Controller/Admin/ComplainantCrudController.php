@@ -104,10 +104,10 @@ class ComplainantCrudController extends AbstractCrudController
 
         foreach ($fieldsToSort as $field) {
             $direction = strtoupper((string) ($sort[$field] ?? 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
-            $alias = 'lithuanian_'.$field.'_sort';
+            $alias = $field.'_lt_sort';
 
             $queryBuilder
-                ->addSelect(sprintf('LITHUANIAN_SORT_KEY(entity.%s) AS HIDDEN %s', $field, $alias))
+                ->addSelect(sprintf('LT_ALPHABET_LOWER(entity.%s) AS HIDDEN %s', $field, $alias))
                 ->addOrderBy($alias, $direction);
         }
 

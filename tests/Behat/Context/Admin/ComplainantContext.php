@@ -131,11 +131,22 @@ final class ComplainantContext extends RawMinkContext implements Context
     #[Given('complainants should appear in this order:')]
     public function complainantsShouldAppearInThisOrder(TableNode $complainants): void
     {
-        $firstNames = $this->getClient()->getCrawler()->filter('table.datagrid tbody tr td[data-column="firstName"]');
-        Assert::greaterThan($firstNames->count(), 0, 'Could not find firstName cells in complainants table.');
+        $this->assertComplainantColumnOrder('firstName', $complainants);
+    }
+
+    #[Given('complainant last names should appear in this order:')]
+    public function complainantLastNamesShouldAppearInThisOrder(TableNode $complainants): void
+    {
+        $this->assertComplainantColumnOrder('lastName', $complainants);
+    }
+
+    private function assertComplainantColumnOrder(string $column, TableNode $complainants): void
+    {
+        $cells = $this->getClient()->getCrawler()->filter(sprintf('table.datagrid tbody tr td[data-column="%s"]', $column));
+        Assert::greaterThan($cells->count(), 0, sprintf('Could not find %s cells in complainants table.', $column));
 
         $actualNames = [];
-        foreach ($firstNames as $node) {
+        foreach ($cells as $node) {
             $actualNames[] = trim($node->textContent ?? '');
         }
 

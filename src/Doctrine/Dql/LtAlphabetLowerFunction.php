@@ -10,7 +10,7 @@ use Doctrine\ORM\Query\Parser;
 use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\TokenType;
 
-class LithuanianSortKeyFunction extends FunctionNode
+class LtAlphabetLowerFunction extends FunctionNode
 {
     public Node $fieldExpression;
 
@@ -25,7 +25,7 @@ class LithuanianSortKeyFunction extends FunctionNode
     public function getSql(SqlWalker $sqlWalker): string
     {
         return sprintf(
-            'lithuanian_sort_key(%s)',
+            'lower(normalize(%s, NFC)) COLLATE lt_alphabet',
             $this->fieldExpression->dispatch($sqlWalker),
         );
     }
