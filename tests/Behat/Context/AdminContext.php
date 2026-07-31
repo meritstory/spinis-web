@@ -22,16 +22,32 @@ class AdminContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[Given('/^(admin|specialist) with email "([^"]*)" is created$/')]
-    #[Given('/^(admin|specialist) with email "([^"]*)" and password "([^"]*)" is created$/')]
+    #[Given('/^(admin|specialist|department_head) with email "([^"]*)" is created$/')]
+    #[Given('/^(admin|specialist|department_head) with email "([^"]*)" and password "([^"]*)" is created$/')]
     public function adminIsCreated(
         string $role,
         string $email,
-        string $password = self::ADMIN_DEFAULT_PASSWORD
+        string $password = self::ADMIN_DEFAULT_PASSWORD,
     ): void {
+        $this->createAdmin($role, $email, $password, false);
+    }
+
+    #[Given('/^(admin|specialist|department_head) with email "([^"]*)" is created without two-factor$/')]
+    #[Given('/^(admin|specialist|department_head) with email "([^"]*)" and password "([^"]*)" is created without two-factor$/')]
+    public function adminIsCreatedWithoutTwoFactor(
+        string $role,
+        string $email,
+        string $password = self::ADMIN_DEFAULT_PASSWORD,
+    ): void {
+        $this->createAdmin($role, $email, $password, true);
+    }
+
+    private function createAdmin(string $role, string $email, string $password, bool $withoutTwoFactor): void
+    {
         $roleEnum = match (strtolower($role)) {
             'admin' => RoleEnum::SYSTEM_ADMIN,
             'specialist' => RoleEnum::SPECIALIST,
+            'department_head' => RoleEnum::DEPARTMENT_HEAD,
             default => RoleEnum::fromName(strtoupper($role)),
         };
 
@@ -43,7 +59,7 @@ class AdminContext extends RawMinkContext implements Context
             ->setLastName('Test')
             ->setRoles([$roleEnum->value])
             ->setActive(true)
-            ->setEmailTwoFactorEnabled(true);
+            ->setEmailTwoFactorEnabled(!$withoutTwoFactor);
 
         $admin->setPassword($this->userPasswordHasher->hashPassword($admin, $password));
 
