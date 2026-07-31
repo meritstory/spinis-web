@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class ContactsController extends AbstractController
 {
     public function __construct(
-        #[Autowire(env: 'GOOGLE_MAPS_API_KEY')]
-        private readonly string $googleMapsApiKey,
+        #[Autowire(env: 'GOOGLE_MAPS_BROWSER_API_KEY')]
+        private readonly string $googleMapsBrowserApiKey,
     ) {
     }
 
@@ -22,7 +22,7 @@ class ContactsController extends AbstractController
     public function index(): Response
     {
         return $this->render('contacts/index.html.twig', [
-            'googleMapsApiKey' => $this->googleMapsApiKey,
+            'googleMapsBrowserApiKey' => $this->googleMapsBrowserApiKey,
         ]);
     }
 }

@@ -17,6 +17,9 @@ export default class extends Controller {
 
     connect()
     {
+        if (!this.apiKeyValue || this.apiKeyValue.trim() === '') {
+            return;
+        }
         this.loadGoogleMapsScript()
             .then(() => this.renderMap())
             .catch(() => {
