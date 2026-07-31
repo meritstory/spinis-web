@@ -309,3 +309,30 @@ privacy_page:
     heading: Privatumo politika
     description: 'Sužinokite, kaip mes saugome jūsų duomenis ir užtikriname privatumą naudojantis sistema.'
     updated_at_label: 'Paskutinio atnaujinimo data:'
+
+contacts_page:
+    title: Kontaktai
+    breadcrumb:
+        current: Kontaktai
+    heading: Kontaktai
+    description: 'Susisiekite su mumis dėl pagalbos ar klausimų apie sistemą.'
+    info:
+        heading: Kontaktinė informacija
+        address:
+            label: Adresas
+            value: 'A. Juozapavičiaus g. 9, Vilnius'
+        email:
+            label: 'El. paštas'
+            value: info@skundai.lt
+        phone:
+            label: 'Tel. numeris'
+            value: '+370 5 261 3777'
+        hours:
+            label: 'Darbo valandos'
+            value: 'I–V 8:00–17:00'
+    map:
+        aria_label: 'Žemėlapis su pažymėta įstaigos vietove'
+    questions:
+        heading: Turite klausimų?
+        description: 'Skaitykite dažniausiai užduodamus klausimus – ten rasite atsakymus į daugumą techninių ir teisinių užklausų.'
+        cta: 'Peržiūrėti D.U.K.'
