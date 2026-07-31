@@ -1,0 +1,160 @@
+.form-fieldset.has-fieldset-error {
+    border: none;
+    box-shadow: none;
+}
+
+.user-menu-wrapper .user-details .user-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    line-height: 1.25;
+    margin-inline-start: 0.375rem;
+    min-width: 0;
+}
+
+.user-menu-wrapper :is(.user-details, .dropdown-menu .dropdown-user-details) .user-identity .user-name {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-color, #212529);
+    margin-inline-start: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu-wrapper :is(.user-details, .dropdown-menu .dropdown-user-details) .user-identity .user-role {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--text-muted, #6c757d);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-menu-wrapper .dropdown-menu .dropdown-user-details > div:last-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-menu-wrapper .dropdown-menu .dropdown-user-details .user-identity {
+    margin-block-start: 0.125rem;
+}
+
+body.ea {
+    --color-primary: #216b4c;
+    --color-primary-rgb: 33, 107, 76;
+    --color-surface-green: #ecf6f1;
+
+    --color-status-info-text: #0668d6;
+    --color-status-info-bg: #e6f0fb;
+    --color-status-success-text: var(--color-primary);
+    --color-status-success-bg: var(--color-surface-green);
+    --color-status-warning-text: #ac560c;
+    --color-status-warning-bg: #ffeedf;
+    --color-status-danger-text: #ca2113;
+    --color-status-danger-bg: #fee2e2;
+    --color-status-neutral-text: #637381;
+    --color-status-neutral-bg: #f4f6f8;
+
+    --pagination-active-bg: var(--color-primary);
+    --pagination-active-color: #ffffff;
+    --sidebar-menu-active-item-color: var(--color-primary);
+    --sidebar-menu-active-item-bg: var(--color-surface-green);
+    --sidebar-menu-active-item-bg-dark: rgba(var(--color-primary-rgb), 0.16);
+    --table-thead-sorted-marker-color: var(--color-primary);
+    --form-type-check-input-checked-bg: var(--color-primary);
+}
+
+body.ea.ea-dark-scheme {
+    --sidebar-menu-active-item-bg: var(--sidebar-menu-active-item-bg-dark);
+}
+
+.main-header #header-logo a .ea-dashboard-logo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    border-inline-start: 0.1875rem solid var(--color-primary);
+    padding-inline-start: 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-transform: uppercase;
+}
+
+.main-header #header-logo a .ea-dashboard-logo__accent {
+    color: var(--color-primary);
+}
+
+.main-header #header-logo a .ea-dashboard-logo__line {
+    color: var(--text-color, #212529);
+}
+
+#modal-filters .btn-primary {
+    background: var(--color-primary);
+    border-color: #1a5540;
+}
+
+#modal-filters .btn-primary:hover,
+#modal-filters .btn-primary:focus-visible {
+    background: #1a5540;
+    border-color: #1a5540;
+}
+
+#modal-filters .filter-heading a {
+    color: var(--color-primary);
+}
+
+.ea-complaint-number {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.ea-complaint-badge {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    min-height: 1.5rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1rem;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.ea-complaint-badge--blue {
+    --badge-text: var(--color-status-info-text);
+    --badge-bg: var(--color-status-info-bg);
+}
+
+.ea-complaint-badge--green {
+    --badge-text: var(--color-status-success-text);
+    --badge-bg: var(--color-status-success-bg);
+}
+
+.ea-complaint-badge--orange {
+    --badge-text: var(--color-status-warning-text);
+    --badge-bg: var(--color-status-warning-bg);
+}
+
+.ea-complaint-badge--red {
+    --badge-text: var(--color-status-danger-text);
+    --badge-bg: var(--color-status-danger-bg);
+}
+
+.ea-complaint-badge--gray {
+    --badge-text: var(--color-status-neutral-text);
+    --badge-bg: var(--color-status-neutral-bg);
+}
+
+.ea-complaint-badge--blue,
+.ea-complaint-badge--green,
+.ea-complaint-badge--orange,
+.ea-complaint-badge--red,
+.ea-complaint-badge--gray {
+    color: var(--badge-text);
+    background-color: var(--badge-bg);
+}
