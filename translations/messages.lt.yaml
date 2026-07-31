@@ -347,3 +347,11 @@ about_page:
         heading: Turite skundą?
         description: 'Pradėkite pildyti formą dabar – tai kelių žingsnių nesudėtingas procesas.'
         button: Pateikti skundą
+
+privacy_page:
+    title: Privatumo politika
+    breadcrumb:
+        current: Privatumo politika
+    heading: Privatumo politika
+    description: 'Sužinokite, kaip mes saugome jūsų duomenis ir užtikriname privatumą naudojantis sistema.'
+    updated_at_label: 'Paskutinio atnaujinimo data:'

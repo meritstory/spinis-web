@@ -347,3 +347,11 @@ about_page:
         heading: Have a complaint?
         description: 'Start filling out the form now – it''s a simple, multi-step process.'
         button: Submit a complaint
+
+privacy_page:
+    title: Privacy Policy
+    breadcrumb:
+        current: Privacy Policy
+    heading: Privacy Policy
+    description: 'Learn how we protect your data and ensure privacy while using the system.'
+    updated_at_label: 'Last updated:'
