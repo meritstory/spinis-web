@@ -5,15 +5,10 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Entity\Complainant;
-use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
@@ -39,7 +34,7 @@ class ComplainantCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_INDEX, 'menu.complainants')
             ->setPageTitle(Crud::PAGE_DETAIL, 'complainant.page.detail')
             ->setSearchFields(['firstName', 'lastName'])
-            ->setDefaultSort(['lastName' => 'ASC'])
+            ->setDefaultSort(['createdAt' => 'DESC'])
             ->setDefaultRowAction(Action::DETAIL);
     }
 
@@ -83,36 +78,11 @@ class ComplainantCrudController extends AbstractCrudController
             ->hideOnIndex();
         yield DateTimeField::new('createdAt')
             ->setLabel('complainant.field.created_at')
-            ->hideOnForm();
+            ->hideOnForm()
+            ->hideOnIndex();
         yield DateTimeField::new('updatedAt')
             ->setLabel('complainant.field.updated_at')
-            ->hideOnForm();
-    }
-
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
-        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
-
-        $sort = $searchDto->getSort();
-        $fieldsToSort = array_values(array_intersect(array_keys($sort), ['lastName', 'firstName']));
-
-        if ($fieldsToSort === []) {
-            $fieldsToSort = ['lastName'];
-        }
-
-        $queryBuilder->resetDQLPart('orderBy');
-
-        foreach ($fieldsToSort as $field) {
-            $direction = strtoupper((string) ($sort[$field] ?? 'ASC')) === 'DESC' ? 'DESC' : 'ASC';
-            $alias = $field.'_lt_sort';
-
-            $queryBuilder
-                ->addSelect(sprintf('LT_ALPHABET_LOWER(entity.%s) AS HIDDEN %s', $field, $alias))
-                ->addOrderBy($alias, $direction);
-        }
-
-        $queryBuilder->addOrderBy('entity.id', 'ASC');
-
-        return $queryBuilder;
+            ->hideOnForm()
+            ->hideOnIndex();
     }
 }

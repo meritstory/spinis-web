@@ -75,17 +75,6 @@ Feature: Admin complainants
     Given a complainant exists with first name "Test" and last name "Zita"
     Given a complainant exists with first name "Test" and last name "Živilė"
     Given I visit the admin complainants list page
-    Given complainant last names should appear in this order:
-      | Antanas  |
-      | Ądomas   |
-      | Bronius  |
-      | Cezaris  |
-      | Česlovas |
-      | Ema      |
-      | Ęrika    |
-      | Ėla      |
-      | Zita     |
-      | Živilė   |
     Given I sort admin complainants by last name
     Given complainant last names should appear in this order:
       | Živilė   |
@@ -110,6 +99,52 @@ Feature: Admin complainants
       | Ėla      |
       | Zita     |
       | Živilė   |
+    Given I sort admin complainants by last name
+    Given complainant last names should appear in this order:
+      | Živilė   |
+      | Zita     |
+      | Ėla      |
+      | Ęrika    |
+      | Ema      |
+      | Česlovas |
+      | Cezaris  |
+      | Bronius  |
+      | Ądomas   |
+      | Antanas  |
+
+  Scenario: Complainants are sorted with Y between Į and J regardless of letter case
+    Given a complainant exists with first name "Ignas" and last name "Test"
+    Given a complainant exists with first name "Įrangas" and last name "Test"
+    Given a complainant exists with first name "yga" and last name "Test"
+    Given a complainant exists with first name "Jonas" and last name "Test"
+    Given a complainant exists with first name "Saulius" and last name "Test"
+    Given a complainant exists with first name "šarūnas" and last name "Test"
+    Given a complainant exists with first name "Urtė" and last name "Test"
+    Given a complainant exists with first name "Ųla" and last name "Test"
+    Given a complainant exists with first name "Ūla" and last name "Test"
+    Given I visit the admin complainants list page
+    Given I sort admin complainants by first name
+    Given complainants should appear in this order:
+      | Ūla     |
+      | Ųla     |
+      | Urtė    |
+      | šarūnas |
+      | Saulius |
+      | Jonas   |
+      | yga     |
+      | Įrangas |
+      | Ignas   |
+    Given I sort admin complainants by first name
+    Given complainants should appear in this order:
+      | Ignas   |
+      | Įrangas |
+      | yga     |
+      | Jonas   |
+      | Saulius |
+      | šarūnas |
+      | Urtė    |
+      | Ųla     |
+      | Ūla     |
 
   Scenario: Complainant detail page opens from list
     Given a complainant exists with first name "Peržiūra" and last name "Testinė"
