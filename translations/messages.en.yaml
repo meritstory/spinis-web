@@ -1,10 +1,18 @@
 app:
     name: 'Complaint intake and processing information system'
     short_name: SPINIS
+    admin_logo:
+        accent: COMPLAINT
+        line2: HANDLING
+        line3: SYSTEM
+
+paginator:
+    counter: '<strong>%start%–%end%</strong> of %total% entries'
 
 menu:
     admins: Accounts
     complainants: Complainants
+    complaints: Complaints
     faq: FAQ
     documents: Documents
     links: Links
@@ -274,6 +282,44 @@ document:
         privacy_policy: 'Privacy policy'
         about_system: 'About the system'
 
+complaint:
+    label:
+        singular: Complaint
+    page:
+        detail: Complaint
+    field:
+        number: 'Complaint no.'
+        institution: Institution
+        type: 'Complaint type'
+        created_at: Created
+        term: Deadline
+        status: Status
+        specialist: Specialist
+    number:
+        not_blank: 'Enter the complaint number.'
+        unique: 'This complaint number is already in use.'
+    institution:
+        not_blank: 'Enter the institution name.'
+    specialist:
+        invalid_role: 'Only a specialist can be assigned to this complaint.'
+    type:
+        invalid: 'Invalid complaint type.'
+        patient_rights: 'Patient rights'
+        damage_compensation: 'Damage compensation'
+    status:
+        invalid: 'Invalid complaint status.'
+        submitted: Submitted
+        returned: 'Returned for clarification'
+        updated: Updated
+        in_review: In review
+        awaiting_expert: 'Awaiting expert opinions'
+        resolved: Reviewed
+    term:
+        invalid: 'Invalid deadline status.'
+        on_time: On time
+        overdue: Overdue
+        approaching: 'Approaching deadline'
+
 faq_page:
     title: Frequently Asked Questions
     breadcrumb:
@@ -284,3 +330,49 @@ faq_page:
         heading: Still have questions?
         description: 'If you haven''t found an answer to your question, contact our specialist for help.'
         cta: Call a specialist
+
+about_page:
+    title: About the System
+    breadcrumb:
+        current: About the System
+    heading: About the System
+    description: 'Learn more about the complaint handling system and how it works.'
+    who_we_are:
+        heading: Who are we?
+        description: 'This is the official complaint management platform, built to simplify interactions between citizens and government institutions. Our system lets you submit complaints securely, track their review progress in real time, and receive official responses electronically. We believe that transparent complaint handling is one of the key conditions for improving public services.'
+    how_it_works:
+        heading: How does the system work?
+        step1: Choose to submit a new complaint.
+        step2: Select the complaint type and provide your personal information.
+        step3: Describe the situation and attach related documents.
+        step4: Review the completed complaint and submit it.
+        step5: Track the progress of the complaint review.
+        step6: If needed, supplement the complaint with missing information.
+        step7_prefix: 'Receive the findings within '
+        step7_duration: 60 working days.
+    goals:
+        heading: Our goals
+        transparency:
+            title: Transparency
+            description: 'We ensure that every complaint is registered and reviewed through the prescribed legal process.'
+        efficiency:
+            title: Efficiency
+            description: 'We shorten complaint referral and review processes by using digital tools.'
+        accessibility:
+            title: Accessibility
+            description: 'We give all citizens of Lithuania the ability to submit complaints remotely.'
+    legal_basis:
+        heading: Legal basis
+        description: 'The system''s operation is based on the Law on Public Administration of the Republic of Lithuania, the Law on the Rights of Patients and Compensation of Damage to Their Health, and other legal acts governing the handling of individuals'' requests and complaints by public administration entities. All your data is processed in accordance with the General Data Protection Regulation (GDPR).'
+    cta:
+        heading: Have a complaint?
+        description: 'Start filling out the form now – it''s a simple, multi-step process.'
+        button: Submit a complaint
+
+privacy_page:
+    title: Privacy Policy
+    breadcrumb:
+        current: Privacy Policy
+    heading: Privacy Policy
+    description: 'Learn how we protect your data and ensure privacy while using the system.'
+    updated_at_label: 'Last updated:'

@@ -1,10 +1,18 @@
 app:
     name: 'Skundų priėmimo ir nagrinėjimo informacinė sistema'
     short_name: SPINIS
+    admin_logo:
+        accent: SKUNDŲ
+        line2: NAGRINĖJIMO
+        line3: SISTEMA
+
+paginator:
+    counter: '<strong>%start%–%end%</strong> iš %total% įrašų'
 
 menu:
     admins: Paskyros
     complainants: Pareiškėjai
+    complaints: Skundai
     faq: DUK
     documents: Dokumentai
     links: Nuorodos
@@ -274,6 +282,44 @@ document:
         privacy_policy: 'Privatumo politika'
         about_system: 'Apie sistemą'
 
+complaint:
+    label:
+        singular: Skundas
+    page:
+        detail: Skundas
+    field:
+        number: 'Skundo nr.'
+        institution: Įstaiga
+        type: 'Skundo tipas'
+        created_at: Sukurta
+        term: Terminas
+        status: Būsena
+        specialist: Specialistas
+    number:
+        not_blank: 'Įveskite skundo numerį.'
+        unique: 'Skundo numeris jau naudojamas.'
+    institution:
+        not_blank: 'Įveskite įstaigos pavadinimą.'
+    specialist:
+        invalid_role: 'Šiam skundui galima priskirti tik specialistą.'
+    type:
+        invalid: 'Neteisingas skundo tipas.'
+        patient_rights: 'Pacientų teisės'
+        damage_compensation: 'Žalos atlyginimas'
+    status:
+        invalid: 'Neteisinga skundo būsena.'
+        submitted: Pateiktas
+        returned: 'Grąžintas tikslinti'
+        updated: Atnaujintas
+        in_review: Nagrinėjamas
+        awaiting_expert: 'Laukia ekspertų išvadų'
+        resolved: Išnagrinėtas
+    term:
+        invalid: 'Neteisinga termino būsena.'
+        on_time: Laiku
+        overdue: Vėluoja
+        approaching: 'Artėja prie termino'
+
 faq_page:
     title: Dažniausiai užduodami klausimai
     breadcrumb:
@@ -284,3 +330,49 @@ faq_page:
         heading: Vis dar turite klausimų?
         description: 'Jei neradote atsakymo į savo klausimą, susisiekite su mūsų specialistu ir gaukite pagalbą.'
         cta: Skambinti specialistui
+
+about_page:
+    title: Apie sistemą
+    breadcrumb:
+        current: Apie sistemą
+    heading: Apie sistemą
+    description: 'Sužinokite daugiau apie skundų nagrinėjimo sistemą ir jos veikimo principus.'
+    who_we_are:
+        heading: Kas mes esame?
+        description: 'Tai oficiali skundų valdymo platforma, sukurta siekiant supaprastinti piliečių ir valstybės institucijų sąveiką. Mūsų sistema leidžia saugiai pateikti skundus, stebėti jų nagrinėjimo eigą realiu laiku bei gauti oficialius atsakymus elektroniniu būdu. Mes tikime, kad skaidrus skundų nagrinėjimas yra viena iš svarbiausių sąlygų gerinant viešąsias paslaugas.'
+    how_it_works:
+        heading: Kaip veikia sistema?
+        step1: Pasirinkite naujo skundo teikimą.
+        step2: Pasirinkite skundo tipą, nurodykite asmeninę informaciją.
+        step3: Aprašykite situaciją ir pridėkite susijusius dokumentus.
+        step4: Peržiūrėkite užpildytą skundą ir pateikite.
+        step5: Sekite skundo nagrinėjimo eigą.
+        step6: Esant reikalui, papildykite skundą trūkstama informacija.
+        step7_prefix: 'Gaukite išvadas per '
+        step7_duration: 60 darbo dienų.
+    goals:
+        heading: Mūsų tikslai
+        transparency:
+            title: Skaidrumas
+            description: 'Užtikriname, kad kiekvienas skundas būtų užregistruotas ir nagrinėjamas numatyto teisinio proceso keliu.'
+        efficiency:
+            title: Efektyvumas
+            description: 'Trumpiname skundų perdavimo ir nagrinėjimo procesus naudodami skaitmenizuotus įrankius.'
+        accessibility:
+            title: Prieinamumas
+            description: 'Sudarome sąlygas visiems Lietuvos piliečiams galimybę pateikti skundus nuotoliniu būdu.'
+    legal_basis:
+        heading: Teisinė bazė
+        description: 'Sistemos veikla yra grindžiama Lietuvos Respublikos Viešojo administravimo įstatymu, Pacientų teisių ir žalos sveikatai atlyginimo įstatymu bei kitais teisės aktais, reglamentuojančiais asmenų prašymų ir skundų nagrinėjimą viešojo administravimo subjektuose. Visi jūsų duomenys tvarkomi laikantis Bendrojo duomenų apsaugos reglamento (BDAR).'
+    cta:
+        heading: Turite skundą?
+        description: 'Pradėkite pildyti formą dabar – tai kelių žingsnių nesudėtingas procesas.'
+        button: Pateikti skundą
+
+privacy_page:
+    title: Privatumo politika
+    breadcrumb:
+        current: Privatumo politika
+    heading: Privatumo politika
+    description: 'Sužinokite, kaip mes saugome jūsų duomenis ir užtikriname privatumą naudojantis sistema.'
+    updated_at_label: 'Paskutinio atnaujinimo data:'

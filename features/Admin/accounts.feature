@@ -90,8 +90,8 @@ Feature: Admin account management
     Then I should be on the admin login page
     When I submit the admin login form with email "active-rolechange@example.com" and password "secret"
     And I confirm admin login with the latest authentication code for "active-rolechange@example.com"
-    Given I should be on the admin home page
-    And admin "active-rolechange@example.com" should have role "department_head"
+    Then I should be on the admin complaints list page
+    And I should see "Skyriaus vedėjas"
 
   Scenario: Deactivated account during two-factor login is kicked out
     When I visit the logout page

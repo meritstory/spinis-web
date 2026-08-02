@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'about_page.title'|trans }}{% endblock %}
+
+{% block body %}
+    <main>
+        <section class="pt-8 pb-16 bg-page">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <div class="mx-auto max-w-[1140px]">
+                {% include '_breadcrumb.html.twig' with {crumbs: [{label: 'about_page.breadcrumb.current'|trans}]} %}
+
+
+                    <h1 class="mt-8 mb-5 text-heading-h1 font-bold">{{ 'about_page.heading'|trans }}</h1>
+                    <p class="text-body-lg text-text-primary">{{ 'about_page.description'|trans }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="pt-20 pb-10 bg-white">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <div class="mx-auto max-w-[1140px]">
+                    <h2 class="mb-5 text-heading-h2 font-bold">{{ 'about_page.who_we_are.heading'|trans }}</h2>
+                    <p class="text-body-lg text-text-primary">{{ 'about_page.who_we_are.description'|trans }}</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-[1140px] border-t border-light"></div>
+
+        <section class="pt-8 pb-12 bg-white">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <div class="mx-auto max-w-[1140px]">
+                    <h2 class="mb-4 text-heading-h2 font-bold">{{ 'about_page.how_it_works.heading'|trans }}</h2>
+                    <ol class="flex flex-col gap-5">
+                        {% for step in 1..7 %}
+                            <li class="flex items-start gap-4">
+                                <span aria-hidden="true" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-light text-body-md font-semibold text-primary-dark">{{ step }}</span>
+                                <p class="mt-1 text-body-lg text-text-primary">
+                                    {% if step == 7 %}
+                                        {{ 'about_page.how_it_works.step7_prefix'|trans }}<strong>{{ 'about_page.how_it_works.step7_duration'|trans }}</strong>
+                                    {% else %}
+                                        {{ ('about_page.how_it_works.step' ~ step)|trans }}
+                                    {% endif %}
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-[1140px] border-t border-light"></div>
+
+        <section class="pt-8 pb-12 bg-white">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <div class="mx-auto max-w-[1140px]">
+                    <h2 class="mb-4 text-heading-h2 font-bold">{{ 'about_page.goals.heading'|trans }}</h2>
+
+                    <div class="grid grid-cols-3 gap-6">
+                        <article class="rounded-md border border-border-default bg-white px-6 py-8">
+                            <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-subtle">
+                                <img class="h-6 w-6 object-contain" src="{{ asset('images/goal-transparency.svg') }}" alt="">
+                            </div>
+                            <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'about_page.goals.transparency.title'|trans }}</h3>
+                            <p class="text-body-lg text-gray-600">{{ 'about_page.goals.transparency.description'|trans }}</p>
+                        </article>
+
+                        <article class="rounded-md border border-border-default bg-white px-6 py-8">
+                            <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-subtle">
+                                <img class="h-6 w-6 object-contain" src="{{ asset('images/goal-efficiency.svg') }}" alt="">
+                            </div>
+                            <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'about_page.goals.efficiency.title'|trans }}</h3>
+                            <p class="text-body-lg text-gray-600">{{ 'about_page.goals.efficiency.description'|trans }}</p>
+                        </article>
+
+                        <article class="rounded-md border border-border-default bg-white px-6 py-8">
+                            <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-subtle">
+                                <img class="h-6 w-6 object-contain" src="{{ asset('images/goal-accessibility.svg') }}" alt="">
+                            </div>
+                            <h3 class="mb-4 text-heading-h4 font-semibold">{{ 'about_page.goals.accessibility.title'|trans }}</h3>
+                            <p class="text-body-lg text-gray-600">{{ 'about_page.goals.accessibility.description'|trans }}</p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="mx-auto max-w-[1140px] border-t border-light"></div>
+
+        <section class="pb-20 pt-8 bg-white">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <div class="mx-auto max-w-[1140px]">
+                    <h2 class="mb-5 text-heading-h2 font-bold">{{ 'about_page.legal_basis.heading'|trans }}</h2>
+                    <p class="text-body-lg text-text-primary">{{ 'about_page.legal_basis.description'|trans }}</p>
+                </div>
+            </div>
+        </section>
+
+        {% include '_cta_section.html.twig' with {
+            heading: 'about_page.cta.heading'|trans,
+            description: 'about_page.cta.description'|trans,
+            cta: 'about_page.cta.button'|trans,
+            sectionClass: 'py-16 bg-page',
+        } %}
+    </main>
+{% endblock %}

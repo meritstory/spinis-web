@@ -1,0 +1,17 @@
+<div class="list-pagination">
+    <div class="list-pagination-counter">
+        {% if render_detailed_pagination ?? true %}
+            {{ 'paginator.counter'|trans({
+                '%start%': paginator.rangeFirstResultNumber,
+                '%end%': paginator.rangeLastResultNumber,
+                '%total%': paginator.numResults,
+            })|raw }}
+        {% endif %}
+    </div>
+
+    <twig:ea:Pagination
+        paginator="{{ paginator }}"
+        :showResultsCount="false"
+        :showPageNumbers="render_detailed_pagination ?? true"
+    />
+</div>

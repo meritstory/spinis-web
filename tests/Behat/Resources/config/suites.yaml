@@ -5,6 +5,7 @@ default:
                 # the list must be in alphabetical order for easier conflict resolution
                 - 'App\Tests\Behat\Context\Admin\AccountContext'
                 - 'App\Tests\Behat\Context\Admin\ComplainantContext'
+                - 'App\Tests\Behat\Context\Admin\ComplaintContext'
                 - 'App\Tests\Behat\Context\Admin\DocumentContext'
                 - 'App\Tests\Behat\Context\Admin\FaqContext'
                 - 'App\Tests\Behat\Context\Admin\FileContext'
@@ -12,7 +13,6 @@ default:
                 - 'App\Tests\Behat\Context\Admin\LoginContext'
                 - 'App\Tests\Behat\Context\Admin\SettingsContext'
                 - 'App\Tests\Behat\Context\Hook\DoctrineORMContext'
-                - 'App\Tests\Behat\Context\Transform\AdminContext'
                 - 'App\Tests\Behat\Context\Viisp\LoginContext'
                 - 'App\Tests\Behat\Context\FeatureContext'
                 - 'App\Tests\Behat\Context\HomeContext'
