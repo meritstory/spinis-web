@@ -11,6 +11,7 @@ paginator:
 
 menu:
     admins: Paskyros
+    complainants: Pareiškėjai
     complaints: Skundai
     faq: DUK
     documents: Dokumentai
@@ -226,6 +227,26 @@ setting:
         create: 'Sukurti nustatymą'
         continue: 'Tęsti'
     all_created: 'Visi galimi nustatymai jau sukurti.'
+
+complainant:
+    label:
+        singular: Pareiškėjas
+    field:
+        first_name: Vardas
+        last_name: Pavardė
+        legal_entity: 'Juridinis asmuo'
+        personal_code: 'Asmens kodas'
+        company_code: 'Įmonės kodas'
+        company_name: 'Įmonės pavadinimas'
+        email: 'El. paštas'
+        phone: Telefonas
+        address: Adresas
+        created_at: 'Sukūrimo data'
+        updated_at: 'Atnaujinimo data'
+    page:
+        detail: Pareiškėjas
+    action:
+        view: Peržiūrėti
 
 viisp:
     login_submit:

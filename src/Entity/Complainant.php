@@ -38,11 +38,11 @@ class Complainant implements UserInterface, \Stringable
     private ?string $companyName = null;
 
     #[Assert\NotBlank(message: 'complainant.first_name.not_blank')]
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, options: ['collation' => 'lt_alphabet'])]
     private string $firstName = '';
 
     #[Assert\NotBlank(message: 'complainant.last_name.not_blank')]
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, options: ['collation' => 'lt_alphabet'])]
     private string $lastName = '';
 
     #[ORM\Column(length: 255)]

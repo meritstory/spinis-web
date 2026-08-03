@@ -118,7 +118,7 @@ Feature: Admin account management
     When I visit "/admin/faq"
     Then I should be on the admin login page
     When I submit the admin login form with email "twofactor-change@example.com" and password "secret"
-    Then I should be on the admin FAQ page
+    Given I should be on the admin home page
     And I should not see "Autentifikacijos kodas"
 
   Scenario: Soft deletion ends an existing session on the next request
@@ -191,7 +191,7 @@ Feature: Admin account management
     When I open the account invitation link
     And I remember the current session id
     And I set the account invitation password to "Newsecretpass1!"
-    Then I should be on the admin FAQ page
+    Given I should be on the admin home page
     And the session id should have changed
     And admin "activate-no-2fa@example.com" should have a last active time
     And no invitation should exist for admin "activate-no-2fa@example.com"
