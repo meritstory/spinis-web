@@ -376,3 +376,30 @@ privacy_page:
     heading: Privacy Policy
     description: 'Learn how we protect your data and ensure privacy while using the system.'
     updated_at_label: 'Last updated:'
+
+contacts_page:
+    title: Contacts
+    breadcrumb:
+        current: Contacts
+    heading: Contacts
+    description: 'Contact us for help or questions about the system.'
+    info:
+        heading: Contact Information
+        address:
+            label: Address
+            value: 'A. Juozapavičiaus g. 9, Vilnius'
+        email:
+            label: Email
+            value: info@skundai.lt
+        phone:
+            label: Phone number
+            value: '+370 5 261 3777'
+        hours:
+            label: Working hours
+            value: 'Mon–Fri 8:00 AM–5:00 PM'
+    map:
+        aria_label: 'Map showing the marked office location'
+    questions:
+        heading: Have questions?
+        description: 'Read the frequently asked questions – there you will find answers to most technical and legal queries.'
+        cta: 'View FAQ'

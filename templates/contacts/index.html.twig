@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'contacts_page.title'|trans }}{% endblock %}
+
+{% block body %}
+    <main>
+        <section class="pt-8 pb-16 bg-page">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <div class="mx-auto max-w-[1140px]">
+                    {% include '_breadcrumb.html.twig' with {crumbs: [{label: 'contacts_page.breadcrumb.current'|trans}]} %}
+
+                    <h1 class="mt-8 mb-5 text-heading-h1 font-bold">{{ 'contacts_page.heading'|trans }}</h1>
+                    <p class="text-body-lg text-text-secondary">{{ 'contacts_page.description'|trans }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 bg-white">
+            <div class="mx-auto max-w-[1200px] px-6">
+                <div class="mx-auto max-w-[1140px]">
+                    <div class="grid grid-cols-1 gap-10 md:grid-cols-[1fr_558px]">
+                        <div>
+                            <h2 class="mb-8 text-heading-h2 font-bold">{{ 'contacts_page.info.heading'|trans }}</h2>
+                            <ul class="flex flex-col gap-6">
+                                <li class="flex items-start gap-3">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pale">
+                                        <img src="{{ asset('images/contact-address.svg') }}" width="20" height="20" alt="" aria-hidden="true">
+                                    </div>
+                                    <div>
+                                        <p class="text-body-md font-semibold uppercase text-text-primary">{{ 'contacts_page.info.address.label'|trans }}</p>
+                                        <p class="text-body-md text-text-primary">{{ 'contacts_page.info.address.value'|trans }}</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pale">
+                                        <img src="{{ asset('images/contact-email.svg') }}" width="20" height="20" alt="" aria-hidden="true">
+                                    </div>
+                                    <div>
+                                        <p class="text-body-md font-semibold uppercase text-text-primary">{{ 'contacts_page.info.email.label'|trans }}</p>
+                                        <a href="mailto:{{ 'contacts_page.info.email.value'|trans }}" class="text-body-md text-text-primary hover:underline">{{ 'contacts_page.info.email.value'|trans }}</a>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pale">
+                                        <img src="{{ asset('images/contact-phone.svg') }}" width="20" height="20" alt="" aria-hidden="true">
+                                    </div>
+                                    <div>
+                                        <p class="text-body-md font-semibold uppercase text-text-primary">{{ 'contacts_page.info.phone.label'|trans }}</p>
+                                        <a href="tel:{{ 'contacts_page.info.phone.value'|trans|replace({' ': ''}) }}" class="text-body-md text-text-primary hover:underline">{{ 'contacts_page.info.phone.value'|trans }}</a>
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pale">
+                                        <img src="{{ asset('images/contact-hours.svg') }}" width="20" height="20" alt="" aria-hidden="true">
+                                    </div>
+                                    <div>
+                                        <p class="text-body-md font-semibold uppercase text-text-primary">{{ 'contacts_page.info.hours.label'|trans }}</p>
+                                        <p class="text-body-md text-text-primary">{{ 'contacts_page.info.hours.value'|trans }}</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div
+                            class="mx-auto h-[558px] w-[558px] max-w-full overflow-hidden rounded-lg border border-border-default bg-subtle"
+                            data-controller="contacts-map"
+                            data-contacts-map-api-key-value="{{ googleMapsBrowserApiKey }}"
+                            data-contacts-map-lat-value="54.6921456"
+                            data-contacts-map-lng-value="25.2841948"
+                            data-contacts-map-address-icon-value="{{ asset('images/contact-address.svg') }}"
+                        >
+                            <div data-contacts-map-target="map" class="h-full w-full" hidden role="img" aria-label="{{ 'contacts_page.map.aria_label'|trans }}"></div>
+                            <div data-contacts-map-target="fallback" class="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center">
+                                <img src="{{ asset('images/contact-address.svg') }}" width="24" height="24" alt="" aria-hidden="true">
+                                <p class="text-body-md text-text-secondary">{{ 'contacts_page.info.address.value'|trans }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {% include '_cta_section.html.twig' with {
+            heading: 'contacts_page.questions.heading'|trans,
+            description: 'contacts_page.questions.description'|trans,
+            cta: 'contacts_page.questions.cta'|trans,
+            href: path('faq'),
+        } %}
+    </main>
+{% endblock %}
