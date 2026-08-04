@@ -9,6 +9,8 @@ use App\Repository\AdminRepository;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -68,6 +70,29 @@ final class FileContext extends RawMinkContext implements Context
     public function iDownloadStoredFile(string $uuid): void
     {
         $this->getClient()->request('GET', '/files/'.$uuid);
+    }
+
+    #[When('I download stored file :name uploaded by admin :email')]
+    public function iDownloadStoredFileUploadedByAdmin(string $name, string $email): void
+    {
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+
+        $file = $this->entityManager->getRepository(StoredFile::class)->findOneBy([
+            'originalName' => $name,
+            'uploadedByAdmin' => $admin,
+        ]);
+        Assert::notNull($file);
+        Assert::notNull($file->getId());
+
+        $this->getClient()->request('GET', '/files/'.$file->getId()->toRfc4122());
+    }
+
+    #[Then('the last response should be a file_s3 download')]
+    public function theLastResponseShouldBeAFileS3Download(): void
+    {
+        $path = $this->getClient()->getRequest()->getPathInfo();
+        Assert::true((bool) preg_match('#^/files/[0-9a-f-]{36}$#', $path));
     }
 
     #[Given('the downloaded stored file content should be :content')]

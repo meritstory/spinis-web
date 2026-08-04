@@ -286,15 +286,66 @@ complaint:
     label:
         singular: Complaint
     page:
-        detail: Complaint
+        edit_heading: 'Complaint %number%'
+    fieldset:
+        institution: 'Institution information'
+        specialist: 'Assigned specialist'
+        institution_documents: 'Copy submitted to institution(s) and institution response(s)'
+        complaint_info: 'Complaint information'
+        circumstances: 'Complaint circumstances'
+        history: 'Complaint review history'
+        patient_info: 'Patient information'
+        patient_document: 'Copy of patient identity document'
+        representative_info: 'Patient representative information'
+        representation_documents: 'Documents proving representation'
+        other_info: 'Other information'
+        response: Response
+    action:
+        cancel_changes: 'Cancel changes'
+        save_and_continue: 'Save and continue editing'
+        save: Save
+        supplement: 'Supplement complaint'
+        submit_response: 'Submit response to patient'
+    confirm:
+        cancel_changes: 'Are you sure you want to cancel your changes?'
+        save: 'Are you sure you want to save your changes?'
+        no: No
+        yes: Yes
+    flash:
+        saved: 'Changes saved.'
+    submitter:
+        patient: Patient
+        representative: 'Submitted by representative'
+    attachments:
+        empty: 'No documents.'
+        download: Download
+        column:
+            file: File
+            type: Type
+            date: Date
+            size: Size
+    history:
+        empty: 'No history entries.'
     field:
         number: 'Complaint no.'
+        number_short: No.
         institution: Institution
-        type: 'Complaint type'
+        institution_title: 'First healthcare institution name'
+        institution_legal_code: 'First healthcare institution legal entity code'
+        type: Type
         created_at: Created
+        submitted_at: 'Submission date'
         term: Deadline
+        term_date: 'Deadline date'
         status: Status
         specialist: Specialist
+        patient_type: 'Patient type'
+        complaint_date: 'Complaint date'
+        event_date: 'Event date'
+        related_specialists: 'Related specialist(s)'
+        description: 'Complaint description'
+        disagreement: 'Institution information you disagree with'
+        expected_result: 'Expected outcome'
     number:
         not_blank: 'Enter the complaint number.'
         unique: 'This complaint number is already in use.'
@@ -304,14 +355,14 @@ complaint:
         invalid_role: 'Only a specialist can be assigned to this complaint.'
     type:
         invalid: 'Invalid complaint type.'
-        patient_rights: 'Patient rights'
-        damage_compensation: 'Damage compensation'
+        patient_rights: 'Complaint to the patient rights determination service'
+        damage_compensation: 'Damage compensation complaint'
     status:
         invalid: 'Invalid complaint status.'
         submitted: Submitted
         returned: 'Returned for clarification'
         updated: Updated
-        in_review: In review
+        in_review: 'In review'
         awaiting_expert: 'Awaiting expert opinions'
         resolved: Reviewed
     term:
@@ -319,6 +370,8 @@ complaint:
         on_time: On time
         overdue: Overdue
         approaching: 'Approaching deadline'
+    term_date:
+        not_in_past: 'The deadline date cannot be in the past.'
 
 faq_page:
     title: Frequently Asked Questions

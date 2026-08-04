@@ -30,6 +30,10 @@ services:
 
     App\Service\Viisp\ViispClientInterface: '@App\Service\Viisp\ViispClient'
 
+    s3.storage.public:
+        alias: s3.storage
+        public: true
+
     Aws\S3\S3Client:
         arguments:
             -

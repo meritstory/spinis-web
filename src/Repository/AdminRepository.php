@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Entity\Admin;
 use App\Entity\RoleEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -58,13 +59,22 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
 
     public function countActiveByRole(RoleEnum $role): int
     {
-        return (int) $this->createQueryBuilder('admin')
-            ->select('COUNT(admin.id)')
-            ->andWhere('admin.active = true')
-            ->andWhere('JSONB_CONTAINS(admin.roles, :role) = true')
-            ->setParameter('role', json_encode([$role->value], JSON_THROW_ON_ERROR))
+        return (int) $this->applyActiveRoleConstraints(
+            $this->createQueryBuilder('admin')->select('COUNT(admin.id)'),
+            $role,
+            'admin',
+        )
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function applyActiveRoleConstraints(QueryBuilder $queryBuilder, RoleEnum $role, string $alias = 'entity'): QueryBuilder
+    {
+        return $queryBuilder
+            ->andWhere(sprintf('%s.active = true', $alias))
+            ->andWhere(sprintf('%s.deletedAt IS NULL', $alias))
+            ->andWhere(sprintf('JSONB_CONTAINS(%s.roles, :role) = true', $alias))
+            ->setParameter('role', json_encode([$role->value], JSON_THROW_ON_ERROR));
     }
 
     public function isPersistedActiveSystemAdministrator(Admin $admin): bool

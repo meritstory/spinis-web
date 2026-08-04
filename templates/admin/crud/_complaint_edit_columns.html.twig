@@ -1,0 +1,157 @@
+<div class="ea-complaint-edit__layout">
+    <div class="ea-complaint-edit__column ea-complaint-edit__column--main">
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.institution'|trans }}</div>
+            <div class="ea-complaint-edit-grid ea-complaint-edit-grid--2">
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.institution_title'|trans,
+                    value: complaint.healthCareInstitution ? complaint.healthCareInstitution.title : '—',
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.institution_legal_code'|trans,
+                    value: complaint.healthCareInstitution ? complaint.healthCareInstitution.code : '—',
+                }) }}
+            </div>
+        </div>
+
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.institution_documents'|trans }}</div>
+            {{ include('admin/field/_complaint_attachments_table.html.twig', {
+                attachments: complaint.attachments|filter(a => a.type == 'institution_submission' or a.type == 'institution_response'),
+            }) }}
+        </div>
+
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.circumstances'|trans }}</div>
+            <div class="ea-complaint-edit-stack">
+                <div class="ea-complaint-edit-grid ea-complaint-edit-grid--2">
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complaint.field.complaint_date'|trans,
+                        value: complaint.complaintDate ? complaint.complaintDate|date('Y-m-d') : '—',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complaint.field.event_date'|trans,
+                        value: complaint.eventDate ? complaint.eventDate|date('Y-m-d') : '—',
+                    }) }}
+                </div>
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.related_specialists'|trans,
+                    value: complaint.relatedSpecialists|default('—'),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.description'|trans,
+                    value: complaint.complaintDescription|default('—'),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.disagreement'|trans,
+                    value: complaint.disagreementDescription|default('—'),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.expected_result'|trans,
+                    value: complaint.expectedResult|default('—'),
+                }) }}
+            </div>
+        </div>
+
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.patient_info'|trans }}</div>
+            <div class="ea-complaint-edit-stack">
+                <div class="ea-complaint-edit-grid ea-complaint-edit-grid--3">
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.first_name'|trans,
+                        value: complaint.patient ? complaint.patient.firstName|default('—') : '—',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.last_name'|trans,
+                        value: complaint.patient ? complaint.patient.lastName|default('—') : '—',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.personal_code'|trans,
+                        value: complaint.patient ? complaint.patient.personalCode|default('—') : '—',
+                    }) }}
+                </div>
+                <div class="ea-complaint-edit-grid ea-complaint-edit-grid--3">
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.email'|trans,
+                        value: complaint.patient ? complaint.patient.email|default('—') : '—',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.phone'|trans,
+                        value: complaint.patient ? complaint.patient.phone|default('—') : '—',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.address'|trans,
+                        value: complaint.patient ? complaint.patient.address|default('—') : '—',
+                    }) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.patient_document'|trans }}</div>
+            {{ include('admin/field/_complaint_attachments_table.html.twig', {
+                attachments: complaint.attachments|filter(a => a.type == 'patient_id_document'),
+            }) }}
+        </div>
+
+        {% if complaint.submittedByRepresentative %}
+            {{ include('admin/field/_complaint_representative_sections.html.twig', {
+                complaint: complaint,
+                representationAttachments: complaint.attachments|filter(a => a.type == 'representation_proof'),
+            }) }}
+        {% endif %}
+
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.other_info'|trans }}</div>
+            <button type="button" class="btn btn-secondary" disabled>{{ 'complaint.action.supplement'|trans }}</button>
+        </div>
+
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.response'|trans }}</div>
+            <button type="button" class="btn btn-primary" disabled>{{ 'complaint.action.submit_response'|trans }}</button>
+        </div>
+    </div>
+
+    <div class="ea-complaint-edit__column ea-complaint-edit__column--sidebar">
+        <div class="ea-complaint-card ea-complaint-card--form">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.specialist'|trans }}</div>
+            {{ form_row(form.children.specialist) }}
+        </div>
+
+        <div class="ea-complaint-card ea-complaint-card--form">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.complaint_info'|trans }}</div>
+            <div class="ea-complaint-edit-stack ea-complaint-edit-stack--compact">
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.number_short'|trans,
+                    value: complaint.number,
+                }) }}
+                {{ form_row(form.children.status) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.submitted_at'|trans,
+                    value: complaint.createdAt ? complaint.createdAt|date('Y-m-d') : '—',
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.term'|trans,
+                    value: complaint_term_badge(complaint),
+                    raw: true,
+                }) }}
+                {{ form_row(form.children.termDate) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.type'|trans,
+                    value: complaint_type_label(complaint),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.patient_type'|trans,
+                    value: complaint.submittedByRepresentative
+                        ? 'complaint.submitter.representative'|trans
+                        : 'complaint.submitter.patient'|trans,
+                }) }}
+            </div>
+        </div>
+
+        <div class="ea-complaint-card">
+            <div class="ea-complaint-card__title">{{ 'complaint.fieldset.history'|trans }}</div>
+            {{ include('admin/field/_complaint_status_history.html.twig', { complaint: complaint }) }}
+        </div>
+    </div>
+</div>

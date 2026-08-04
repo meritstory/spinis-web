@@ -1,0 +1,39 @@
+{% set representative = complaint.representative %}
+<div class="ea-complaint-card">
+    <div class="ea-complaint-card__title">{{ 'complaint.fieldset.representative_info'|trans }}</div>
+    <div class="ea-complaint-edit-stack">
+        <div class="ea-complaint-edit-grid ea-complaint-edit-grid--3">
+            {{ include('admin/field/_complaint_edit_field.html.twig', {
+                label: 'complainant.field.first_name'|trans,
+                value: representative ? representative.firstName|default('—') : '—',
+            }) }}
+            {{ include('admin/field/_complaint_edit_field.html.twig', {
+                label: 'complainant.field.last_name'|trans,
+                value: representative ? representative.lastName|default('—') : '—',
+            }) }}
+            {{ include('admin/field/_complaint_edit_field.html.twig', {
+                label: 'complainant.field.personal_code'|trans,
+                value: representative ? representative.personalCode|default('—') : '—',
+            }) }}
+        </div>
+        <div class="ea-complaint-edit-grid ea-complaint-edit-grid--3">
+            {{ include('admin/field/_complaint_edit_field.html.twig', {
+                label: 'complainant.field.email'|trans,
+                value: representative ? representative.email|default('—') : '—',
+            }) }}
+            {{ include('admin/field/_complaint_edit_field.html.twig', {
+                label: 'complainant.field.phone'|trans,
+                value: representative ? representative.phone|default('—') : '—',
+            }) }}
+            {{ include('admin/field/_complaint_edit_field.html.twig', {
+                label: 'complainant.field.address'|trans,
+                value: representative ? representative.address|default('—') : '—',
+            }) }}
+        </div>
+    </div>
+</div>
+
+<div class="ea-complaint-card">
+    <div class="ea-complaint-card__title">{{ 'complaint.fieldset.representation_documents'|trans }}</div>
+    {{ include('admin/field/_complaint_attachments_table.html.twig', { attachments: representationAttachments }) }}
+</div>

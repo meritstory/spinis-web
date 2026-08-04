@@ -45,7 +45,18 @@
 body.ea {
     --color-primary: #216b4c;
     --color-primary-rgb: 33, 107, 76;
+    --color-primary-dark: #1a5540;
     --color-surface-green: #ecf6f1;
+
+    --button-primary-bg: #216b4c;
+    --button-primary-hover-bg: #1a5540;
+    --button-primary-active-bg: #154a36;
+    --button-primary-border-color: #1a5540;
+    --button-primary-hover-border-color: #1a5540;
+    --button-primary-active-border-color: #154a36;
+
+    --bs-primary: #216b4c;
+    --bs-primary-rgb: 33, 107, 76;
 
     --color-status-info-text: #0668d6;
     --color-status-info-bg: #e6f0fb;
@@ -65,6 +76,12 @@ body.ea {
     --sidebar-menu-active-item-bg-dark: rgba(var(--color-primary-rgb), 0.16);
     --table-thead-sorted-marker-color: var(--color-primary);
     --form-type-check-input-checked-bg: var(--color-primary);
+
+    --ea-admin-border-color: var(--border-color, #dee2e6);
+    --ea-admin-surface: var(--content-bg, var(--white, #fff));
+    --ea-admin-surface-subtle: var(--color-status-neutral-bg);
+    --ea-admin-text-secondary: var(--text-muted, #6c757d);
+    --ea-admin-text-primary: var(--text-color, #212529);
 }
 
 body.ea.ea-dark-scheme {
@@ -91,15 +108,53 @@ body.ea.ea-dark-scheme {
     color: var(--text-color, #212529);
 }
 
-#modal-filters .btn-primary {
-    background: var(--color-primary);
-    border-color: #1a5540;
+body.ea .btn.btn-primary {
+    --button-bg: var(--color-primary);
+    --button-border-color: var(--color-primary-dark);
+    --button-color: #ffffff;
+    --button-hover-bg: var(--color-primary-dark);
+    --button-hover-border-color: var(--color-primary-dark);
+    --button-hover-color: #ffffff;
+    --button-active-bg: #154a36;
+    --button-active-border-color: #154a36;
+    --button-active-color: #ffffff;
+    --button-primary-bg: var(--color-primary);
+    --button-primary-hover-bg: var(--color-primary-dark);
+    --button-primary-active-bg: #154a36;
+    --button-primary-border-color: var(--color-primary-dark);
+    --button-primary-hover-border-color: var(--color-primary-dark);
+    --button-primary-active-border-color: #154a36;
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary-dark);
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: var(--color-primary-dark);
+    --bs-btn-hover-border-color: var(--color-primary-dark);
+    --bs-btn-focus-shadow-rgb: var(--color-primary-rgb);
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: #154a36;
+    --bs-btn-active-border-color: #154a36;
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-disabled-bg: var(--color-primary);
+    --bs-btn-disabled-border-color: var(--color-primary-dark);
+    color: #ffffff;
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary-dark) !important;
 }
 
-#modal-filters .btn-primary:hover,
-#modal-filters .btn-primary:focus-visible {
-    background: #1a5540;
-    border-color: #1a5540;
+body.ea .btn.btn-primary:hover,
+body.ea .btn.btn-primary:focus-visible {
+    color: #ffffff;
+    background: var(--color-primary-dark) !important;
+    border-color: var(--color-primary-dark) !important;
+}
+
+body.ea .btn.btn-primary:disabled,
+body.ea .btn.btn-primary.disabled {
+    color: #ffffff;
+    background: var(--color-primary) !important;
+    border-color: var(--color-primary-dark) !important;
+    opacity: 0.85;
 }
 
 #modal-filters .filter-heading a {
@@ -126,35 +181,365 @@ body.ea.ea-dark-scheme {
 }
 
 .ea-complaint-badge--blue {
-    --badge-text: var(--color-status-info-text);
-    --badge-bg: var(--color-status-info-bg);
+    color: var(--color-status-info-text);
+    background-color: var(--color-status-info-bg);
 }
 
 .ea-complaint-badge--green {
-    --badge-text: var(--color-status-success-text);
-    --badge-bg: var(--color-status-success-bg);
+    color: var(--color-status-success-text);
+    background-color: var(--color-status-success-bg);
 }
 
 .ea-complaint-badge--orange {
-    --badge-text: var(--color-status-warning-text);
-    --badge-bg: var(--color-status-warning-bg);
+    color: var(--color-status-warning-text);
+    background-color: var(--color-status-warning-bg);
 }
 
 .ea-complaint-badge--red {
-    --badge-text: var(--color-status-danger-text);
-    --badge-bg: var(--color-status-danger-bg);
+    color: var(--color-status-danger-text);
+    background-color: var(--color-status-danger-bg);
 }
 
 .ea-complaint-badge--gray {
-    --badge-text: var(--color-status-neutral-text);
-    --badge-bg: var(--color-status-neutral-bg);
+    color: var(--color-status-neutral-text);
+    background-color: var(--color-status-neutral-bg);
 }
 
-.ea-complaint-badge--blue,
-.ea-complaint-badge--green,
-.ea-complaint-badge--orange,
-.ea-complaint-badge--red,
-.ea-complaint-badge--gray {
-    color: var(--badge-text);
-    background-color: var(--badge-bg);
+body.ea-edit-Complaint .content-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+}
+
+body.ea-edit-Complaint .content-header-title h1.title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    margin: 0;
+}
+
+.ea-complaint-breadcrumb {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    margin-bottom: 0;
+}
+
+.ea-complaint-breadcrumb a {
+    color: var(--ea-admin-text-secondary);
+    text-decoration: none;
+}
+
+.ea-complaint-breadcrumb a:hover {
+    color: var(--color-primary);
+}
+
+.ea-complaint-breadcrumb__separator,
+.ea-complaint-breadcrumb__current {
+    color: var(--ea-admin-text-secondary);
+}
+
+.ea-complaint-breadcrumb__separator {
+    margin: 0 0.35rem;
+}
+
+.ea-complaint-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 2rem;
+    color: var(--ea-admin-text-primary);
+    margin: 0;
+}
+
+.ea-complaint-edit__layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.ea-complaint-edit__column--main {
+    flex: 2 1 0;
+    min-width: 0;
+}
+
+.ea-complaint-edit__column--sidebar {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.ea-complaint-edit__column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-self: stretch;
+    min-width: 0;
+}
+
+.ea-complaint-edit__column .ea-complaint-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ea-complaint-edit-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.ea-complaint-edit-stack--compact {
+    gap: 0.75rem;
+}
+
+.ea-complaint-edit-grid {
+    display: grid;
+    gap: 3rem;
+}
+
+.ea-complaint-edit-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ea-complaint-edit-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ea-complaint-card {
+    background: var(--ea-admin-surface);
+    border: 0.0625rem solid var(--ea-admin-border-color);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+}
+
+.ea-complaint-card__title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.25rem;
+    text-transform: uppercase;
+    color: var(--ea-admin-text-secondary);
+    margin-bottom: 1rem;
+}
+
+.ea-complaint-field__label,
+.ea-complaint-edit .form-group label,
+.ea-complaint-card--form legend.col-form-label {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--ea-admin-text-secondary);
+    margin-bottom: 0.25rem;
+    padding: 0;
+}
+
+.ea-complaint-field__value,
+.ea-complaint-edit .form-group .form-widget > div {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: var(--ea-admin-text-primary);
+    word-break: break-word;
+}
+
+.ea-complaint-card--form .form-group {
+    margin-bottom: 0;
+}
+
+.ea-complaint-card--form .form-group .row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.ea-complaint-card--form .form-group .col-12 {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.ea-complaint-card--form .ea-complaint-edit-stack--compact > .form-group,
+.ea-complaint-card--form .ea-complaint-edit-stack--compact > .ea-complaint-field {
+    margin-top: 0;
+}
+
+.ea-complaint-edit .ea-complaint-card--form > *:not(.ea-complaint-card__title),
+.ea-complaint-edit .ea-complaint-edit-stack--compact > * {
+    width: 100%;
+    max-width: none;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+}
+
+.ea-complaint-edit .ea-complaint-card--form .flex-fill,
+.ea-complaint-edit .ea-complaint-edit-stack .flex-fill {
+    display: none;
+}
+
+.ea-complaint-edit .ea-complaint-card--form [class*="col-md-"],
+.ea-complaint-edit .ea-complaint-card--form [class*="col-lg-"],
+.ea-complaint-edit .ea-complaint-card--form [class*="col-xl-"] {
+    width: 100%;
+    max-width: none;
+    flex: 0 0 100%;
+}
+
+.ea-complaint-edit .ea-complaint-card--form .form-widget {
+    display: block;
+    width: 100%;
+    max-width: none;
+}
+
+.ea-complaint-edit .ea-complaint-card--form .form-group,
+.ea-complaint-edit .ea-complaint-card--form .form-widget > select,
+.ea-complaint-edit .ea-complaint-card--form .form-widget > input,
+.ea-complaint-edit .ea-complaint-card--form .form-control,
+.ea-complaint-edit .ea-complaint-card--form .form-select,
+.ea-complaint-edit .ea-complaint-card--form .ts-wrapper,
+.ea-complaint-edit .ea-complaint-card--form .ts-wrapper .ts-control {
+    max-width: none;
+    width: 100%;
+}
+
+.ea-complaint-edit__column--sidebar .ts-wrapper.single .ts-control > .item {
+    display: block;
+    max-width: calc(100% - 1.5rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ea-complaint-files {
+    border: 0.0625rem solid var(--ea-admin-border-color);
+    border-radius: 0.375rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.ea-complaint-files__head,
+.ea-complaint-files__row {
+    align-items: center;
+    column-gap: 0.75rem;
+    display: grid;
+    grid-template-columns: minmax(8rem, 2fr) minmax(6rem, 1.25fr) 5.5rem 4.25rem 1.5rem;
+    min-width: min(100%, 28rem);
+    padding: 0.75rem 1rem;
+}
+
+.ea-complaint-files__head {
+    background: var(--ea-admin-surface-subtle);
+    border-bottom: 0.0625rem solid var(--ea-admin-border-color);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 0.8125rem;
+    text-transform: uppercase;
+    color: var(--ea-admin-text-secondary);
+}
+
+.ea-complaint-files__head .ea-complaint-files__col {
+    line-height: 1.15;
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+}
+
+.ea-complaint-files__col {
+    min-width: 0;
+}
+
+.ea-complaint-files__col--file,
+.ea-complaint-files__col--type {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ea-complaint-files__col--date,
+.ea-complaint-files__col--size {
+    white-space: nowrap;
+}
+
+.ea-complaint-files__col--action {
+    justify-self: end;
+}
+
+.ea-complaint-files__row {
+    border-bottom: 0.0625rem solid var(--ea-admin-border-color);
+    font-size: 0.8125rem;
+    line-height: 1rem;
+}
+
+.ea-complaint-files__row:last-child {
+    border-bottom: none;
+}
+
+.ea-complaint-files__link {
+    align-items: center;
+    color: var(--color-primary);
+    display: flex;
+    font-weight: 600;
+    gap: 0.5rem;
+    max-width: 100%;
+    min-width: 0;
+    text-decoration: none;
+    width: 100%;
+}
+
+.ea-complaint-files__file-icon,
+.ea-complaint-files__download {
+    color: var(--ea-admin-text-secondary);
+    display: inline-flex;
+}
+
+.ea-complaint-files__file-icon {
+    flex-shrink: 0;
+}
+
+.ea-complaint-files__file-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ea-complaint-files__link:hover {
+    text-decoration: underline;
+}
+
+.ea-complaint-files__link:hover .ea-complaint-files__file-name {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: unset;
+    white-space: normal;
+}
+
+.ea-complaint-files__col--type:hover {
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: unset;
+    white-space: normal;
+}
+
+.ea-complaint-empty {
+    font-size: 0.875rem;
+    color: var(--ea-admin-text-secondary);
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
+    .ea-complaint-edit__layout {
+        flex-direction: column;
+    }
+
+    .ea-complaint-edit__column--main,
+    .ea-complaint-edit__column--sidebar {
+        flex: 1 1 auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ea-complaint-edit-grid--2,
+    .ea-complaint-edit-grid--3 {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
 }

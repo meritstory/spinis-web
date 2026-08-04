@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\StoredFile;
+use App\Security\Voter\StoredFileVoter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -29,12 +30,16 @@ final class StoredFileController extends AbstractController
         #[MapEntity(expr: 'repository.findOneBy({id: uuid})')]
         StoredFile $file,
     ): Response {
-        // TODO: implement file access voter when roles and complaints exist
+        $this->denyAccessUnlessGranted(StoredFileVoter::VIEW, $file);
+
         try {
             $stream = $this->storage->readStream($file->getFileName());
         } catch (FilesystemException) {
             throw $this->createNotFoundException();
         }
+
+        $downloadName = $this->dispositionFilename($file->getOriginalName(), $file->getFileName());
+        $fallbackName = $this->dispositionFallbackFilename($file->getFileName());
 
         $response = new StreamedResponse(static function () use ($stream): void {
             try {
@@ -44,17 +49,38 @@ final class StoredFileController extends AbstractController
             }
         });
         $response->headers->set('Content-Type', $file->getMimeType());
-        $response->headers->set('Content-Length', (string) $file->getFileSize());
         $response->headers->set('Cache-Control', 'private, no-store');
         $response->headers->set(
             'Content-Disposition',
             $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $file->getOriginalName(),
-                $file->getFileName(),
+                $downloadName,
+                $fallbackName,
             ),
         );
 
         return $response;
+    }
+
+    private function dispositionFilename(string $originalName, string $storagePath): string
+    {
+        $name = trim($originalName);
+        if ($name === '') {
+            $name = basename(str_replace('\\', '/', $storagePath));
+        }
+
+        return $this->stripPathSeparators($name);
+    }
+
+    private function dispositionFallbackFilename(string $storagePath): string
+    {
+        return $this->stripPathSeparators(basename(str_replace('\\', '/', $storagePath)));
+    }
+
+    private function stripPathSeparators(string $filename): string
+    {
+        $filename = str_replace(['/', '\\'], '-', $filename);
+
+        return trim($filename) !== '' ? trim($filename) : 'download';
     }
 }

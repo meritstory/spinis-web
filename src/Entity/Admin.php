@@ -253,6 +253,13 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
         return in_array(RoleEnum::SPECIALIST->value, $this->getRoles(), true);
     }
 
+    public function isAssignableAsComplaintSpecialist(): bool
+    {
+        return $this->isSpecialist()
+            && $this->isActive()
+            && $this->getDeletedAt() === null;
+    }
+
     public function __toString(): string
     {
         return $this->getFullName();

@@ -1,0 +1,19 @@
+<form class="d-none" method="post" id="action-confirmation-form">
+    {% guard function csrf_token %}
+        <input type="hidden" name="token" value="{{ csrf_token('ea-delete') }}" />
+    {% endguard %}
+</form>
+
+<twig:ea:Modal id="modal-action-confirmation">
+    <twig:block name="body">
+        <h4 id="action-confirmation-title">{{ 'action_confirmation_modal.title'|trans([], 'EasyAdminBundle') }}</h4>
+        <p id="action-confirmation-content" class="d-none"></p>
+    </twig:block>
+    <twig:block name="footer">
+        <twig:ea:Modal:Close>{{ 'complaint.confirm.no'|trans }}</twig:ea:Modal:Close>
+
+        <twig:ea:Button type="button" variant="primary" data-bs-dismiss="modal" id="modal-action-confirmation-button">
+            {{ 'complaint.confirm.yes'|trans }}
+        </twig:ea:Button>
+    </twig:block>
+</twig:ea:Modal>

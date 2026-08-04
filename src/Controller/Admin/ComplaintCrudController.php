@@ -4,33 +4,42 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Entity\Admin;
 use App\Entity\Complaint;
+use App\Entity\ComplaintStatusHistory;
 use App\Entity\RoleEnum;
 use App\Enum\ComplaintStatusEnum;
 use App\Enum\ComplaintTermEnum;
 use App\Enum\ComplaintTypeEnum;
+use App\Repository\ComplaintRepository;
 use App\Service\Admin\ComplaintBadgeHelper;
 use App\Service\Admin\LabelledEnumHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @extends AbstractCrudController<Complaint>
@@ -38,9 +47,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted(RoleEnum::DEPARTMENT_HEAD->value)]
 class ComplaintCrudController extends AbstractCrudController
 {
+    /** @var array<int, int> */
+    private array $specialistAssignedCountCache = [];
+
     public function __construct(
         private readonly LabelledEnumHelper $labelledEnumHelper,
         private readonly ComplaintBadgeHelper $complaintBadgeHelper,
+        private readonly ComplaintRepository $complaintRepository,
+        private readonly TranslatorInterface $translator,
+        private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
 
@@ -55,36 +70,54 @@ class ComplaintCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('complaint.label.singular')
             ->setEntityLabelInPlural('menu.complaints')
             ->setPageTitle(Crud::PAGE_INDEX, 'menu.complaints')
-            ->setPageTitle(Crud::PAGE_DETAIL, 'complaint.page.detail')
             ->setSearchFields(['number', 'healthCareInstitution.title', 'specialist.firstName', 'specialist.lastName'])
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setDefaultRowAction(Action::DETAIL)
-            ->setPaginatorPageSize(10);
+            ->setDefaultRowAction(Action::EDIT)
+            ->setPaginatorPageSize(10)
+            ->overrideTemplate('crud/edit', 'admin/crud/complaint_edit.html.twig');
+    }
+
+    public function configureAssets(Assets $assets): Assets
+    {
+        return $assets->addAssetMapperEntry(
+            Asset::new('admin/complaint-edit-form')->onlyOnForms(),
+        );
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        $selectionBatchAction = Action::new('selection', false, 'internal:check')
-            ->createAsBatchAction()
-            ->linkToCrudAction('selectionBatch');
+        $cancelChanges = Action::new('cancelChanges', 'complaint.action.cancel_changes')
+            ->linkToCrudAction('cancelChanges')
+            ->asDangerAction()
+            ->asTextLink()
+            ->askConfirmation('complaint.confirm.cancel_changes', 'complaint.confirm.yes')
+            ->setTemplatePath('admin/crud/cancel_changes_action.html.twig');
 
         return $actions
-            ->disable(Action::NEW, Action::EDIT, Action::DELETE, Action::BATCH_DELETE)
-            ->add(Crud::PAGE_INDEX, Action::DETAIL)
-            ->addBatchAction($selectionBatchAction)
-            ->remove(Crud::PAGE_DETAIL, Action::EDIT);
+            ->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::DETAIL)
+            ->add(Crud::PAGE_EDIT, $cancelChanges)
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, fn (Action $action): Action => $action
+                ->setLabel('complaint.action.save_and_continue')
+                ->askConfirmation('complaint.confirm.save', 'complaint.confirm.yes'))
+            ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, fn (Action $action): Action => $action
+                ->setLabel('complaint.action.save')
+                ->askConfirmation('complaint.confirm.save', 'complaint.confirm.yes'));
     }
 
     /**
      * @param AdminContext<Complaint> $context
-     * @param BatchActionDto<Complaint> $batchActionDto
      */
-    #[AdminRoute(path: '/batch-selection', options: ['methods' => [Request::METHOD_POST]])]
-    public function selectionBatch(AdminContext $context, BatchActionDto $batchActionDto): Response
+    #[AdminRoute(path: '/{entityId}/cancel-changes', options: ['methods' => [Request::METHOD_GET]])]
+    public function cancelChanges(AdminContext $context): Response
     {
-        unset($context, $batchActionDto);
+        /** @var Complaint $complaint */
+        $complaint = $context->getEntity()->getInstance();
 
-        return $this->redirectToRoute('admin_complaint_index');
+        if ($complaint->getId() === null) {
+            return $this->redirectToRoute('admin_complaint_index');
+        }
+
+        return $this->redirectToComplaintEdit($complaint);
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -106,6 +139,12 @@ class ComplaintCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        if ($pageName === Crud::PAGE_EDIT) {
+            yield from $this->configureEditFields();
+
+            return;
+        }
+
         yield TextField::new('number')
             ->setLabel('complaint.field.number')
             ->renderAsHtml()
@@ -138,9 +177,25 @@ class ComplaintCrudController extends AbstractCrudController
         yield AssociationField::new('specialist')
             ->setLabel('complaint.field.specialist')
             ->setTemplatePath('admin/field/plain_association.html.twig')
-            ->formatValue(static fn (mixed $value, ?Complaint $complaint): string => $complaint?->getSpecialist() !== null
-                ? (string) $complaint->getSpecialist()
-                : '—');
+            ->formatValue(static fn (mixed $value, ?Complaint $complaint): string => self::formatOrDash(
+                $complaint?->getSpecialist() !== null ? (string) $complaint->getSpecialist() : null,
+            ));
+    }
+
+    /**
+     * @return iterable<\EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface>
+     */
+    private function configureEditFields(): iterable
+    {
+        yield AssociationField::new('specialist', 'complaint.field.specialist')
+            ->setCrudController(SpecialistPickerCrudController::class)
+            ->autocomplete(true, fn (Admin $admin): string => $this->formatSpecialistAutocompleteLabel($admin))
+            ->setRequired(false);
+        yield ChoiceField::new('status', 'complaint.field.status')
+            ->setChoices($this->labelledEnumHelper->getChoicesForEnum(ComplaintStatusEnum::class));
+        yield DateField::new('termDate', 'complaint.field.term_date')
+            ->renderAsNativeWidget()
+            ->setFormTypeOption('attr', ['min' => self::todayIsoDate()]);
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -150,5 +205,68 @@ class ComplaintCrudController extends AbstractCrudController
             ->addSelect('complaintHealthCareInstitution')
             ->leftJoin('entity.specialist', 'complaintSpecialist')
             ->addSelect('complaintSpecialist');
+    }
+
+    /**
+     * @param Complaint $entityInstance
+     */
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        $previousStatus = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance)['status'] ?? null;
+
+        if ($previousStatus !== $entityInstance->getStatus()) {
+            $entityInstance->addStatusHistory(
+                (new ComplaintStatusHistory())
+                    ->setStatus($entityInstance->getStatus())
+                    ->setChangedAt(new \DateTimeImmutable()),
+            );
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
+
+        $this->addFlash('success', $this->translator->trans('complaint.flash.saved'));
+    }
+
+    private function redirectToComplaintEdit(Complaint $complaint): Response
+    {
+        $response = $this->redirect($this->adminUrlGenerator
+            ->setController(self::class)
+            ->setAction(Action::EDIT)
+            ->setEntityId($complaint->getId())
+            ->generateUrl());
+
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
+
+        return $response;
+    }
+
+    private function formatSpecialistAutocompleteLabel(Admin $admin): string
+    {
+        $specialistId = $admin->getId();
+        if ($specialistId === null) {
+            return $admin->getFullName();
+        }
+
+        if (!isset($this->specialistAssignedCountCache[$specialistId])) {
+            $this->specialistAssignedCountCache[$specialistId] = $this->complaintRepository
+                ->countAssignedBySpecialistIds([$specialistId])[$specialistId] ?? 0;
+        }
+
+        return sprintf(
+            '%s — %s (%d)',
+            $admin->getFullName(),
+            $this->translator->trans('admin.role.specialist'),
+            $this->specialistAssignedCountCache[$specialistId],
+        );
+    }
+
+    private static function formatOrDash(?string $value): string
+    {
+        return $value ?? '—';
+    }
+
+    private static function todayIsoDate(): string
+    {
+        return (new \DateTimeImmutable('today'))->format('Y-m-d');
     }
 }
