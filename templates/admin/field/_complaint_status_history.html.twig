@@ -2,7 +2,7 @@
 {% if history is empty %}
     <p class="ea-complaint-empty">{{ 'complaint.history.empty'|trans }}</p>
 {% else %}
-    <div class="ea-complaint-edit-stack ea-complaint-edit-stack--compact">
+    <div class="d-flex flex-column gap-3">
         {% for entry in history %}
             {{ include('admin/field/_complaint_edit_field.html.twig', {
                 label: ('complaint.status.' ~ entry.status)|trans,

@@ -1,35 +1,38 @@
 {% if attachments is empty %}
     <p class="ea-complaint-empty">{{ 'complaint.attachments.empty'|trans }}</p>
 {% else %}
-    <div class="ea-complaint-files">
-        <div class="ea-complaint-files__head">
-            <span class="ea-complaint-files__col ea-complaint-files__col--file">{{ 'complaint.attachments.column.file'|trans }}</span>
-            <span class="ea-complaint-files__col ea-complaint-files__col--type">{{ 'complaint.attachments.column.type'|trans }}</span>
-            <span class="ea-complaint-files__col ea-complaint-files__col--date">{{ 'complaint.attachments.column.date'|trans }}</span>
-            <span class="ea-complaint-files__col ea-complaint-files__col--size">{{ 'complaint.attachments.column.size'|trans }}</span>
-            <span class="ea-complaint-files__col ea-complaint-files__col--action" aria-hidden="true"></span>
-        </div>
-        {% for attachment in attachments %}
-            {% set file = attachment.storedFile %}
-            {% set type_label = file.displayFileType %}
-            <div class="ea-complaint-files__row">
-                <div class="ea-complaint-files__col ea-complaint-files__col--file">
-                    <a class="ea-complaint-files__link" href="{{ path('file_s3', { uuid: file.id }) }}" title="{{ file.originalName }}">
-                        <span class="ea-complaint-files__file-icon" aria-hidden="true">
-                            <twig:ea:Icon name="internal:file-lines" />
-                        </span>
-                        <span class="ea-complaint-files__file-name">{{ file.originalName }}</span>
-                    </a>
-                </div>
-                <div class="ea-complaint-files__col ea-complaint-files__col--type" title="{{ type_label }}">{{ type_label }}</div>
-                <div class="ea-complaint-files__col ea-complaint-files__col--date">{{ attachment.createdAt|date('Y-m-d') }}</div>
-                <div class="ea-complaint-files__col ea-complaint-files__col--size">{{ file.formattedFileSize }}</div>
-                <div class="ea-complaint-files__col ea-complaint-files__col--action">
-                    <a class="ea-complaint-files__download" href="{{ path('file_s3', { uuid: file.id }) }}" title="{{ 'complaint.attachments.download'|trans }}">
-                        <twig:ea:Icon name="internal:download" />
-                    </a>
-                </div>
-            </div>
-        {% endfor %}
+    <div class="table-responsive ea-complaint-files">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'complaint.attachments.column.file'|trans }}</th>
+                    <th scope="col">{{ 'complaint.attachments.column.type'|trans }}</th>
+                    <th scope="col">{{ 'complaint.attachments.column.date'|trans }}</th>
+                    <th scope="col">{{ 'complaint.attachments.column.size'|trans }}</th>
+                    <th scope="col"><span class="visually-hidden">{{ 'complaint.attachments.download'|trans }}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for attachment in attachments %}
+                    {% set file = attachment.storedFile %}
+                    <tr>
+                        <td>
+                            <a class="ea-complaint-files__link" href="{{ path('file_s3', { uuid: file.id }) }}" title="{{ file.originalName }}">
+                                <span aria-hidden="true"><twig:ea:Icon name="internal:file-lines" /></span>
+                                <span class="text-truncate">{{ file.originalName }}</span>
+                            </a>
+                        </td>
+                        <td>{{ file.displayFileType }}</td>
+                        <td class="text-nowrap">{{ attachment.createdAt|date('Y-m-d') }}</td>
+                        <td class="text-nowrap">{{ file.formattedFileSize }}</td>
+                        <td class="text-end">
+                            <a class="ea-complaint-files__download" href="{{ path('file_s3', { uuid: file.id }) }}" title="{{ 'complaint.attachments.download'|trans }}">
+                                <twig:ea:Icon name="internal:download" />
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endif %}

@@ -1,39 +1,45 @@
 {% set representative = complaint.representative %}
-<div class="ea-complaint-card">
-    <div class="ea-complaint-card__title">{{ 'complaint.fieldset.representative_info'|trans }}</div>
-    <div class="ea-complaint-edit-stack">
-        <div class="ea-complaint-edit-grid ea-complaint-edit-grid--3">
+<section class="card p-4">
+    <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.representative_info'|trans }}</h2>
+    <div class="d-flex flex-column gap-4">
+        <div class="row gx-5 gy-4">
             {{ include('admin/field/_complaint_edit_field.html.twig', {
                 label: 'complainant.field.first_name'|trans,
                 value: representative ? representative.firstName|default('—') : '—',
+                class: 'col-md-4',
             }) }}
             {{ include('admin/field/_complaint_edit_field.html.twig', {
                 label: 'complainant.field.last_name'|trans,
                 value: representative ? representative.lastName|default('—') : '—',
+                class: 'col-md-4',
             }) }}
             {{ include('admin/field/_complaint_edit_field.html.twig', {
                 label: 'complainant.field.personal_code'|trans,
                 value: representative ? representative.personalCode|default('—') : '—',
+                class: 'col-md-4',
             }) }}
         </div>
-        <div class="ea-complaint-edit-grid ea-complaint-edit-grid--3">
+        <div class="row gx-5 gy-4">
             {{ include('admin/field/_complaint_edit_field.html.twig', {
                 label: 'complainant.field.email'|trans,
                 value: representative ? representative.email|default('—') : '—',
+                class: 'col-md-4',
             }) }}
             {{ include('admin/field/_complaint_edit_field.html.twig', {
                 label: 'complainant.field.phone'|trans,
                 value: representative ? representative.phone|default('—') : '—',
+                class: 'col-md-4',
             }) }}
             {{ include('admin/field/_complaint_edit_field.html.twig', {
                 label: 'complainant.field.address'|trans,
                 value: representative ? representative.address|default('—') : '—',
+                class: 'col-md-4',
             }) }}
         </div>
     </div>
-</div>
+</section>
 
-<div class="ea-complaint-card">
-    <div class="ea-complaint-card__title">{{ 'complaint.fieldset.representation_documents'|trans }}</div>
+<section class="card p-4">
+    <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.representation_documents'|trans }}</h2>
     {{ include('admin/field/_complaint_attachments_table.html.twig', { attachments: representationAttachments }) }}
-</div>
+</section>

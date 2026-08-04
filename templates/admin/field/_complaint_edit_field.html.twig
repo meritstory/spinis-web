@@ -1,4 +1,4 @@
-<div class="ea-complaint-field">
+<div class="ea-complaint-field {{ class|default('') }}">
     <div class="ea-complaint-field__label">{{ label }}</div>
     <div class="ea-complaint-field__value">
         {% if raw|default(false) %}{{ value|raw }}{% else %}{{ value }}{% endif %}
