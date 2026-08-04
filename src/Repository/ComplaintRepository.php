@@ -32,7 +32,7 @@ class ComplaintRepository extends ServiceEntityRepository
         /** @var list<array{specialistId: int, complaintCount: int}> $rows */
         $rows = $this->createQueryBuilder('complaint')
             ->select('IDENTITY(complaint.specialist) AS specialistId', 'COUNT(complaint.id) AS complaintCount')
-            ->where('complaint.specialist IN (:specialistIds)')
+            ->where('IDENTITY(complaint.specialist) IN (:specialistIds)')
             ->setParameter('specialistIds', $specialistIds)
             ->groupBy('complaint.specialist')
             ->getQuery()
