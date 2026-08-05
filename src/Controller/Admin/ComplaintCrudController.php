@@ -11,7 +11,7 @@ use App\Entity\RoleEnum;
 use App\Enum\ComplaintStatusEnum;
 use App\Enum\ComplaintTermEnum;
 use App\Enum\ComplaintTypeEnum;
-use App\Repository\ComplaintRepository;
+use App\Repository\AdminRepository;
 use App\Service\Admin\ComplaintBadgeHelper;
 use App\Service\Admin\LabelledEnumHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,13 +42,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[IsGranted(RoleEnum::DEPARTMENT_HEAD->value)]
 class ComplaintCrudController extends AbstractCrudController
 {
-    /** @var array<int, int> */
-    private array $specialistAssignedCountCache = [];
+    /** @var array<int, int>|null */
+    private ?array $specialistAssignedComplaintCounts = null;
 
     public function __construct(
         private readonly LabelledEnumHelper $labelledEnumHelper,
         private readonly ComplaintBadgeHelper $complaintBadgeHelper,
-        private readonly ComplaintRepository $complaintRepository,
+        private readonly AdminRepository $adminRepository,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -171,8 +171,17 @@ class ComplaintCrudController extends AbstractCrudController
     private function configureEditFields(): iterable
     {
         yield AssociationField::new('specialist', 'complaint.field.specialist')
-            ->setCrudController(SpecialistPickerCrudController::class)
-            ->autocomplete(true, fn (Admin $admin): string => $this->formatSpecialistAutocompleteLabel($admin))
+            ->setQueryBuilder(
+                fn (QueryBuilder $queryBuilder): QueryBuilder => $this->adminRepository->restrictQueryBuilderToActiveSpecialists(
+                    $queryBuilder,
+                    'entity',
+                    $this->currentComplaintSpecialistId(),
+                ),
+            )
+            ->setFormTypeOption(
+                'choice_label',
+                fn (?Admin $admin): string => $this->formatSpecialistChoiceLabel($admin),
+            )
             ->setRequired(false);
         yield ChoiceField::new('status', 'complaint.field.status')
             ->setChoices($this->labelledEnumHelper->getEnumChoicesForEnum(ComplaintStatusEnum::class))
@@ -214,23 +223,31 @@ class ComplaintCrudController extends AbstractCrudController
         $this->addFlash('success', $this->translator->trans('complaint.flash.saved'));
     }
 
-    private function formatSpecialistAutocompleteLabel(Admin $admin): string
+    private function currentComplaintSpecialistId(): ?int
     {
+        $complaint = $this->getContext()?->getEntity()?->getInstance();
+
+        return $complaint instanceof Complaint ? $complaint->getSpecialist()?->getId() : null;
+    }
+
+    private function formatSpecialistChoiceLabel(?Admin $admin): string
+    {
+        if ($admin === null) {
+            return '';
+        }
+
         $specialistId = $admin->getId();
         if ($specialistId === null) {
             return $admin->getFullName();
         }
 
-        if (!isset($this->specialistAssignedCountCache[$specialistId])) {
-            $this->specialistAssignedCountCache[$specialistId] = $this->complaintRepository
-                ->countAssignedBySpecialistIds([$specialistId])[$specialistId] ?? 0;
-        }
+        $this->specialistAssignedComplaintCounts ??= $this->adminRepository->mapComplaintAssignmentCountsForActiveSpecialists();
 
         return sprintf(
             '%s — %s (%d)',
             $admin->getFullName(),
             $this->translator->trans('admin.role.specialist'),
-            $this->specialistAssignedCountCache[$specialistId],
+            $this->specialistAssignedComplaintCounts[$specialistId] ?? 0,
         );
     }
 

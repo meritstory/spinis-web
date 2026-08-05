@@ -527,17 +527,15 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::notNull($statusFieldName, 'Complaint status field was not found on the edit form.');
         $form[$statusFieldName]->setValue($statusValue);
 
-        $specialistFieldName = $this->findComplaintFormFieldNameBySuffix($formFieldNames, '[specialist][autocomplete]');
-        Assert::notNull($specialistFieldName, 'Complaint specialist autocomplete field was not found.');
-        $specialistAutocompleteValue = $form[$specialistFieldName]->getValue();
-        Assert::notSame('', $specialistAutocompleteValue, 'Complaint specialist autocomplete value is empty on edit form.');
+        $specialistFieldName = $this->findComplaintFormFieldNameBySuffix($formFieldNames, '[specialist]');
+        Assert::notNull($specialistFieldName, 'Complaint specialist field was not found on the edit form.');
+        $specialistValue = $form[$specialistFieldName]->getValue();
+        Assert::notSame('', $specialistValue, 'Complaint specialist value is empty on edit form.');
 
         $complaintData = [
             'status' => $statusValue,
             '_token' => $tokenValue,
-            'specialist' => [
-                'autocomplete' => $specialistAutocompleteValue,
-            ],
+            'specialist' => $specialistValue,
         ];
 
         $termDateFieldName = $this->findComplaintFormFieldNameBySuffix($formFieldNames, '[termDate]');
