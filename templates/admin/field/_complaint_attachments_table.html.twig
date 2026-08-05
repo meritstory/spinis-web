@@ -13,8 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for attachment in attachments %}
-                    {% set file = attachment.storedFile %}
+                {% for file in attachments %}
                     <tr>
                         <td>
                             <a class="ea-complaint-files__link" href="{{ path('file_s3', { uuid: file.id }) }}" title="{{ file.originalName }}">
@@ -23,7 +22,7 @@
                             </a>
                         </td>
                         <td>{{ file.displayFileType }}</td>
-                        <td class="text-nowrap">{{ attachment.createdAt|date('Y-m-d') }}</td>
+                        <td class="text-nowrap">{{ file.createdAt|date('Y-m-d') }}</td>
                         <td class="text-nowrap">{{ file.formattedFileSize }}</td>
                         <td class="text-end">
                             <a class="ea-complaint-files__download" href="{{ path('file_s3', { uuid: file.id }) }}" title="{{ 'complaint.attachments.download'|trans }}">

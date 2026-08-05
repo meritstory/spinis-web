@@ -19,7 +19,7 @@
         <section class="card p-4">
             <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.institution_documents'|trans }}</h2>
             {{ include('admin/field/_complaint_attachments_table.html.twig', {
-                attachments: complaint.attachments|filter(a => a.type == 'institution_submission' or a.type == 'institution_response'),
+                attachments: complaint.attachments|filter(a => a.type and a.type.value in ['institution_submission', 'institution_response']),
             }) }}
         </section>
 
@@ -100,14 +100,14 @@
         <section class="card p-4">
             <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.patient_document'|trans }}</h2>
             {{ include('admin/field/_complaint_attachments_table.html.twig', {
-                attachments: complaint.attachments|filter(a => a.type == 'patient_id_document'),
+                attachments: complaint.attachments|filter(a => a.type and a.type.value == 'patient_id_document'),
             }) }}
         </section>
 
         {% if complaint.submittedByRepresentative %}
             {{ include('admin/field/_complaint_representative_sections.html.twig', {
                 complaint: complaint,
-                representationAttachments: complaint.attachments|filter(a => a.type == 'representation_proof'),
+                representationAttachments: complaint.attachments|filter(a => a.type and a.type.value == 'representation_proof'),
             }) }}
         {% endif %}
 

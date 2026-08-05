@@ -8,7 +8,6 @@ use App\Enum\ComplaintStatusEnum;
 use App\Repository\ComplaintStatusHistoryRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ComplaintStatusHistoryRepository::class)]
 #[ORM\Table(name: 'complaint_status_history')]
@@ -23,10 +22,8 @@ class ComplaintStatusHistory
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Complaint $complaint = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Choice(callback: [ComplaintStatusEnum::class, 'values'])]
-    #[ORM\Column(length: 50)]
-    private string $status = '';
+    #[ORM\Column(length: 50, enumType: ComplaintStatusEnum::class)]
+    private ComplaintStatusEnum $status = ComplaintStatusEnum::SUBMITTED;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private \DateTimeImmutable $changedAt;
@@ -48,12 +45,12 @@ class ComplaintStatusHistory
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): ComplaintStatusEnum
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(ComplaintStatusEnum $status): static
     {
         $this->status = $status;
 

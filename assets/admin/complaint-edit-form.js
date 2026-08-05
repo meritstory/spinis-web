@@ -50,25 +50,21 @@ function initComplaintEditConfirmedActions() {
             () => {
                 pendingActionElement = actionElement;
 
-                if (confirmationModal === null) {
+                const modalButton = document.getElementById('modal-action-confirmation-button');
+                if (modalButton === null) {
                     return;
                 }
 
-                confirmationModal.addEventListener(
-                    'shown.bs.modal',
-                    () => {
-                        const modalButton = document.getElementById('modal-action-confirmation-button');
-                        if (modalButton === null || pendingActionElement === null) {
-                            return;
-                        }
+                const applyVariant = () => {
+                    setComplaintConfirmButtonVariant(
+                        modalButton,
+                        complaintConfirmVariantForAction(actionElement),
+                    );
+                };
 
-                        setComplaintConfirmButtonVariant(
-                            modalButton,
-                            complaintConfirmVariantForAction(pendingActionElement),
-                        );
-                    },
-                    { once: true },
-                );
+                applyVariant();
+
+                confirmationModal?.addEventListener('shown.bs.modal', applyVariant, { once: true });
             },
             true,
         );

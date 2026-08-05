@@ -6,7 +6,7 @@ namespace App\Tests\Behat\Context\Admin;
 
 use App\Entity\Admin;
 use App\Entity\Complaint;
-use App\Entity\ComplaintAttachment;
+use App\Entity\ComplaintPatient;
 use App\Entity\ComplaintStatusHistory;
 use App\Entity\Complainant;
 use App\Entity\HealthCareInstitution;
@@ -63,29 +63,20 @@ final class ComplaintContext extends RawMinkContext implements Context
     public function aFullComplaintExists(string $number): void
     {
         $patient = $this->createComplainant('Petras', 'Petraitis', '39001010000');
-        $representative = $this->createComplainant('Ona', 'Onaitė', '49001010000');
         $specialist = $this->defaultSpecialist();
 
-        $complaint = $this->withSubmittedDefaults($this->newComplaint($number))
-            ->setTermDate(new \DateTimeImmutable('+30 days'))
-            ->setComplaintDate(new \DateTimeImmutable('2026-01-15'))
-            ->setEventDate(new \DateTimeImmutable('2026-01-10'))
-            ->setRelatedSpecialists('Dr. Smith')
-            ->setComplaintDescription('Skundo aprašymas test')
-            ->setDisagreementDescription('Nesutinkama informacija test')
-            ->setExpectedResult('Laukiamas rezultatas test')
-            ->setSubmittedByRepresentative(false)
-            ->setPatient($patient)
-            ->setRepresentative($representative)
-            ->setSpecialist($specialist);
+        $complaint = $this->applyFullComplaintDetails(
+            $this->withSubmittedDefaults($this->newComplaint($number)),
+            $patient,
+            $patient,
+            false,
+        )->setSpecialist($specialist);
 
         $complaint->addStatusHistory(
             $this->newStatusHistory($complaint, ComplaintStatusEnum::SUBMITTED, new \DateTimeImmutable('2026-01-15 10:00:00')),
         );
 
-        $this->addAttachment($complaint, $specialist, 'patient-id.pdf', ComplaintAttachmentTypeEnum::PATIENT_ID_DOCUMENT);
-        $this->addAttachment($complaint, $specialist, 'institution-copy.pdf', ComplaintAttachmentTypeEnum::INSTITUTION_SUBMISSION);
-        $this->addAttachment($complaint, $specialist, 'institution-response.pdf', ComplaintAttachmentTypeEnum::INSTITUTION_RESPONSE);
+        $this->addStandardComplaintAttachments($complaint, $specialist);
 
         $this->persistComplaint($complaint);
     }
@@ -97,20 +88,15 @@ final class ComplaintContext extends RawMinkContext implements Context
         $representative = $this->createComplainant('Ona', 'Onaitė', '49001010001');
         $specialist = $this->defaultSpecialist();
 
-        $complaint = $this->newComplaint($number)
-            ->setType(ComplaintTypeEnum::DAMAGE_COMPENSATION->value)
-            ->setStatus(ComplaintStatusEnum::IN_REVIEW->value)
-            ->setTermStatus(ComplaintTermEnum::APPROACHING->value)
-            ->setTermDate(new \DateTimeImmutable('+30 days'))
-            ->setComplaintDate(new \DateTimeImmutable('2026-01-15'))
-            ->setEventDate(new \DateTimeImmutable('2026-01-10'))
-            ->setRelatedSpecialists('Dr. Smith')
-            ->setComplaintDescription('Skundo aprašymas test')
-            ->setDisagreementDescription('Nesutinkama informacija test')
-            ->setExpectedResult('Laukiamas rezultatas test')
-            ->setSubmittedByRepresentative(true)
-            ->setPatient($patient)
-            ->setRepresentative($representative)
+        $complaint = $this->applyFullComplaintDetails(
+            $this->newComplaint($number),
+            $representative,
+            $patient,
+            true,
+        )
+            ->setType(ComplaintTypeEnum::DAMAGE_COMPENSATION)
+            ->setStatus(ComplaintStatusEnum::IN_REVIEW)
+            ->setTermStatus(ComplaintTermEnum::APPROACHING)
             ->setSpecialist($specialist);
 
         $complaint->addStatusHistory(
@@ -120,10 +106,37 @@ final class ComplaintContext extends RawMinkContext implements Context
             $this->newStatusHistory($complaint, ComplaintStatusEnum::IN_REVIEW, new \DateTimeImmutable('2026-02-01 12:00:00')),
         );
 
-        $this->addAttachment($complaint, $specialist, 'patient-id.pdf', ComplaintAttachmentTypeEnum::PATIENT_ID_DOCUMENT);
-        $this->addAttachment($complaint, $specialist, 'institution-copy.pdf', ComplaintAttachmentTypeEnum::INSTITUTION_SUBMISSION);
-        $this->addAttachment($complaint, $specialist, 'institution-response.pdf', ComplaintAttachmentTypeEnum::INSTITUTION_RESPONSE);
-        $this->addAttachment($complaint, $specialist, 'representation.pdf', ComplaintAttachmentTypeEnum::REPRESENTATION_PROOF);
+        $this->addStandardComplaintAttachments($complaint, $specialist, true);
+
+        $this->persistComplaint($complaint);
+    }
+
+    #[Given('a full complaint with guest patient snapshot exists with number :number')]
+    public function aFullComplaintWithGuestPatientSnapshotExists(string $number): void
+    {
+        $submitter = $this->createComplainant('Elena', 'Elenaitė', '49001017777');
+        $specialist = $this->defaultSpecialist();
+
+        $guestPatient = (new ComplaintPatient())
+            ->setFirstName('Aistė')
+            ->setLastName('Aistytė')
+            ->setPersonalCode('49901017777')
+            ->setEmail('aiste.guest@example.com')
+            ->setPhone('+370 655 44444')
+            ->setAddress('Kauno g. 5, Kaunas');
+
+        $complaint = $this->applyFullComplaintDetails(
+            $this->withSubmittedDefaults($this->newComplaint($number)),
+            $submitter,
+            $guestPatient,
+            true,
+        )->setSpecialist($specialist);
+
+        $complaint->addStatusHistory(
+            $this->newStatusHistory($complaint, ComplaintStatusEnum::SUBMITTED, new \DateTimeImmutable('2026-07-01 12:00:00')),
+        );
+
+        $this->addStandardComplaintAttachments($complaint, $specialist, true);
 
         $this->persistComplaint($complaint);
     }
@@ -198,11 +211,7 @@ final class ComplaintContext extends RawMinkContext implements Context
     {
         $complaint = $this->requireComplaint($number);
         $client = $this->getClient();
-        $client->request('GET', $this->complaintAdminPath($complaint, 'cancel-changes'));
-        $response = $client->getResponse();
-        if ($response->isRedirect()) {
-            $client->followRedirect();
-        }
+        $client->request('GET', $this->complaintAdminPath($complaint, 'edit'));
     }
 
     #[When('I change complaint :number status on the edit page to :status without saving')]
@@ -244,7 +253,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::contains($html, 'Taip');
 
         $crawler = $this->getClient()->getCrawler();
-        $cancelAction = $crawler->filter('a[data-action-confirmation="true"][href*="cancel-changes"]');
+        $cancelAction = $crawler->filter('a.action-cancelChanges[data-action-confirmation="true"][href$="/edit"]');
         Assert::true($cancelAction->count() > 0, 'Cancel changes action link was not found on the edit page.');
         Assert::contains($cancelAction->text(), 'Atšaukti pakeitimus');
         Assert::false($cancelAction->attr('form') !== null && $cancelAction->attr('form') !== '', 'Cancel action must not be tied to the edit form.');
@@ -297,11 +306,26 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::same($min, (new \DateTimeImmutable('today'))->format('Y-m-d'));
     }
 
+    #[Then('complaint :number should have a patient snapshot without linked complainant')]
+    public function complaintShouldHavePatientSnapshotWithoutLinkedComplainant(string $number): void
+    {
+        $this->entityManager->clear();
+        $complaint = $this->requireComplaint($number);
+        $patient = $complaint->getPatient();
+        Assert::notNull($patient, sprintf('Complaint "%s" has no patient snapshot.', $number));
+        Assert::null(
+            $patient->getComplainant(),
+            sprintf('Complaint "%s" patient snapshot should not be linked to a complainant.', $number),
+        );
+        Assert::same('Aistė', $patient->getFirstName());
+        Assert::same('Aistytė', $patient->getLastName());
+    }
+
     #[Then('complaint :number should have status :status')]
     public function complaintShouldHaveStatus(string $number, string $status): void
     {
         $this->entityManager->clear();
-        $expected = ComplaintStatusEnum::fromName(strtoupper($status))->value;
+        $expected = ComplaintStatusEnum::fromName(strtoupper($status));
         Assert::same($this->requireComplaint($number)->getStatus(), $expected);
     }
 
@@ -363,9 +387,49 @@ final class ComplaintContext extends RawMinkContext implements Context
     private function withSubmittedDefaults(Complaint $complaint): Complaint
     {
         return $complaint
-            ->setType(ComplaintTypeEnum::PATIENT_RIGHTS->value)
-            ->setStatus(ComplaintStatusEnum::SUBMITTED->value)
-            ->setTermStatus(ComplaintTermEnum::ON_TIME->value);
+            ->setType(ComplaintTypeEnum::PATIENT_RIGHTS)
+            ->setStatus(ComplaintStatusEnum::SUBMITTED)
+            ->setTermStatus(ComplaintTermEnum::ON_TIME);
+    }
+
+    private function applyFullComplaintDetails(
+        Complaint $complaint,
+        Complainant $submitter,
+        Complainant|ComplaintPatient $patient,
+        bool $submittedByRepresentative,
+    ): Complaint {
+        $complaint = $complaint
+            ->setTermDate(new \DateTimeImmutable('+30 days'))
+            ->setComplaintDate(new \DateTimeImmutable('2026-01-15'))
+            ->setEventDate(new \DateTimeImmutable('2026-01-10'))
+            ->setRelatedSpecialists('Dr. Smith')
+            ->setComplaintDescription('Skundo aprašymas test')
+            ->setDisagreementDescription('Nesutinkama informacija test')
+            ->setExpectedResult('Laukiamas rezultatas test')
+            ->setSubmittedByRepresentative($submittedByRepresentative)
+            ->setSubmitter($submitter);
+
+        if ($patient instanceof Complainant) {
+            $complaint->assignPatientFromComplainant($patient);
+        } else {
+            $complaint->setPatient($patient);
+        }
+
+        return $complaint;
+    }
+
+    private function addStandardComplaintAttachments(
+        Complaint $complaint,
+        Admin $specialist,
+        bool $withRepresentationProof = false,
+    ): void {
+        $this->addAttachment($complaint, $specialist, 'patient-id.pdf', ComplaintAttachmentTypeEnum::PATIENT_ID_DOCUMENT);
+        $this->addAttachment($complaint, $specialist, 'institution-copy.pdf', ComplaintAttachmentTypeEnum::INSTITUTION_SUBMISSION);
+        $this->addAttachment($complaint, $specialist, 'institution-response.pdf', ComplaintAttachmentTypeEnum::INSTITUTION_RESPONSE);
+
+        if ($withRepresentationProof) {
+            $this->addAttachment($complaint, $specialist, 'representation.pdf', ComplaintAttachmentTypeEnum::REPRESENTATION_PROOF);
+        }
     }
 
     private function newStatusHistory(
@@ -375,7 +439,7 @@ final class ComplaintContext extends RawMinkContext implements Context
     ): ComplaintStatusHistory {
         return (new ComplaintStatusHistory())
             ->setComplaint($complaint)
-            ->setStatus($status->value)
+            ->setStatus($status)
             ->setChangedAt($changedAt);
     }
 
@@ -432,19 +496,14 @@ final class ComplaintContext extends RawMinkContext implements Context
 
         $storedFile = (new StoredFile())
             ->setUploadedByAdmin($admin)
+            ->setType($type)
             ->setFileName($path)
             ->setOriginalName($originalName)
             ->setFileSize(strlen('pdf-content'))
             ->setMimeType('application/pdf');
 
-        $attachment = (new ComplaintAttachment())
-            ->setComplaint($complaint)
-            ->setStoredFile($storedFile)
-            ->setType($type->value);
-
-        $complaint->addAttachment($attachment);
+        $complaint->addAttachment($storedFile);
         $this->entityManager->persist($storedFile);
-        $this->entityManager->persist($attachment);
     }
 
     private function submitComplaintEditForm(string $number, string $button, string $status): void

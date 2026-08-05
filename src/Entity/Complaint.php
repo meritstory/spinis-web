@@ -38,17 +38,14 @@ class Complaint implements \Stringable
     #[ORM\JoinColumn(nullable: false)]
     private ?HealthCareInstitution $healthCareInstitution = null;
 
-    #[Assert\Choice(callback: [ComplaintTypeEnum::class, 'values'], message: 'complaint.type.invalid')]
-    #[ORM\Column(length: 50)]
-    private string $type = ComplaintTypeEnum::PATIENT_RIGHTS->value;
+    #[ORM\Column(length: 50, enumType: ComplaintTypeEnum::class)]
+    private ComplaintTypeEnum $type = ComplaintTypeEnum::PATIENT_RIGHTS;
 
-    #[Assert\Choice(callback: [ComplaintStatusEnum::class, 'values'], message: 'complaint.status.invalid')]
-    #[ORM\Column(length: 50)]
-    private string $status = ComplaintStatusEnum::SUBMITTED->value;
+    #[ORM\Column(length: 50, enumType: ComplaintStatusEnum::class)]
+    private ComplaintStatusEnum $status = ComplaintStatusEnum::SUBMITTED;
 
-    #[Assert\Choice(callback: [ComplaintTermEnum::class, 'values'], message: 'complaint.term.invalid')]
-    #[ORM\Column(length: 50)]
-    private string $termStatus = ComplaintTermEnum::ON_TIME->value;
+    #[ORM\Column(length: 50, enumType: ComplaintTermEnum::class)]
+    private ComplaintTermEnum $termStatus = ComplaintTermEnum::ON_TIME;
 
     #[Assert\GreaterThanOrEqual('today', message: 'complaint.term_date.not_in_past')]
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
@@ -76,12 +73,11 @@ class Complaint implements \Stringable
     private bool $submittedByRepresentative = false;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Complainant $patient = null;
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
+    private ?Complainant $submitter = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Complainant $representative = null;
+    #[ORM\OneToOne(mappedBy: 'complaint', targetEntity: ComplaintPatient::class, cascade: ['persist'], orphanRemoval: true)]
+    private ?ComplaintPatient $patient = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: true)]
@@ -92,9 +88,9 @@ class Complaint implements \Stringable
     private ?Admin $specialist = null;
 
     /**
-     * @var Collection<int, ComplaintAttachment>
+     * @var Collection<int, StoredFile>
      */
-    #[ORM\OneToMany(mappedBy: 'complaint', targetEntity: ComplaintAttachment::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'complaint', targetEntity: StoredFile::class)]
     private Collection $attachments;
 
     /**
@@ -139,36 +135,36 @@ class Complaint implements \Stringable
         return $this;
     }
 
-    public function getType(): string
+    public function getType(): ComplaintTypeEnum
     {
         return $this->type;
     }
 
-    public function setType(string $type): static
+    public function setType(ComplaintTypeEnum $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): ComplaintStatusEnum
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(ComplaintStatusEnum $status): static
     {
         $this->status = $status;
 
         return $this;
     }
 
-    public function getTermStatus(): string
+    public function getTermStatus(): ComplaintTermEnum
     {
         return $this->termStatus;
     }
 
-    public function setTermStatus(string $termStatus): static
+    public function setTermStatus(ComplaintTermEnum $termStatus): static
     {
         $this->termStatus = $termStatus;
 
@@ -271,26 +267,39 @@ class Complaint implements \Stringable
         return $this;
     }
 
-    public function getPatient(): ?Complainant
+    public function getSubmitter(): ?Complainant
+    {
+        return $this->submitter;
+    }
+
+    public function setSubmitter(?Complainant $submitter): static
+    {
+        $this->submitter = $submitter;
+
+        return $this;
+    }
+
+    public function getPatient(): ?ComplaintPatient
     {
         return $this->patient;
     }
 
-    public function setPatient(?Complainant $patient): static
+    public function setPatient(?ComplaintPatient $patient): static
     {
+        if ($patient !== null && $patient->getComplaint() !== $this) {
+            $patient->setComplaint($this);
+        }
+
         $this->patient = $patient;
 
         return $this;
     }
 
-    public function getRepresentative(): ?Complainant
+    public function assignPatientFromComplainant(Complainant $complainant, bool $linkComplainant = true): static
     {
-        return $this->representative;
-    }
-
-    public function setRepresentative(?Complainant $representative): static
-    {
-        $this->representative = $representative;
+        $patient = $this->patient ?? new ComplaintPatient();
+        $patient->copyFromComplainant($complainant, $linkComplainant);
+        $this->setPatient($patient);
 
         return $this;
     }
@@ -308,14 +317,14 @@ class Complaint implements \Stringable
     }
 
     /**
-     * @return Collection<int, ComplaintAttachment>
+     * @return Collection<int, StoredFile>
      */
     public function getAttachments(): Collection
     {
         return $this->attachments;
     }
 
-    public function addAttachment(ComplaintAttachment $attachment): static
+    public function addAttachment(StoredFile $attachment): static
     {
         if (!$this->attachments->contains($attachment)) {
             $this->attachments->add($attachment);
@@ -325,7 +334,7 @@ class Complaint implements \Stringable
         return $this;
     }
 
-    public function removeAttachment(ComplaintAttachment $attachment): static
+    public function removeAttachment(StoredFile $attachment): static
     {
         if ($this->attachments->removeElement($attachment) && $attachment->getComplaint() === $this) {
             $attachment->setComplaint(null);

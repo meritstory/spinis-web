@@ -16,7 +16,6 @@ use App\Service\Admin\ComplaintBadgeHelper;
 use App\Service\Admin\LabelledEnumHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -25,7 +24,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
@@ -35,9 +33,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -55,7 +50,6 @@ class ComplaintCrudController extends AbstractCrudController
         private readonly ComplaintBadgeHelper $complaintBadgeHelper,
         private readonly ComplaintRepository $complaintRepository,
         private readonly TranslatorInterface $translator,
-        private readonly AdminUrlGenerator $adminUrlGenerator,
     ) {
     }
 
@@ -87,8 +81,7 @@ class ComplaintCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $cancelChanges = Action::new('cancelChanges', 'complaint.action.cancel_changes')
-            ->linkToCrudAction('cancelChanges')
-            ->asDangerAction()
+            ->linkToCrudAction(Action::EDIT)
             ->asTextLink()
             ->askConfirmation('complaint.confirm.cancel_changes', 'complaint.confirm.yes')
             ->setTemplatePath('admin/crud/cancel_changes_action.html.twig');
@@ -102,22 +95,6 @@ class ComplaintCrudController extends AbstractCrudController
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_RETURN, fn (Action $action): Action => $action
                 ->setLabel('complaint.action.save')
                 ->askConfirmation('complaint.confirm.save', 'complaint.confirm.yes'));
-    }
-
-    /**
-     * @param AdminContext<Complaint> $context
-     */
-    #[AdminRoute(path: '/{entityId}/cancel-changes', options: ['methods' => [Request::METHOD_GET]])]
-    public function cancelChanges(AdminContext $context): Response
-    {
-        /** @var Complaint $complaint */
-        $complaint = $context->getEntity()->getInstance();
-
-        if ($complaint->getId() === null) {
-            return $this->redirectToRoute('admin_complaint_index');
-        }
-
-        return $this->redirectToComplaintEdit($complaint);
     }
 
     public function configureFilters(Filters $filters): Filters
@@ -156,23 +133,29 @@ class ComplaintCrudController extends AbstractCrudController
                 : '');
         yield AssociationField::new('healthCareInstitution')
             ->setLabel('complaint.field.institution');
-        yield TextField::new('type')
+        yield ChoiceField::new('type')
             ->setLabel('complaint.field.type')
-            ->formatValue(fn (?string $value): string => $this->labelledEnumHelper->formatValue($value, ComplaintTypeEnum::class));
+            ->setChoices($this->labelledEnumHelper->getEnumChoicesForEnum(ComplaintTypeEnum::class))
+            ->formatValue(fn (ComplaintTypeEnum|string|null $value): string => $this->labelledEnumHelper->formatValue(
+                $value,
+                ComplaintTypeEnum::class,
+            ));
         yield DateTimeField::new('createdAt')
             ->setLabel('complaint.field.created_at')
             ->setFormat('yyyy-MM-dd');
-        yield TextField::new('termStatus')
+        yield ChoiceField::new('termStatus')
             ->setLabel('complaint.field.term')
-            ->renderAsHtml()
-            ->formatValue(fn (?string $value, ?Complaint $entity): string => $this->complaintBadgeHelper->formatTerm(
+            ->setChoices($this->labelledEnumHelper->getEnumChoicesForEnum(ComplaintTermEnum::class))
+            ->escapeHtml(false)
+            ->formatValue(fn (ComplaintTermEnum|string|null $value, ?Complaint $entity): string => $this->complaintBadgeHelper->formatTerm(
                 $value,
                 $entity?->getStatus(),
             ));
-        yield TextField::new('status')
+        yield ChoiceField::new('status')
             ->setLabel('complaint.field.status')
-            ->renderAsHtml()
-            ->formatValue(fn (?string $value): string => $this->complaintBadgeHelper->format($value, ComplaintStatusEnum::class));
+            ->setChoices($this->labelledEnumHelper->getEnumChoicesForEnum(ComplaintStatusEnum::class))
+            ->escapeHtml(false)
+            ->formatValue(fn (ComplaintStatusEnum|string|null $value): string => $this->complaintBadgeHelper->format($value, ComplaintStatusEnum::class));
 
         yield AssociationField::new('specialist')
             ->setLabel('complaint.field.specialist')
@@ -192,7 +175,11 @@ class ComplaintCrudController extends AbstractCrudController
             ->autocomplete(true, fn (Admin $admin): string => $this->formatSpecialistAutocompleteLabel($admin))
             ->setRequired(false);
         yield ChoiceField::new('status', 'complaint.field.status')
-            ->setChoices($this->labelledEnumHelper->getChoicesForEnum(ComplaintStatusEnum::class));
+            ->setChoices($this->labelledEnumHelper->getEnumChoicesForEnum(ComplaintStatusEnum::class))
+            ->setFormTypeOption(
+                'choice_value',
+                static fn (?ComplaintStatusEnum $status): string => $status === null ? '' : $status->value,
+            );
         yield DateField::new('termDate', 'complaint.field.term_date')
             ->renderAsNativeWidget()
             ->setFormTypeOption('attr', ['min' => self::todayIsoDate()]);
@@ -225,19 +212,6 @@ class ComplaintCrudController extends AbstractCrudController
         parent::updateEntity($entityManager, $entityInstance);
 
         $this->addFlash('success', $this->translator->trans('complaint.flash.saved'));
-    }
-
-    private function redirectToComplaintEdit(Complaint $complaint): Response
-    {
-        $response = $this->redirect($this->adminUrlGenerator
-            ->setController(self::class)
-            ->setAction(Action::EDIT)
-            ->setEntityId($complaint->getId())
-            ->generateUrl());
-
-        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
-
-        return $response;
     }
 
     private function formatSpecialistAutocompleteLabel(Admin $admin): string

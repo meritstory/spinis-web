@@ -50,6 +50,7 @@ Feature: Admin complaints
     And I should see "Testinė poliklinika"
     And I should see "Skundas pacientų teisių nustatymo tarnybai"
     And I should see "Pacientas"
+    And I should see "Petras"
     And I should see "Pateiktas"
     And I should see "Skundo aprašymas test"
     And I should see "institution-copy.pdf"
@@ -120,6 +121,15 @@ Feature: Admin complaints
     And I cancel unsaved complaint changes on the edit page for "SK-2026-CANCEL-01"
     Then I should be on the admin complaint edit page for "SK-2026-CANCEL-01"
     And complaint "SK-2026-CANCEL-01" on the edit page should show status SUBMITTED
+
+  Scenario: Complaint edit page shows guest patient snapshot without system user link
+    Given a full complaint with guest patient snapshot exists with number "SK-2026-GUEST-01"
+    And I visit the admin complaint edit page for "SK-2026-GUEST-01"
+    Then I should see "Aistė"
+    And I should see "Aistytė"
+    And I should see "Teikia atstovaujantis asmuo"
+    And I should see "Elena"
+    And complaint "SK-2026-GUEST-01" should have a patient snapshot without linked complainant
 
   Scenario: Term date field uses calendar input with minimum today
     Given a full complaint exists with number "SK-2026-DATE-01"

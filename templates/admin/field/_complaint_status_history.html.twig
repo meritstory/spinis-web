@@ -5,7 +5,7 @@
     <div class="d-flex flex-column gap-3">
         {% for entry in history %}
             {{ include('admin/field/_complaint_edit_field.html.twig', {
-                label: ('complaint.status.' ~ entry.status)|trans,
+                label: ('complaint.status.' ~ entry.status.value)|trans,
                 value: entry.changedAt|date('Y-m-d'),
             }) }}
         {% endfor %}

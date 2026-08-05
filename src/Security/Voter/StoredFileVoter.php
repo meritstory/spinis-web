@@ -7,7 +7,6 @@ namespace App\Security\Voter;
 use App\Entity\Admin;
 use App\Entity\RoleEnum;
 use App\Entity\StoredFile;
-use App\Repository\ComplaintAttachmentRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -17,11 +16,6 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 final class StoredFileVoter extends Voter
 {
     public const string VIEW = 'VIEW';
-
-    public function __construct(
-        private readonly ComplaintAttachmentRepository $complaintAttachmentRepository,
-    ) {
-    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -43,7 +37,7 @@ final class StoredFileVoter extends Voter
             return true;
         }
 
-        return $this->complaintAttachmentRepository->existsForStoredFile($storedFile)
+        return $storedFile->getComplaint() !== null
             && in_array(RoleEnum::DEPARTMENT_HEAD->value, $user->getRoles(), true);
     }
 }
