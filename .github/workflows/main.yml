@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    with:
+      php_version: '8.5'
+
+  deploy_staging:
+      if: github.ref == 'refs/heads/dev'
+      needs: test
+      uses: ./.github/workflows/deploy.yml
+      with:
+          environment: staging
+          image_name: ghcr.io/meritstory/spinis-web-staging
+          k3s_namespace: spinis-web
+          deployment_name: spinis-web
+          container_name: spinis-web
+          env_secret_from: spinis-web-env
+          image_pull_secret: ghcr-pull
+          dockerfile_path: ./docker/app/Dockerfile
+          migration_job_name: spinis-web-migrate
+          migration_command: /var/www/symfony/bin/console doctrine:migrations:migrate --no-interaction
+          vault_url: https://vault.devmerit.com
+          vault_jwt_role: github-staging
+          vault_kv_path: /v1/kv/staging/data/spinis.devmerit.com/files
+      secrets: inherit

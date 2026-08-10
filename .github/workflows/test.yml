@@ -1,9 +1,11 @@
 name: Test
 
 on:
-    push:
-
-    workflow_dispatch:
+    workflow_call:
+        inputs:
+            php_version:
+                required: true
+                type: string
 
 permissions:
     contents: read
@@ -46,7 +48,7 @@ jobs:
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.5'
+                    php-version: ${{ inputs.php_version }}
 
             -   name: Install dependencies
                 run: composer install

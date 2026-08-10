@@ -1,0 +1,235 @@
+name: Build and Deploy (k3s)
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+      k3s_namespace:
+        required: true
+        type: string
+      deployment_name:
+        required: true
+        type: string
+      container_name:
+        required: true
+        type: string
+      env_secret_from:
+        required: true
+        type: string
+      image_pull_secret:
+        required: true
+        type: string
+      dockerfile_path:
+        required: true
+        type: string
+      dockerfile_target:
+        required: false
+        type: string
+      migration_job_name:
+        required: true
+        type: string
+      migration_command:
+        required: true
+        type: string
+      vault_url:
+        required: true
+        type: string
+      vault_kv_path:
+        required: true
+        type: string
+      vault_jwt_role:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+concurrency:
+  group: ${{ inputs.deployment_name}}-${{ inputs.environment }}
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: ${{ inputs.image_name }}
+  DEPLOYMENT_NAME: ${{ inputs.deployment_name }}
+  CONTAINER_NAME: ${{ inputs.container_name }}
+  ENV_SECRET_FROM: ${{ inputs.env_secret_from }}
+  IMAGE_PULL_SECRET: ${{ inputs.image_pull_secret }}
+  MIGRATION_JOB_NAME: ${{ inputs.migration_job_name }}
+  MIGRATION_COMMAND: ${{ inputs.migration_command }}
+  K3S_NAMESPACE: ${{ inputs.k3s_namespace }}
+  K3S_SERVER: ${{ secrets.K3S_SERVER }}
+  K3S_TOKEN: ${{ secrets.K3S_TOKEN }}
+  K3S_CA_CRT: ${{ secrets.K3S_CA_CRT }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Vault token
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ inputs.vault_url }}
+          method: jwt
+          role: ${{ inputs.vault_jwt_role }}
+          exportToken: true
+
+      - name: Pull secret files from Vault
+        shell: bash
+        run: |
+          set -euo pipefail
+          response="$(curl -fsS \
+            -H "X-Vault-Token: $VAULT_TOKEN" \
+            "${{ inputs.vault_url }}${{ inputs.vault_kv_path }}")"
+          echo "$response" | jq -er '.data.data' > /dev/null
+          echo "$response" | jq -rc '.data.data | to_entries[]' | while IFS= read -r entry; do
+            file_path="$(jq -r '.key' <<< "$entry")"
+            if [[ "$file_path" = /* ]] || [[ "$file_path" == *".."* ]]; then
+              echo "Unsafe file path from Vault: $file_path" >&2
+              exit 1
+            fi
+            mkdir -p "$(dirname "$file_path")"
+            jq -j -r '.value' <<< "$entry" > "$file_path"
+            echo "Created: $file_path"
+          done
+
+      - name: Compute image tag
+        id: vars
+        run: |
+          set -euo pipefail
+          TS=$(date -u +"%Y%m%d%H%M%S")
+          SHORT_SHA="${GITHUB_SHA::7}"
+          echo "sha_short=$SHORT_SHA" >> "$GITHUB_OUTPUT"
+          echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
+          echo "image=${IMAGE_NAME}:${SHORT_SHA}-${TS}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ inputs.dockerfile_path }}
+          target: ${{ inputs.dockerfile_target }}
+          push: true
+          tags: |
+            ${{ steps.vars.outputs.image }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.0
+
+      - name: Configure kubeconfig
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.kube
+          cat > ~/.kube/config <<EOF
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - name: k3s
+            cluster:
+              certificate-authority-data: ${K3S_CA_CRT}
+              server: ${K3S_SERVER}
+          contexts:
+          - name: k3s
+            context:
+              cluster: k3s
+              namespace: ${K3S_NAMESPACE}
+              user: gha
+          current-context: k3s
+          users:
+          - name: gha
+            user:
+              token: ${K3S_TOKEN}
+          EOF
+
+      - name: Run migrations (inline Job)
+        run: |
+          set -euo pipefail
+          NS="${K3S_NAMESPACE}"
+          IMG="${{ steps.vars.outputs.image }}"
+          ENV_SECRET_FROM="${ENV_SECRET_FROM}"
+          JOB="${MIGRATION_JOB_NAME}"
+          echo "Running migrations with image: $IMG"
+          echo "Migration command: ${MIGRATION_COMMAND}"
+          # Re-run safe
+          kubectl -n "$NS" delete job "$JOB" --ignore-not-found=true
+          cat <<EOF | kubectl apply -f -
+          apiVersion: batch/v1
+          kind: Job
+          metadata:
+            name: ${JOB}
+            namespace: ${NS}
+          spec:
+            backoffLimit: 0
+            ttlSecondsAfterFinished: 600
+            template:
+              spec:
+                restartPolicy: Never
+                imagePullSecrets:
+                  - name: ${IMAGE_PULL_SECRET}
+                containers:
+                  - name: migrate
+                    image: ${IMG}
+                    envFrom:
+                      - secretRef:
+                          name: ${ENV_SECRET_FROM}
+                    imagePullPolicy: IfNotPresent
+                    command: ["sh","-lc","${MIGRATION_COMMAND}"]
+          EOF
+          deadline=$((SECONDS + 600)) # 10 minute timeout
+          while true; do
+            failed="$(kubectl -n "$NS" get job "$JOB" -o jsonpath='{.status.conditions[?(@.type=="Failed")].status}' 2>/dev/null || true)"
+            complete="$(kubectl -n "$NS" get job "$JOB" -o jsonpath='{.status.conditions[?(@.type=="Complete")].status}' 2>/dev/null || true)"
+            if [[ "$failed" == "True" ]]; then
+              echo "❌ Migration job failed. Logs:"
+              kubectl -n "$NS" logs "job/$JOB" --all-containers=true --tail=200 || true
+              kubectl -n "$NS" describe "job/$JOB" || true
+              exit 1
+            fi
+            if [[ "$complete" == "True" ]]; then
+              echo "✅ Migration job completed successfully"
+              break
+            fi
+            if (( SECONDS >= deadline )); then
+              echo "❌ Timed out waiting for job/$JOB"
+              kubectl -n "$NS" logs "job/$JOB" --all-containers=true --tail=200 || true
+              kubectl -n "$NS" describe "job/$JOB" || true
+              exit 1
+            fi
+            sleep 2
+          done
+
+      - name: Roll out new image
+        run: |
+          set -euo pipefail
+          NS="${K3S_NAMESPACE}"
+          IMG="${{ steps.vars.outputs.image }}"
+          kubectl -n "$NS" set image "deploy/${DEPLOYMENT_NAME}" "${CONTAINER_NAME}=$IMG"
+          kubectl -n "$NS" rollout status "deploy/${DEPLOYMENT_NAME}" --timeout=180s
