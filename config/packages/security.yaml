@@ -88,6 +88,7 @@ security:
         - { path: ^/logout, roles: PUBLIC_ACCESS }
         - { path: ^/my-complaints, roles: ROLE_COMPLAINANT }
         - { path: ^/files, roles: ROLE_ADMIN }
+        - { path: ^/api/health-check, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
