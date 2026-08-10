@@ -25,3 +25,32 @@ Feature: Private stored files
     Given file metadata without an S3 object exists for admin "admin@example.com"
     When I download the stored file
     Then the response status code should be 404
+
+  Scenario: Department head can download own private stored file
+    When I visit the logout page
+    Given department_head with email "head@example.com" and password "secret" is created without two-factor
+    And stored file "head-only.txt" with content "head private" exists for admin "head@example.com"
+    And I am logged in to the admin panel as "head@example.com" with password "secret" without two-factor
+    When I download stored file "head-only.txt" uploaded by admin "head@example.com"
+    Then the response status code should be 200
+
+  Scenario: Department head cannot download system administrator private stored file
+    When I visit the logout page
+    Given department_head with email "head@example.com" and password "secret" is created without two-factor
+    And stored file "admin-only.txt" with content "admin private" exists for admin "admin@example.com"
+    And I am logged in to the admin panel as "head@example.com" with password "secret" without two-factor
+    When I download stored file "admin-only.txt" uploaded by admin "admin@example.com"
+    Then the response status code should be 403
+
+  Scenario: System administrator cannot download department head private stored file
+    Given department_head with email "head@example.com" and password "secret" is created without two-factor
+    And stored file "head-private.txt" with content "not for sysadmin" exists for admin "head@example.com"
+    When I download stored file "head-private.txt" uploaded by admin "head@example.com"
+    Then the response status code should be 403
+
+  Scenario: Complaint attachment uploader can download their file
+    Given a full complaint exists with number "SK-2026-UPLOADER-01"
+    And I visit the logout page
+    And I am logged in to the admin panel as "jonas.jonaitis@example.com" with password "secret" without two-factor
+    When I download stored file "patient-id.pdf" uploaded by admin "jonas.jonaitis@example.com"
+    Then the response status code should be 200

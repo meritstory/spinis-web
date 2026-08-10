@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Enum\ComplaintAttachmentTypeEnum;
 use App\Repository\StoredFileRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -50,6 +51,13 @@ class StoredFile
     #[ORM\ManyToOne]
     private ?Admin $uploadedByAdmin = null;
 
+    #[ORM\ManyToOne(inversedBy: 'attachments')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Complaint $complaint = null;
+
+    #[ORM\Column(length: 50, nullable: true, enumType: ComplaintAttachmentTypeEnum::class)]
+    private ?ComplaintAttachmentTypeEnum $type = null;
+
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -91,6 +99,44 @@ class StoredFile
         return $this;
     }
 
+    public function getFormattedFileSize(): string
+    {
+        $bytes = $this->fileSize;
+        if ($bytes < 1024) {
+            return sprintf('%d B', $bytes);
+        }
+
+        if ($bytes < 1024 * 1024) {
+            return sprintf('%.1f KB', $bytes / 1024);
+        }
+
+        return sprintf('%.1f MB', $bytes / (1024 * 1024));
+    }
+
+    public function getDisplayFileType(): string
+    {
+        return match ($this->mimeType) {
+            'application/pdf' => 'PDF',
+            'application/msword' => 'DOC',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'DOCX',
+            'application/vnd.ms-excel' => 'XLS',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'XLSX',
+            'image/jpeg' => 'JPEG',
+            'image/png' => 'PNG',
+            default => $this->displayFileTypeFromExtension(),
+        };
+    }
+
+    private function displayFileTypeFromExtension(): string
+    {
+        $extension = pathinfo($this->originalName, PATHINFO_EXTENSION);
+        if ($extension === '') {
+            $extension = pathinfo($this->fileName, PATHINFO_EXTENSION);
+        }
+
+        return $extension !== '' ? strtoupper($extension) : 'FILE';
+    }
+
     public function getMimeType(): string
     {
         return $this->mimeType;
@@ -111,6 +157,30 @@ class StoredFile
     public function setUploadedByAdmin(?Admin $uploadedByAdmin): static
     {
         $this->uploadedByAdmin = $uploadedByAdmin;
+
+        return $this;
+    }
+
+    public function getComplaint(): ?Complaint
+    {
+        return $this->complaint;
+    }
+
+    public function setComplaint(?Complaint $complaint): static
+    {
+        $this->complaint = $complaint;
+
+        return $this;
+    }
+
+    public function getType(): ?ComplaintAttachmentTypeEnum
+    {
+        return $this->type;
+    }
+
+    public function setType(?ComplaintAttachmentTypeEnum $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

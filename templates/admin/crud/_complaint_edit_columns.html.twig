@@ -1,0 +1,167 @@
+<div class="row g-4">
+    <div class="col-12 col-xl-8 d-flex flex-column gap-4">
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.institution'|trans }}</h2>
+            <div class="row gx-5 gy-4">
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.institution_title'|trans,
+                    value: complaint.healthCareInstitution ? complaint.healthCareInstitution.title : '—',
+                    class: 'col-md-6',
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.institution_legal_code'|trans,
+                    value: complaint.healthCareInstitution ? complaint.healthCareInstitution.code : '—',
+                    class: 'col-md-6',
+                }) }}
+            </div>
+        </section>
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.institution_documents'|trans }}</h2>
+            {{ include('admin/field/_complaint_attachments_table.html.twig', {
+                attachments: complaint.attachments|filter(a => a.type and a.type.value in ['institution_submission', 'institution_response']),
+            }) }}
+        </section>
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.circumstances'|trans }}</h2>
+            <div class="d-flex flex-column gap-4">
+                <div class="row gx-5 gy-4">
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complaint.field.complaint_date'|trans,
+                        value: complaint.complaintDate ? complaint.complaintDate|date('Y-m-d') : '—',
+                        class: 'col-md-6',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complaint.field.event_date'|trans,
+                        value: complaint.eventDate ? complaint.eventDate|date('Y-m-d') : '—',
+                        class: 'col-md-6',
+                    }) }}
+                </div>
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.related_specialists'|trans,
+                    value: complaint.relatedSpecialists|default('—'),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.description'|trans,
+                    value: complaint.complaintDescription|default('—'),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.disagreement'|trans,
+                    value: complaint.disagreementDescription|default('—'),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.expected_result'|trans,
+                    value: complaint.expectedResult|default('—'),
+                }) }}
+            </div>
+        </section>
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.patient_info'|trans }}</h2>
+            <div class="d-flex flex-column gap-4">
+                <div class="row gx-5 gy-4">
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.first_name'|trans,
+                        value: complaint.patient ? complaint.patient.firstName|default('—') : '—',
+                        class: 'col-md-4',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.last_name'|trans,
+                        value: complaint.patient ? complaint.patient.lastName|default('—') : '—',
+                        class: 'col-md-4',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.personal_code'|trans,
+                        value: complaint.patient ? complaint.patient.personalCode|default('—') : '—',
+                        class: 'col-md-4',
+                    }) }}
+                </div>
+                <div class="row gx-5 gy-4">
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.email'|trans,
+                        value: complaint.patient ? complaint.patient.email|default('—') : '—',
+                        class: 'col-md-4',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.phone'|trans,
+                        value: complaint.patient ? complaint.patient.phone|default('—') : '—',
+                        class: 'col-md-4',
+                    }) }}
+                    {{ include('admin/field/_complaint_edit_field.html.twig', {
+                        label: 'complainant.field.address'|trans,
+                        value: complaint.patient ? complaint.patient.address|default('—') : '—',
+                        class: 'col-md-4',
+                    }) }}
+                </div>
+            </div>
+        </section>
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.patient_document'|trans }}</h2>
+            {{ include('admin/field/_complaint_attachments_table.html.twig', {
+                attachments: complaint.attachments|filter(a => a.type and a.type.value == 'patient_id_document'),
+            }) }}
+        </section>
+
+        {% if complaint.submittedByRepresentative %}
+            {{ include('admin/field/_complaint_representative_sections.html.twig', {
+                complaint: complaint,
+                representationAttachments: complaint.attachments|filter(a => a.type and a.type.value == 'representation_proof'),
+            }) }}
+        {% endif %}
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.other_info'|trans }}</h2>
+            <button type="button" class="btn btn-secondary align-self-start" disabled>{{ 'complaint.action.supplement'|trans }}</button>
+        </section>
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.response'|trans }}</h2>
+            <button type="button" class="btn btn-primary align-self-start" disabled>{{ 'complaint.action.submit_response'|trans }}</button>
+        </section>
+    </div>
+
+    <aside class="col-12 col-xl-4 d-flex flex-column gap-4">
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.specialist'|trans }}</h2>
+            {{ include('admin/field/_complaint_form_field.html.twig', { field: form.children.specialist }) }}
+        </section>
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.complaint_info'|trans }}</h2>
+            <div class="d-flex flex-column gap-3">
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.number_short'|trans,
+                    value: complaint.number,
+                }) }}
+                {{ include('admin/field/_complaint_form_field.html.twig', { field: form.children.status }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.submitted_at'|trans,
+                    value: complaint.createdAt ? complaint.createdAt|date('Y-m-d') : '—',
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.term'|trans,
+                    value: complaint_term_badge(complaint),
+                    raw: true,
+                }) }}
+                {{ include('admin/field/_complaint_form_field.html.twig', { field: form.children.termDate }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.type'|trans,
+                    value: complaint_type_label(complaint),
+                }) }}
+                {{ include('admin/field/_complaint_edit_field.html.twig', {
+                    label: 'complaint.field.patient_type'|trans,
+                    value: complaint.submittedByRepresentative
+                        ? 'complaint.submitter.representative'|trans
+                        : 'complaint.submitter.patient'|trans,
+                }) }}
+            </div>
+        </section>
+
+        <section class="card p-4">
+            <h2 class="h6 fw-bold mb-4">{{ 'complaint.fieldset.history'|trans }}</h2>
+            {{ include('admin/field/_complaint_status_history.html.twig', { complaint: complaint }) }}
+        </section>
+    </aside>
+</div>

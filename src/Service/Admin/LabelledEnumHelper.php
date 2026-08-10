@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
+use BackedEnum;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -80,15 +81,16 @@ final readonly class LabelledEnumHelper
         return $choices;
     }
 
-    public function formatValue(?string $value, string $enumClass): string
+    public function formatValue(BackedEnum|string|null $value, string $enumClass): string
     {
         if ($value === null || $value === '') {
             return '';
         }
 
-        $enum = $enumClass::tryFrom($value);
+        $enumValue = $value instanceof BackedEnum ? $value->value : $value;
+        $enum = $enumClass::tryFrom($enumValue);
 
-        return $enum !== null ? $this->translator->trans($enum->getLabelKey()) : $value;
+        return $enum !== null ? $this->translator->trans($enum->getLabelKey()) : (string) $enumValue;
     }
 
     /**
@@ -107,6 +109,18 @@ final readonly class LabelledEnumHelper
             }
 
             $choices[$this->translator->trans($case->getLabelKey())] = (string) $case->value;
+        }
+
+        return $choices;
+    }
+
+    /** @return array<string, BackedEnum> */
+    public function getEnumChoicesForEnum(string $enumClass): array
+    {
+        $choices = [];
+
+        foreach ($enumClass::cases() as $case) {
+            $choices[$this->translator->trans($case->getLabelKey())] = $case;
         }
 
         return $choices;

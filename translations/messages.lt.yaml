@@ -286,15 +286,66 @@ complaint:
     label:
         singular: Skundas
     page:
-        detail: Skundas
+        edit_heading: 'Skundas %number%'
+    fieldset:
+        institution: 'Įstaigos informacija'
+        specialist: 'Priskirtas specialistas'
+        institution_documents: 'Įstaigai /-oms teikto skundo kopija ir įstaigos atsakymas /-ai'
+        complaint_info: 'Skundo informacija'
+        circumstances: 'Skundo aplinkybės'
+        history: 'Skundo nagrinėjimo istorija'
+        patient_info: 'Paciento informacija'
+        patient_document: 'Paciento asmens dokumento kopija'
+        representative_info: 'Paciento atstovo /-ų informacija'
+        representation_documents: 'Atstovavimą patvirtinantys dokumentai'
+        other_info: 'Kita informacija'
+        response: Atsakymas
+    action:
+        cancel_changes: 'Atšaukti pakeitimus'
+        save_and_continue: 'Išsaugoti ir tęsti redagavimą'
+        save: Išsaugoti
+        supplement: 'Papildyti skundą'
+        submit_response: 'Teikti atsakymą pacientui'
+    confirm:
+        cancel_changes: 'Ar tikrai norite atšaukti pakeitimus?'
+        save: 'Ar tikrai norite išsaugoti pakeitimus?'
+        no: Ne
+        yes: Taip
+    flash:
+        saved: 'Pakeitimai išsaugoti.'
+    submitter:
+        patient: Pacientas
+        representative: 'Teikia atstovaujantis asmuo'
+    attachments:
+        empty: 'Dokumentų nėra.'
+        download: Atsisiųsti
+        column:
+            file: Failas
+            type: Tipas
+            date: Data
+            size: Dydis
+    history:
+        empty: 'Istorijos įrašų nėra.'
     field:
         number: 'Skundo nr.'
+        number_short: Nr.
         institution: Įstaiga
-        type: 'Skundo tipas'
+        institution_title: 'Pirmos ASPĮ pavadinimas'
+        institution_legal_code: 'Pirmos ASPĮ juridinio asmens kodas'
+        type: Tipas
         created_at: Sukurta
+        submitted_at: 'Pateikimo data'
         term: Terminas
+        term_date: 'Termino data'
         status: Būsena
         specialist: Specialistas
+        patient_type: 'Paciento tipas'
+        complaint_date: 'Skundo data'
+        event_date: 'Įvykio data'
+        related_specialists: 'Susiję specialistas /-ai'
+        description: 'Skundo aprašymas'
+        disagreement: 'Su kokia įstaigos pateikta informacija nesutinkama'
+        expected_result: 'Laukiamas rezultatas'
     number:
         not_blank: 'Įveskite skundo numerį.'
         unique: 'Skundo numeris jau naudojamas.'
@@ -304,8 +355,8 @@ complaint:
         invalid_role: 'Šiam skundui galima priskirti tik specialistą.'
     type:
         invalid: 'Neteisingas skundo tipas.'
-        patient_rights: 'Pacientų teisės'
-        damage_compensation: 'Žalos atlyginimas'
+        patient_rights: 'Skundas pacientų teisių nustatymo tarnybai'
+        damage_compensation: 'Skundas žalos atlyginimo komisijai'
     status:
         invalid: 'Neteisinga skundo būsena.'
         submitted: Pateiktas
@@ -319,6 +370,8 @@ complaint:
         on_time: Laiku
         overdue: Vėluoja
         approaching: 'Artėja prie termino'
+    term_date:
+        not_in_past: 'Termino data negali būti praeityje.'
 
 faq_page:
     title: Dažniausiai užduodami klausimai

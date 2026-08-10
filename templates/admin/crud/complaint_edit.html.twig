@@ -1,0 +1,27 @@
+{% extends '@EasyAdmin/crud/edit.html.twig' %}
+
+{% block edit_form %}
+    <div class="ea-complaint-edit">
+        {{ form_start(edit_form, { attr: { class: 'ea-edit-form', id: 'edit-Complaint-form' } }) }}
+        {% include 'admin/crud/_complaint_edit_columns.html.twig' with {
+            complaint: entity.instance,
+            form: edit_form,
+        } %}
+        {{ form_end(edit_form) }}
+    </div>
+{% endblock %}
+
+{% block content_title %}
+    <nav class="ea-complaint-breadcrumb" aria-label="breadcrumb">
+        <a href="{{ path('admin_complaint_index') }}">{{ 'menu.complaints'|trans }}</a>
+        <span class="ea-complaint-breadcrumb__separator" aria-hidden="true">&gt;</span>
+        <span class="ea-complaint-breadcrumb__current">{{ entity.instance.number }}</span>
+    </nav>
+    <span class="ea-complaint-page-title">
+        {{ 'complaint.page.edit_heading'|trans({'%number%': entity.instance.number}) }}
+    </span>
+{% endblock %}
+
+{% block delete_form %}
+    {{ include('admin/crud/_complaint_action_confirmation_modal.html.twig') }}
+{% endblock %}

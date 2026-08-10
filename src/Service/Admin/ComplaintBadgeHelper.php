@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Admin;
 
+use BackedEnum;
 use App\Enum\ComplaintBadgeColor;
 use App\Enum\ComplaintStatusEnum;
 use App\Enum\ComplaintTermEnum;
@@ -20,36 +21,43 @@ final readonly class ComplaintBadgeHelper
     /**
      * @param class-string<ComplaintStatusEnum|ComplaintTermEnum> $enumClass
      */
-    public function format(?string $value, string $enumClass): string
+    public function format(BackedEnum|string|null $value, string $enumClass): string
     {
         if ($value === null || $value === '') {
             return '';
         }
 
-        $enum = $enumClass::tryFrom($value);
+        $enumValue = $value instanceof BackedEnum ? $value->value : $value;
+        $enum = $enumClass::tryFrom($enumValue);
 
         return $enum === null
-            ? $this->escape($value)
+            ? $this->escape((string) $enumValue)
             : $this->renderEnumBadge($enum);
     }
 
-    public function formatTerm(?string $termValue, ?string $statusValue): string
+    public function formatTerm(
+        ComplaintTermEnum|string|null $termValue,
+        ComplaintStatusEnum|string|null $statusValue,
+    ): string
     {
         if ($termValue === null || $termValue === '') {
             return '';
         }
 
-        $enum = ComplaintTermEnum::tryFrom($termValue);
+        $term = $termValue instanceof ComplaintTermEnum ? $termValue : ComplaintTermEnum::tryFrom($termValue);
 
-        if ($enum === null) {
+        if ($term === null) {
             return $this->escape($termValue);
         }
 
-        $badgeColor = $statusValue === ComplaintStatusEnum::RESOLVED->value
+        $status = $statusValue instanceof ComplaintStatusEnum
+            ? $statusValue
+            : ($statusValue !== null ? ComplaintStatusEnum::tryFrom($statusValue) : null);
+        $badgeColor = $status === ComplaintStatusEnum::RESOLVED
             ? ComplaintBadgeColor::Gray
-            : $enum->getBadgeColor();
+            : $term->getBadgeColor();
 
-        return $this->renderEnumBadge($enum, $badgeColor);
+        return $this->renderEnumBadge($term, $badgeColor);
     }
 
     private function renderEnumBadge(ComplaintStatusEnum|ComplaintTermEnum $enum, ?ComplaintBadgeColor $badgeColor = null): string

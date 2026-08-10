@@ -32,6 +32,10 @@ return [
         'path' => './assets/admin/tinymce-field.js',
         'entrypoint' => true,
     ],
+    'admin/complaint-edit-form' => [
+        'path' => './assets/admin/complaint-edit-form.js',
+        'entrypoint' => true,
+    ],
     'tinymce/icons/default' => [
         'version' => '8.8.0',
     ],
