@@ -73,7 +73,7 @@ class Complaint implements \Stringable
     private bool $submittedByRepresentative = false;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Complainant $submitter = null;
 
     #[ORM\OneToOne(mappedBy: 'complaint', targetEntity: ComplaintPatient::class, cascade: ['persist'], orphanRemoval: true)]

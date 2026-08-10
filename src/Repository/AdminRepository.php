@@ -73,7 +73,6 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
     {
         return $queryBuilder
             ->andWhere(sprintf('%s.active = true', $alias))
-            ->andWhere(sprintf('%s.deletedAt IS NULL', $alias))
             ->andWhere(sprintf('JSONB_CONTAINS(%s.roles, :role) = true', $alias))
             ->setParameter('role', json_encode([$role->value], JSON_THROW_ON_ERROR));
     }
@@ -86,7 +85,6 @@ class AdminRepository extends ServiceEntityRepository implements PasswordUpgrade
         $expr = $queryBuilder->expr();
         $isActiveSpecialist = $expr->andX(
             sprintf('%s.active = true', $alias),
-            sprintf('%s.deletedAt IS NULL', $alias),
             sprintf('JSONB_CONTAINS(%s.roles, :role) = true', $alias),
         );
 

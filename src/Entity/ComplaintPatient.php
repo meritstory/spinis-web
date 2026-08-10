@@ -24,7 +24,7 @@ class ComplaintPatient
     private ?Complaint $complaint = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Complainant $complainant = null;
 
     #[ORM\Column(length: 100, nullable: true, options: ['collation' => 'lt_alphabet'])]
