@@ -11,9 +11,8 @@ jobs:
       php_version: '8.5'
 
   deploy_staging:
-      if: github.ref == 'refs/heads/feature/SIS-68-staging'
-      #if: github.ref == 'refs/heads/dev'
-      #needs: test
+      if: github.ref == 'refs/heads/dev'
+      needs: test
       uses: ./.github/workflows/deploy.yml
       with:
           environment: staging
