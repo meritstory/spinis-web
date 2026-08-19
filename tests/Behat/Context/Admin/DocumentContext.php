@@ -6,7 +6,9 @@ namespace App\Tests\Behat\Context\Admin;
 
 use App\Entity\Document;
 use App\Repository\DocumentRepository;
+use App\Tests\Behat\Context\FeatureContext;
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Behat\Step\When;
@@ -23,27 +25,26 @@ final class DocumentContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[Given('a document exists with title :title key :key and description :description')]
-    public function aDocumentExists(string $title, string $key, string $description): void
+    #[Given('/^documents are loaded:$/')]
+    public function documentsAreLoaded(TableNode $table): void
     {
-        $document = new Document()
-            ->setTitle($title)
-            ->setKey($key)
-            ->setDescription($description);
+        $propertyAccessor = FeatureContext::getPropertyAccessor();
 
-        $this->entityManager->persist($document);
+        foreach ($table as $row) {
+            $document = new Document();
+
+            foreach ($row as $property => $value) {
+                $propertyAccessor->setValue(
+                    $document,
+                    $property,
+                    'updatedAt' === $property ? new \DateTime($value) : $value,
+                );
+            }
+
+            $this->entityManager->persist($document);
+        }
+
         $this->entityManager->flush();
-        $this->entityManager->clear();
-    }
-
-    #[Given('the document with key :key was last updated on :date')]
-    public function theDocumentWithKeyWasLastUpdatedOn(string $key, string $date): void
-    {
-        $this->entityManager->getConnection()->executeStatement(
-            'UPDATE document SET updated_at = :date WHERE document_key = :key',
-            ['date' => $date, 'key' => $key],
-        );
-        $this->entityManager->clear();
     }
 
     #[Given('I open the admin create document form')]
@@ -84,8 +85,6 @@ final class DocumentContext extends RawMinkContext implements Context
     #[Given('a document with key :key and title :title should exist in the database')]
     public function aDocumentWithKeyAndTitleShouldExistInTheDatabase(string $key, string $title): void
     {
-        $this->entityManager->clear();
-
         $document = $this->documentRepository->findOneBy(['key' => $key]);
         Assert::notNull($document);
         Assert::same($title, $document->getTitle());
@@ -116,7 +115,6 @@ final class DocumentContext extends RawMinkContext implements Context
     #[When('I delete the document with key :key from the admin index')]
     public function iDeleteTheDocumentWithKeyFromTheAdminIndex(string $key): void
     {
-        $this->entityManager->clear();
         $document = $this->documentRepository->findOneBy(['key' => $key]);
         Assert::notNull($document);
         $documentId = $document->getId();
@@ -137,7 +135,6 @@ final class DocumentContext extends RawMinkContext implements Context
     #[Given('a document with key :key should not exist in the database')]
     public function aDocumentWithKeyShouldNotExistInTheDatabase(string $key): void
     {
-        $this->entityManager->clear();
         Assert::null($this->documentRepository->findOneBy(['key' => $key]));
     }
 

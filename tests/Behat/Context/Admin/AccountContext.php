@@ -235,8 +235,6 @@ final class AccountContext extends RawMinkContext implements Context
     #[Then('admin :email should have role :role')]
     public function adminShouldHaveRole(string $email, string $role): void
     {
-        $this->entityManager->clear();
-
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
         Assert::same($admin->getPrimaryRole(), RoleEnum::fromName(strtoupper($role)));
@@ -265,8 +263,6 @@ final class AccountContext extends RawMinkContext implements Context
     #[Then('admin :email should have two-factor disabled')]
     public function adminShouldHaveTwoFactorDisabled(string $email): void
     {
-        $this->entityManager->clear();
-
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
         Assert::false($admin->isEmailTwoFactorEnabled());
@@ -356,8 +352,6 @@ final class AccountContext extends RawMinkContext implements Context
     #[Then('admin :email should have a last active time')]
     public function adminShouldHaveALastActiveTime(string $email): void
     {
-        $this->entityManager->clear();
-
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
         Assert::notNull($admin->getLastActiveAt());
@@ -422,22 +416,18 @@ final class AccountContext extends RawMinkContext implements Context
     #[Then('admin account :email should not exist')]
     public function adminAccountShouldNotExist(string $email): void
     {
-        $this->entityManager->clear();
         Assert::null($this->adminRepository->findOneByEmail($email));
     }
 
     #[Then('exactly one active admin account should exist with email :email')]
     public function exactlyOneActiveAdminAccountShouldExistWithEmail(string $email): void
     {
-        $this->entityManager->clear();
         Assert::count($this->adminRepository->findBy(['email' => $email]), 1);
     }
 
     #[Then('admin account :email should be soft deleted')]
     public function adminAccountShouldBeSoftDeleted(string $email): void
     {
-        $this->entityManager->clear();
-
         Assert::notNull($this->lastDeletedAdminId);
 
         $deletedAdmin = $this->findAdminBypassingSoftDelete($this->lastDeletedAdminId);
@@ -481,8 +471,6 @@ final class AccountContext extends RawMinkContext implements Context
 
     private function getInvitationTokenHashForAdmin(string $email): ?string
     {
-        $this->entityManager->clear();
-
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
 

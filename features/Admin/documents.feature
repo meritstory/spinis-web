@@ -17,23 +17,31 @@ Feature: Admin documents
     And I should see "Privatumo politika"
 
   Scenario: Used document key is not available in the create dropdown
-    Given a document exists with title "Esama politika" key "privacy_policy" and description "<p>Turinys</p>"
+    Given documents are loaded:
+      | title          | key            | description    |
+      | Esama politika | privacy_policy | <p>Turinys</p> |
     Given I open the admin create document form
     Given the admin create document form should not show key "Privatumo politika"
 
   Scenario: All document keys used shows empty dropdown message
-    Given a document exists with title "Esama politika" key "privacy_policy" and description "<p>Turinys</p>"
-    And a document exists with title "Apie mus" key "about_system" and description "<p>Apie turinys</p>"
+    Given documents are loaded:
+      | title          | key            | description         |
+      | Esama politika | privacy_policy | <p>Turinys</p>      |
+      | Apie mus       | about_system   | <p>Apie turinys</p> |
     Given I open the admin create document form
     And I should see "Visi galimi raktai jau panaudoti."
 
   Scenario: Documents list search finds records by key label
-    Given a document exists with title "Politika" key "privacy_policy" and description "<p>Turinys</p>"
+    Given documents are loaded:
+      | title    | key            | description    |
+      | Politika | privacy_policy | <p>Turinys</p> |
     Given I search the admin documents list for "Privatumo"
     Then I should see "Privatumo politika"
     And I should see "Politika"
 
   Scenario: Deleting a document removes it from the database
-    Given a document exists with title "Testinis dokumentas" key "privacy_policy" and description "<p>Turinys</p>"
+    Given documents are loaded:
+      | title               | key            | description    |
+      | Testinis dokumentas | privacy_policy | <p>Turinys</p> |
     When I delete the document with key "privacy_policy" from the admin index
     Then a document with key "privacy_policy" should not exist in the database

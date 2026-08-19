@@ -32,7 +32,6 @@ final class LinkContext extends RawMinkContext implements Context
 
         $this->entityManager->persist($link);
         $this->entityManager->flush();
-        $this->entityManager->clear();
     }
 
     #[Given('I open the admin links section from the menu')]
@@ -77,8 +76,6 @@ final class LinkContext extends RawMinkContext implements Context
     #[Given('a link with key :key, title :title and url :url should exist in the database')]
     public function aLinkWithKeyTitleAndUrlShouldExistInTheDatabase(string $key, string $title, string $url): void
     {
-        $this->entityManager->clear();
-
         $link = $this->linkRepository->findOneBy(['key' => $key]);
         Assert::notNull($link);
         Assert::same($title, $link->getTitle());
