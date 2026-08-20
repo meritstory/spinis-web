@@ -28,7 +28,7 @@
 
             {% if step == 'login' or step == 'forgot' %}
                 <div id="login-form-wrapper"{% if step == 'forgot' %} class="d-none"{% endif %}>
-                    <form method="post" action="{{ path('admin_login_check') }}" id="login-form">
+                    <form method="post" action="{{ path('admin_login_check') }}" id="login-form" novalidate>
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
 
                         <div class="form-group">
@@ -54,7 +54,7 @@
                 </div>
 
                 <div id="forgot-form-wrapper"{% if step == 'login' %} class="d-none"{% endif %}>
-                    <form method="post" action="{{ path('admin_forgot_password') }}" id="forgot-form">
+                    <form method="post" action="{{ path('admin_forgot_password') }}" id="forgot-form" novalidate>
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
 
                         <div class="form-group">
@@ -74,7 +74,9 @@
                     </form>
                 </div>
             {% elseif step == 'forgot_sent' %}
-                <p>{{ 'login.forgot_sent'|trans }}</p>
+                <div class="w-100 alert alert-info rounded mb-3">
+                    {{ 'login.forgot_sent'|trans }}
+                </div>
                 <div class="form-text mt-3">
                     <a href="{{ path('admin_login') }}">{{ 'login.back_to_login'|trans }}</a>
                 </div>

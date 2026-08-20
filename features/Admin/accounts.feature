@@ -170,7 +170,10 @@ Feature: Admin account management
     And specialist with email "weak-password@example.com" and password "secret" is created
     And admin "weak-password@example.com" has a pending account invitation
     When I set the account invitation password to "weak"
-    Then I should see "Slaptažodis turi būti bent 12 simbolių."
+    Then the response should contain "<li>Slaptažodis turi būti bent 12 simbolių.</li>"
+    And the response should contain "<li>Slaptažodyje turi būti bent viena didžioji raidė.</li>"
+    And the response should contain "<li>Slaptažodyje turi būti bent vienas skaitmuo.</li>"
+    And the response should contain "<li>Slaptažodyje turi būti bent vienas specialusis simbolis.</li>"
     And an invitation should exist for admin "weak-password@example.com"
 
   Scenario: Invitation password setup redirects to two-factor login
@@ -181,7 +184,7 @@ Feature: Admin account management
     Then I should be on the admin two-factor login page
     When I cancel admin two-factor authentication
     And I open the account invitation link
-    Then I should see "Paskyros aktyvavimo nuoroda negalioja arba pasibaigė."
+    Then I should see "Paskyros aktyvavimo nuoroda negalioja."
 
   Scenario: Invitation setup without two-factor logs in securely
     When I visit the logout page
@@ -201,7 +204,7 @@ Feature: Admin account management
     And specialist with email "expired-invitation@example.com" and password "secret" is created
     And admin "expired-invitation@example.com" has an expired account invitation
     When I open the account invitation link
-    Then I should see "Paskyros aktyvavimo nuoroda negalioja arba pasibaigė."
+    Then I should see "Paskyros aktyvavimo nuoroda negalioja."
 
   Scenario: Non system administrator cannot access accounts page
     Given specialist with email "specialist@example.com" and password "secret" is created

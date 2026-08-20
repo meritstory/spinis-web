@@ -14,6 +14,11 @@ Feature: Admin login
     Then I should see "Neteisingi prisijungimo duomenys."
     And I should not see "Autentifikacijos kodas"
 
+  Scenario: Empty credentials show error
+    When I submit the admin login form with email "" and password ""
+    Then I should see "Neteisingi prisijungimo duomenys."
+    And I should not see "Autentifikacijos kodas"
+
   Scenario: Successful login requires two-factor authentication
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
@@ -47,12 +52,13 @@ Feature: Admin login
     And I confirm admin login with authentication code " "
     Then I should see "Įveskite autentifikacijos kodą."
 
-  Scenario: Expired authentication code shows error
+  Scenario: Expired authentication code shows the invalid code error
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
     And the authentication code for admin "admin@example.com" has expired
     And I confirm admin login with the latest authentication code for "admin@example.com"
-    Then I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
+    Then I should see "Neteisingas autentifikacijos kodas."
+    And I should not see "galiojimo laikas pasibaigė"
 
   Scenario: Cancel two-factor authentication returns to login
     Given admin with email "admin@example.com" and password "secret" is created
@@ -75,11 +81,12 @@ Feature: Admin login
   Scenario: Forgot password shows generic confirmation message
     Given admin with email "admin@example.com" and password "secret" is created
     When I request admin password reset for email "admin@example.com"
-    Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti"
+    Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti."
+    And the response should contain "alert alert-info"
 
   Scenario: Forgot password for unknown email shows the same confirmation message
     When I request admin password reset for email "unknown@example.com"
-    Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti"
+    Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti."
 
   Scenario: Password reset allows login with new password
     Given admin with email "admin@example.com" and password "secret" is created
@@ -87,6 +94,16 @@ Feature: Admin login
     When I reset admin password using the stored reset token to "Newsecretpass1!"
     And I submit the admin login form with email "admin@example.com" and password "Newsecretpass1!"
     And I confirm admin login with the latest authentication code for "admin@example.com"
+    Then I should be on the admin accounts page
+
+  Scenario: Password reset rejects the current password
+    Given admin with email "same-password@example.com" and password "Newsecretpass1!" is created
+    And a password reset token was issued for admin "same-password@example.com"
+    When I reset admin password using the stored reset token to "Newsecretpass1!"
+    Then I should see "Naujas slaptažodis negali sutapti su šiuo metu naudojamu slaptažodžiu."
+    When I reset admin password using the stored reset token to "Differentpass1!"
+    And I submit the admin login form with email "same-password@example.com" and password "Differentpass1!"
+    And I confirm admin login with the latest authentication code for "same-password@example.com"
     Then I should be on the admin accounts page
 
   Scenario: Resend authentication code invalidates the previous code
