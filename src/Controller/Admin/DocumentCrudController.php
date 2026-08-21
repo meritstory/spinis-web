@@ -23,7 +23,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -55,6 +54,7 @@ class DocumentCrudController extends AbstractCrudController
             ->setSearchFields(['title', 'key'])
             ->setDefaultSort(['title' => 'ASC'])
             ->setDefaultRowAction(Action::DETAIL)
+            ->showEntityActionsInlined()
             ->setFormOptions(['attr' => ['novalidate' => 'novalidate']]);
     }
 
@@ -80,8 +80,6 @@ class DocumentCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
-
         yield TextField::new('title')
             ->setLabel('document.field.title')
             ->setRequired(true)

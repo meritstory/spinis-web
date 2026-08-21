@@ -28,7 +28,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -84,6 +83,7 @@ class AdminCrudController extends AbstractCrudController
             ->setSearchFields(['email', 'firstName', 'lastName'])
             ->setDefaultSort(['email' => 'ASC'])
             ->setDefaultRowAction(Action::DETAIL)
+            ->showEntityActionsInlined()
             ->setFormOptions(['attr' => ['novalidate' => 'novalidate']]);
     }
 
@@ -178,8 +178,6 @@ class AdminCrudController extends AbstractCrudController
     /** @return iterable<FieldInterface> */
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->onlyOnDetail();
-
         if ($pageName === Crud::PAGE_NEW || $pageName === Crud::PAGE_DETAIL) {
             yield TextField::new('firstName')
                 ->setLabel('admin.field.first_name')

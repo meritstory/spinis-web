@@ -67,6 +67,7 @@ class ComplaintCrudController extends AbstractCrudController
             ->setSearchFields(['number', 'healthCareInstitution.title', 'specialist.firstName', 'specialist.lastName'])
             ->setDefaultSort(['createdAt' => 'DESC'])
             ->setDefaultRowAction(Action::EDIT)
+            ->showEntityActionsInlined()
             ->setPaginatorPageSize(10)
             ->overrideTemplate('crud/edit', 'admin/crud/complaint_edit.html.twig');
     }

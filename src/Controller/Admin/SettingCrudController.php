@@ -21,7 +21,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -54,6 +53,7 @@ class SettingCrudController extends AbstractCrudController
             ->setSearchFields(['value'])
             ->setDefaultSort(['key' => 'ASC'])
             ->setDefaultRowAction(Action::DETAIL)
+            ->showEntityActionsInlined()
             ->setFormOptions(['attr' => ['novalidate' => 'novalidate']]);
     }
 
@@ -77,8 +77,6 @@ class SettingCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
-
         if ($pageName === Crud::PAGE_INDEX || $pageName === Crud::PAGE_DETAIL) {
             yield TextField::new('key')
                 ->setLabel('setting.field.key')

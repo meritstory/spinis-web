@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
@@ -31,7 +30,8 @@ class LinkCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'link.page.new')
             ->setPageTitle(Crud::PAGE_EDIT, 'link.page.edit')
             ->setSearchFields(['title', 'key'])
-            ->setDefaultRowAction(Action::DETAIL);
+            ->setDefaultRowAction(Action::DETAIL)
+            ->showEntityActionsInlined();
     }
 
     public function configureActions(Actions $actions): Actions
@@ -50,7 +50,6 @@ class LinkCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
         yield TextField::new('title')
             ->setLabel('link.field.title')
             ->setRequired(true)

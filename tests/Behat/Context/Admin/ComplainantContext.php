@@ -109,7 +109,7 @@ final class ComplainantContext extends RawMinkContext implements Context
         Assert::same($this->getClient()->getResponse()->getStatusCode(), Response::HTTP_OK);
         $this->assertSession()->addressMatches('#/admin/complainant($|\\?)#');
         $this->assertSession()->pageTextContains('Pareiškėjai');
-        $this->assertSession()->pageTextContains('Peržiūrėti');
+        $this->assertSession()->elementExists('css', 'td.actions a[title="Peržiūrėti"]');
         $this->assertSession()->pageTextNotContains('Sukurti');
         $this->assertSession()->pageTextNotContains('Ištrinti');
     }
