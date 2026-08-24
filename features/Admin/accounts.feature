@@ -3,6 +3,7 @@ Feature: Admin account management
   Background:
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
 
   Scenario: Accounts can be searched and sorted by translated role
@@ -69,6 +70,7 @@ Feature: Admin account management
   Scenario: System administrator can change an account role
     Given specialist with email "rolechange@example.com" and password "secret" is created
     When I edit admin account "rolechange@example.com" changing role to "department_head"
+    And entity manager is cleared
     Then admin "rolechange@example.com" should have role "department_head"
     And I should see "Skyriaus vedėjas"
 
@@ -84,11 +86,13 @@ Feature: Admin account management
     When I visit the logout page
     Given specialist with email "active-rolechange@example.com" and password "secret" is created
     When I submit the admin login form with email "active-rolechange@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "active-rolechange@example.com"
     And admin account "active-rolechange@example.com" has role changed directly to "department_head"
     When I visit "/admin/faq"
     Then I should be on the admin login page
     When I submit the admin login form with email "active-rolechange@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "active-rolechange@example.com"
     Then I should be on the admin complaints list page
     And I should see "Skyriaus vedėjas"
@@ -113,6 +117,7 @@ Feature: Admin account management
     When I visit the logout page
     Given specialist with email "twofactor-change@example.com" and password "secret" is created
     When I submit the admin login form with email "twofactor-change@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "twofactor-change@example.com"
     And admin account "twofactor-change@example.com" has two-factor disabled directly
     When I visit "/admin/faq"
@@ -125,6 +130,7 @@ Feature: Admin account management
     When I visit the logout page
     Given specialist with email "deleted-session@example.com" and password "secret" is created
     When I submit the admin login form with email "deleted-session@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "deleted-session@example.com"
     And admin account "deleted-session@example.com" is soft deleted directly
     When I visit "/admin/faq"
@@ -142,6 +148,7 @@ Feature: Admin account management
     When I create an admin account with email "reusable@example.com" first name "Ana" last name "Anaitė" role "specialist" and two-factor "enabled"
     And I delete admin account "reusable@example.com"
     Then I should not see account "reusable@example.com" in the accounts list
+    And entity manager is cleared
     And admin account "reusable@example.com" should be soft deleted
     When I create an admin account with email "reusable@example.com" first name "Ana" last name "Anaitė" role "specialist" and two-factor "enabled"
     Then I should see account "reusable@example.com" in the accounts list
@@ -170,7 +177,10 @@ Feature: Admin account management
     And specialist with email "weak-password@example.com" and password "secret" is created
     And admin "weak-password@example.com" has a pending account invitation
     When I set the account invitation password to "weak"
-    Then I should see "Slaptažodis turi būti bent 12 simbolių."
+    Then the response should contain "<li>Slaptažodis turi būti bent 12 simbolių.</li>"
+    And the response should contain "<li>Slaptažodyje turi būti bent viena didžioji raidė.</li>"
+    And the response should contain "<li>Slaptažodyje turi būti bent vienas skaitmuo.</li>"
+    And the response should contain "<li>Slaptažodyje turi būti bent vienas specialusis simbolis.</li>"
     And an invitation should exist for admin "weak-password@example.com"
 
   Scenario: Invitation password setup redirects to two-factor login
@@ -181,7 +191,7 @@ Feature: Admin account management
     Then I should be on the admin two-factor login page
     When I cancel admin two-factor authentication
     And I open the account invitation link
-    Then I should see "Paskyros aktyvavimo nuoroda negalioja arba pasibaigė."
+    Then I should see "Paskyros aktyvavimo nuoroda negalioja."
 
   Scenario: Invitation setup without two-factor logs in securely
     When I visit the logout page
@@ -193,6 +203,7 @@ Feature: Admin account management
     And I set the account invitation password to "Newsecretpass1!"
     Given I should be on the admin home page
     And the session id should have changed
+    And entity manager is cleared
     And admin "activate-no-2fa@example.com" should have a last active time
     And no invitation should exist for admin "activate-no-2fa@example.com"
 
@@ -201,12 +212,13 @@ Feature: Admin account management
     And specialist with email "expired-invitation@example.com" and password "secret" is created
     And admin "expired-invitation@example.com" has an expired account invitation
     When I open the account invitation link
-    Then I should see "Paskyros aktyvavimo nuoroda negalioja arba pasibaigė."
+    Then I should see "Paskyros aktyvavimo nuoroda negalioja."
 
   Scenario: Non system administrator cannot access accounts page
     Given specialist with email "specialist@example.com" and password "secret" is created
     When I visit the logout page
     And I submit the admin login form with email "specialist@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "specialist@example.com"
     And I visit the admin accounts list page
     Then the response status code should be 403

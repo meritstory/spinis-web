@@ -38,7 +38,6 @@ final class ComplainantContext extends RawMinkContext implements Context
 
         $this->entityManager->persist($complainant);
         $this->entityManager->flush();
-        $this->entityManager->clear();
     }
 
     #[Given('I open the admin complainants section from the menu')]

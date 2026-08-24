@@ -3,6 +3,7 @@ Feature: Admin FAQ management
   Background:
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
 
   Scenario: FAQ list page shows create action

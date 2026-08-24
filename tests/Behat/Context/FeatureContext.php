@@ -7,6 +7,7 @@ namespace App\Tests\Behat\Context;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -16,6 +17,10 @@ use Webmozart\Assert\Assert;
 
 final class FeatureContext extends RawMinkContext implements Context
 {
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+    }
+
     /**
      * @param mixed[] $parameters
      * @param mixed[]|string|null $content
@@ -73,6 +78,12 @@ final class FeatureContext extends RawMinkContext implements Context
     public function iVisit(string $url): void
     {
         $this->request(Request::METHOD_GET, $url);
+    }
+
+    #[Given('/^entity manager is cleared$/')]
+    public function entityManagerIsCleared(): void
+    {
+        $this->entityManager->clear();
     }
 
     /** @BeforeScenario */
