@@ -106,6 +106,7 @@ Feature: Admin login
     Then I should see "Naujas slaptažodis negali sutapti su šiuo metu naudojamu slaptažodžiu."
     When I reset admin password using the stored reset token to "Differentpass1!"
     And I submit the admin login form with email "same-password@example.com" and password "Differentpass1!"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "same-password@example.com"
     Then I should be on the admin accounts page
 
