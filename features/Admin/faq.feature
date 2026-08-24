@@ -11,6 +11,11 @@ Feature: Admin FAQ management
     Then I should see "Sukurti DUK"
     And I should see "DUK"
 
+  Scenario: FAQ list can be filtered by creation and update dates
+    When I visit "/admin/faq/render-filters"
+    Then I should see "Sukūrimo data"
+    And I should see "Atnaujinimo data"
+
   Scenario: Admin can create FAQ entry
     When I submit the FAQ form with question "Kaip pateikti skundą?" answer "<p>Skundą galite pateikti el. paštu.</p>" position "1"
     Then I should be on the admin FAQ list page
@@ -20,6 +25,12 @@ Feature: Admin FAQ management
     When I submit the FAQ form with question "Klausimas be atsakymo" answer "" position "1"
     Then I should be on the admin FAQ create page
     And I should see "Tekstas yra privalomas."
+
+  Scenario: Duplicate position shows validation error
+    Given I submit the FAQ form with question "Pirmas klausimas" answer "<p>Pirmas atsakymas.</p>" position "1"
+    When I submit the FAQ form with question "Antras klausimas" answer "<p>Antras atsakymas.</p>" position "1"
+    Then I should be on the admin FAQ create page
+    And I should see "Ši pozicija jau naudojama kitame DUK įraše."
 
   Scenario: FAQ create page shows form fields
     When I visit the admin FAQ create page

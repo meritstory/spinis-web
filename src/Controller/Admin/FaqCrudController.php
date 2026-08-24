@@ -11,11 +11,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 
 /**
  * @extends AbstractCrudController<Faq>
@@ -39,6 +40,7 @@ class FaqCrudController extends AbstractCrudController
             ->setSearchFields(['question', 'answer'])
             ->setDefaultSort(['position' => 'ASC'])
             ->setDefaultRowAction(Action::DETAIL)
+            ->showEntityActionsInlined()
             ->setFormOptions(['attr' => ['novalidate' => 'novalidate']]);
     }
 
@@ -61,9 +63,15 @@ class FaqCrudController extends AbstractCrudController
             ->add(Crud::PAGE_NEW, Action::SAVE_AND_CONTINUE);
     }
 
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(DateTimeFilter::new('createdAt', 'faq.field.created_at'))
+            ->add(DateTimeFilter::new('updatedAt', 'faq.field.updated_at'));
+    }
+
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm();
         yield TextField::new('question')
             ->setLabel('faq.field.question')
             ->setRequired(true)

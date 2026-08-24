@@ -3,6 +3,10 @@
     box-shadow: none;
 }
 
+body.ea-detail .field-group .field-value > :last-child {
+    margin-bottom: 0;
+}
+
 .user-menu-wrapper .user-details .user-identity {
     display: flex;
     flex-direction: column;
@@ -86,6 +90,17 @@ body.ea {
 
 body.ea.ea-dark-scheme {
     --sidebar-menu-active-item-bg: var(--sidebar-menu-active-item-bg-dark);
+}
+
+.content-top .content-search .content-search-reset .icon {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.content-top .content-search .content-search-reset .icon svg {
+    vertical-align: initial;
 }
 
 .main-header #header-logo a .ea-dashboard-logo {

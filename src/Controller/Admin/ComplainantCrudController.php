@@ -12,7 +12,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TelephoneField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -35,7 +34,8 @@ class ComplainantCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_DETAIL, 'complainant.page.detail')
             ->setSearchFields(['firstName', 'lastName'])
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setDefaultRowAction(Action::DETAIL);
+            ->setDefaultRowAction(Action::DETAIL)
+            ->showEntityActionsInlined();
     }
 
     public function configureActions(Actions $actions): Actions
@@ -50,7 +50,6 @@ class ComplainantCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')->hideOnForm()->hideOnIndex();
         yield TextField::new('firstName')
             ->setLabel('complainant.field.first_name');
         yield TextField::new('lastName')
