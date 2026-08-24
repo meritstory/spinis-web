@@ -31,6 +31,7 @@ Feature: Admin login
   Scenario: Successful two-factor authentication logs in to admin
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
     Then I should be on the admin accounts page
     And I should see "Paskyros"
@@ -51,6 +52,7 @@ Feature: Admin login
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
     And the authentication code for admin "admin@example.com" has expired
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
     Then I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
 
@@ -86,12 +88,14 @@ Feature: Admin login
     And a password reset token was issued for admin "admin@example.com"
     When I reset admin password using the stored reset token to "Newsecretpass1!"
     And I submit the admin login form with email "admin@example.com" and password "Newsecretpass1!"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
     Then I should be on the admin accounts page
 
   Scenario: Resend authentication code invalidates the previous code
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
+    And entity manager is cleared
     And I remember the current authentication code for "admin@example.com"
     And I resend the admin authentication code
     And I confirm admin login with the remembered authentication code
@@ -106,6 +110,7 @@ Feature: Admin login
   Scenario: Admin can log out
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "secret"
+    And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
     When I visit the logout page
     Then I should be on the admin login page

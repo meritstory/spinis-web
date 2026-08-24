@@ -15,8 +15,9 @@ Feature: Privacy policy page
     Then I should be on "/privacy-policy"
 
   Scenario: Admin-managed content and last-updated date are shown
-    Given a document exists with title "Privatumo politika" key "privacy_policy" and description "<h2>Duomenų valdytojas</h2><p>Šiame skyriuje aprašoma, kaip tvarkomi jūsų asmens duomenys.</p>"
-    And the document with key "privacy_policy" was last updated on "2026-01-15"
+    Given documents are loaded:
+      | title              | key            | description                                                                                    | updatedAt  |
+      | Privatumo politika | privacy_policy | <h2>Duomenų valdytojas</h2><p>Šiame skyriuje aprašoma, kaip tvarkomi jūsų asmens duomenys.</p> | 2026-01-15 |
     When I visit "/privacy-policy"
     Then I should see "Duomenų valdytojas"
     And I should see "Šiame skyriuje aprašoma, kaip tvarkomi jūsų asmens duomenys."

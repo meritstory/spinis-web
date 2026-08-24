@@ -10,7 +10,6 @@ use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
 use Behat\Step\Then;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Webmozart\Assert\Assert;
 
@@ -19,7 +18,6 @@ final class LoginContext extends RawMinkContext implements Context
     public function __construct(
         private readonly FakeViispClient $fakeViispClient,
         private readonly ComplainantRepository $complainantRepository,
-        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -58,8 +56,6 @@ final class LoginContext extends RawMinkContext implements Context
     #[Then('a complainant with personal code :personalCode should exist')]
     public function aComplainantWithPersonalCodeShouldExist(string $personalCode): void
     {
-        $this->entityManager->clear();
-
         Assert::notNull($this->complainantRepository->findOneByPersonalCode($personalCode));
     }
 
