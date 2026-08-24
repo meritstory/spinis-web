@@ -2,7 +2,7 @@
 
 {% block edit_form %}
     <div class="ea-complaint-edit">
-        {{ form_start(edit_form, { attr: { class: 'ea-edit-form', id: 'edit-Complaint-form' } }) }}
+        {{ form_start(edit_form, { attr: { class: 'ea-edit-form', id: 'edit-Complaint-form', novalidate: 'novalidate' } }) }}
         {% include 'admin/crud/_complaint_edit_columns.html.twig' with {
             complaint: entity.instance,
             form: edit_form,

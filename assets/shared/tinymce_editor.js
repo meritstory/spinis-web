@@ -36,12 +36,24 @@ function resolveInitialMinHeight(textarea) {
 
 function resolveContentStyle(isReadOnly) {
     const fontStyle = 'body { font-family: Calibri, sans-serif; }';
+    const blurredSelectionStyle = 'body:not(.is-focused)::selection, body:not(.is-focused) ::selection { background-color: transparent; }';
+    const baseStyle = `${fontStyle} ${blurredSelectionStyle}`;
 
     if (!isReadOnly) {
-        return fontStyle;
+        return baseStyle;
     }
 
-    return `${fontStyle} body { caret-color: transparent; cursor: default; }`;
+    return `${baseStyle} body { caret-color: transparent; cursor: default; }`;
+}
+
+function clearSelectionOnBlur(editor) {
+    editor.getBody()?.classList.remove('is-focused');
+
+    if (!document.hasFocus()) {
+        return;
+    }
+
+    editor.selection.collapse(false);
 }
 
 function triggerInitialResize(editor) {
@@ -104,6 +116,14 @@ export function initTinyMceEditors() {
             fontsize_formats: '12px 14px 16px 18px 24px',
             block_formats: 'Pastraipa=p; Antraštė 1=h1; Antraštė 2=h2; Antraštė 3=h3',
             setup: (editor) => {
+                editor.on('focus', () => {
+                    editor.getBody()?.classList.add('is-focused');
+                });
+
+                editor.on('blur', () => {
+                    clearSelectionOnBlur(editor);
+                });
+
                 editor.on('init', () => {
                     textarea.dataset.tinymceInitialized = '1';
 

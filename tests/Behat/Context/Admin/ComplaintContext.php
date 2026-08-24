@@ -309,7 +309,6 @@ final class ComplaintContext extends RawMinkContext implements Context
     #[Then('complaint :number should have a patient snapshot without linked complainant')]
     public function complaintShouldHavePatientSnapshotWithoutLinkedComplainant(string $number): void
     {
-        $this->entityManager->clear();
         $complaint = $this->requireComplaint($number);
         $patient = $complaint->getPatient();
         Assert::notNull($patient, sprintf('Complaint "%s" has no patient snapshot.', $number));
@@ -324,7 +323,6 @@ final class ComplaintContext extends RawMinkContext implements Context
     #[Then('complaint :number should have status :status')]
     public function complaintShouldHaveStatus(string $number, string $status): void
     {
-        $this->entityManager->clear();
         $expected = ComplaintStatusEnum::fromName(strtoupper($status));
         Assert::same($this->requireComplaint($number)->getStatus(), $expected);
     }
@@ -332,7 +330,6 @@ final class ComplaintContext extends RawMinkContext implements Context
     #[Then('complaint :number should have :count status history records')]
     public function complaintShouldHaveStatusHistoryCount(string $number, int $count): void
     {
-        $this->entityManager->clear();
         Assert::count($this->requireComplaint($number)->getStatusHistory(), $count);
     }
 
@@ -591,7 +588,6 @@ final class ComplaintContext extends RawMinkContext implements Context
     {
         $this->entityManager->persist($complaint);
         $this->entityManager->flush();
-        $this->entityManager->clear();
     }
 
     /**

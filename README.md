@@ -55,3 +55,9 @@ Run this command to see if the `dev` bucket is there:
 ```bash
 docker compose exec localstack awslocal s3 ls
 ```
+## AI coding assistants
+
+Shared project skills are stored in `.agents/skills/`.
+
+The `.claude/skills` path is a symlink to `.agents/skills`, allowing Codex and Claude Code to use the same skill definitions. Edit only the canonical files under `.agents/
+  skills/`.

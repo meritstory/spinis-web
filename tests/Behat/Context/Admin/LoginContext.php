@@ -46,6 +46,11 @@ final class LoginContext extends RawMinkContext implements Context
     public function iAmLoggedInToTheAdminPanel(string $email, string $password): void
     {
         $this->submitLoginCredentials($email, $password);
+
+        // The authentication code is written by the application in a rebooted kernel, so this
+        // step has to refresh the ORM state itself between its own two requests.
+        $this->entityManager->clear();
+
         $this->submitVerificationCode($this->getLatestAuthenticationCode($email));
     }
 
@@ -167,7 +172,6 @@ final class LoginContext extends RawMinkContext implements Context
 
         $admin->setAuthCodeExpiresAt(new \DateTimeImmutable('-1 minute'));
         $this->entityManager->flush();
-        $this->entityManager->clear();
     }
 
     #[Then('the authentication code for admin :email should be cleared')]
@@ -254,8 +258,6 @@ final class LoginContext extends RawMinkContext implements Context
 
     private function getLatestAuthenticationCode(string $email): string
     {
-        $this->entityManager->clear();
-
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
 

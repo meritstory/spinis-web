@@ -11,8 +11,9 @@ faq:
     validation:
         question_required: 'Pavadinimas yra privalomas.'
         answer_required: 'Tekstas yra privalomas.'
-        position_required: 'Pozicija yra privaloma.'
+        position_required: 'Įveskite sveikąjį skaičių.'
         position_positive: 'Pozicija turi būti didesnė už 0.'
+        position_unique: 'Ši pozicija jau naudojama kitame DUK įraše.'
 
 link:
     title:

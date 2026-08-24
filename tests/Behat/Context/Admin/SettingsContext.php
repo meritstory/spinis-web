@@ -31,7 +31,6 @@ final class SettingsContext extends RawMinkContext implements Context
 
         $this->entityManager->persist($setting);
         $this->entityManager->flush();
-        $this->entityManager->clear();
     }
 
     #[Given('I open the admin create setting form')]
@@ -86,8 +85,6 @@ final class SettingsContext extends RawMinkContext implements Context
     #[Given('a setting with key :key and value :value should exist in the database')]
     public function aSettingWithKeyAndValueShouldExistInTheDatabase(string $key, string $value): void
     {
-        $this->entityManager->clear();
-
         $setting = $this->settingRepository->findOneBy(['key' => $key]);
         Assert::notNull($setting);
         Assert::same($value, $setting->getValue());

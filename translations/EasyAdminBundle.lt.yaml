@@ -1,2 +1,8 @@
 action:
     delete: Ištrinti
+
+delete_modal:
+    content: 'Ištrintų elementų atkurti negalėsite.'
+
+batch_action_modal:
+    content: 'Ištrintų elementų atkurti negalėsite.'

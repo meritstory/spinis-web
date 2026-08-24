@@ -27,7 +27,7 @@ password:
         missing_digit: 'Slaptažodyje turi būti bent vienas skaitmuo.'
         missing_special: 'Slaptažodyje turi būti bent vienas specialusis simbolis.'
         mismatch: 'Slaptažodžiai nesutampa.'
-        requirements: 'Slaptažodis turi būti bent %min% simbolių ir sudarytas iš didžiųjų bei mažųjų raidžių, skaičių ir specialiųjų simbolių.'
+        reused: 'Naujas slaptažodis negali sutapti su šiuo metu naudojamu slaptažodžiu.'
         show: Rodyti
         hide: Slėpti
 
@@ -44,12 +44,11 @@ login:
     resend_link: 'Siųsti kodą iš naujo'
     resend_success: 'Jums buvo išsiųstas naujas patvirtinimo kodas.'
     reset_password: 'Atkurti slaptažodį'
-    forgot_sent: 'Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti'
+    forgot_sent: 'Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti.'
     back_to_login: 'Grįžti į prisijungimą'
     error:
         invalid_credentials: 'Neteisingi prisijungimo duomenys.'
         invalid_code: 'Neteisingas autentifikacijos kodas.'
-        expired_code: 'Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo.'
         empty_code: 'Įveskite autentifikacijos kodą.'
         invalid_request: 'Neteisinga užklausa. Bandykite dar kartą.'
         too_many_attempts: 'Per daug nepavykusių prisijungimo bandymų. Bandykite dar kartą po %minutes% min.'
@@ -60,7 +59,7 @@ login:
         new_password_confirm: 'Pakartokite slaptažodį'
         submit: 'Išsaugoti slaptažodį'
         success: 'Slaptažodis sėkmingai pakeistas. Galite prisijungti.'
-        invalid_token: 'Slaptažodžio atkūrimo nuoroda negalioja arba pasibaigė.'
+        invalid_token: 'Slaptažodžio atkūrimo nuoroda negalioja.'
 
 email:
     auth_code:
@@ -129,7 +128,7 @@ admin:
         new_password: 'Naujas slaptažodis'
         new_password_confirm: 'Pakartokite slaptažodį'
         submit: 'Išsaugoti slaptažodį'
-        invalid_token: 'Paskyros aktyvavimo nuoroda negalioja arba pasibaigė.'
+        invalid_token: 'Paskyros aktyvavimo nuoroda negalioja.'
         resend_success: 'Pakvietimas išsiųstas iš naujo.'
         resend_failed: 'Nepavyko išsiųsti pakvietimo. Ankstesnė pakvietimo nuoroda tebegalioja.'
         resend_not_allowed: 'Šiai paskyrai negalima išsiųsti pakvietimo iš naujo.'

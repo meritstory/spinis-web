@@ -206,6 +206,10 @@ class SecurityController extends AbstractController
             try {
                 /** @var Admin $admin */
                 $admin = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+                if ($this->passwordHasher->isPasswordValid($admin, $password)) {
+                    return $this->renderResetPasswordForm($this->translator->trans('password.policy.reused'));
+                }
+
                 $this->resetPasswordHelper->removeResetRequest($token);
                 $admin->setPassword($this->passwordHasher->hashPassword($admin, $password));
                 $this->entityManager->flush();
@@ -300,7 +304,10 @@ class SecurityController extends AbstractController
         ], $extra));
     }
 
-    private function renderResetPasswordForm(?string $error = null): Response
+    /**
+     * @param string|list<string>|null $error
+     */
+    private function renderResetPasswordForm(string|array|null $error = null): Response
     {
         return $this->render('admin/reset_password.html.twig', [
             'page_title' => $this->translator->trans('app.name'),
@@ -323,7 +330,10 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    private function renderInvitationSetPasswordForm(string $token, ?string $error = null): Response
+    /**
+     * @param string|list<string>|null $error
+     */
+    private function renderInvitationSetPasswordForm(string $token, string|array|null $error = null): Response
     {
         return $this->render('admin/invitation_set_password.html.twig', [
             'page_title' => $this->translator->trans('admin.invitation.page_title'),
@@ -335,16 +345,19 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    private function validateSubmittedPassword(string $password, string $passwordConfirm): ?string
+    /**
+     * @return string|list<string>|null
+     */
+    private function validateSubmittedPassword(string $password, string $passwordConfirm): string|array|null
     {
-        $policyErrorKeys = $this->passwordPolicy->validateAll($password);
-        if ($policyErrorKeys !== []) {
-            return implode(' ', array_map(
+        $passwordErrorKeys = $this->passwordPolicy->validateAll($password);
+        if ($passwordErrorKeys !== []) {
+            return array_map(
                 fn (string $errorKey): string => $this->translator->trans($errorKey, [
                     '%min%' => $this->passwordPolicy->getMinLength(),
                 ]),
-                $policyErrorKeys,
-            ));
+                $passwordErrorKeys,
+            );
         }
 
         if ($password !== $passwordConfirm) {
