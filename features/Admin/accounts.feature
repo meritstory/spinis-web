@@ -110,7 +110,7 @@ Feature: Admin account management
     When I edit admin account "deactivated@example.com" setting email to "deactivated@example.com" and active to "inactive"
     And I visit the logout page
     When I submit the admin login form with email "deactivated@example.com" and password "secret"
-    Then I should see "Neteisingi prisijungimo duomenys."
+    Then I should see "Jūsų paskyra yra deaktyvuota. Dėl prieigos kreipkitės į sistemos administratorių."
     And I should not see "Autentifikacijos kodas"
 
   Scenario: Changing two-factor authentication ends old sessions and allows immediate login

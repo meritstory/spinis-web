@@ -122,7 +122,7 @@ Feature: Admin login
   Scenario: Inactive admin cannot log in
     Given inactive admin with email "inactive@example.com" and password "secret" is created
     When I submit the admin login form with email "inactive@example.com" and password "secret"
-    Then I should see "Neteisingi prisijungimo duomenys."
+    Then I should see "Jūsų paskyra yra deaktyvuota. Dėl prieigos kreipkitės į sistemos administratorių."
     And I should not see "Autentifikacijos kodas"
 
   Scenario: Admin can log out
