@@ -26,15 +26,13 @@
                         {{ 'login.error.invalid_code'|trans }}
                     {% elseif authenticationError == 'login.error.empty_code' %}
                         {{ 'login.error.empty_code'|trans }}
-                    {% elseif authenticationError == 'login.error.expired_code' %}
-                        {{ 'login.error.expired_code'|trans }}
                     {% else %}
                         {{ authenticationError|trans({}, 'SchebTwoFactorBundle') }}
                     {% endif %}
                 </div>
             {% endif %}
 
-            <form method="post" action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}" id="verify-form">
+            <form method="post" action="{{ checkPathUrl ? checkPathUrl : path(checkPathRoute) }}" id="verify-form" novalidate>
                 <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
 
                 <div class="form-group">
@@ -44,13 +42,13 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                <button type="submit" class="btn btn-primary btn-lg btn-block w-100 mt-3">
                     {{ 'login.confirm'|trans }}
                 </button>
             </form>
 
             <div class="mt-2">
-                <a href="{{ logoutPath }}" class="btn btn-secondary btn-lg w-100">
+                <a href="{{ logoutPath }}" class="btn btn-secondary btn-lg btn-block w-100">
                     {{ 'login.cancel'|trans }}
                 </a>
             </div>

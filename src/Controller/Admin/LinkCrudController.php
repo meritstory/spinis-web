@@ -31,7 +31,8 @@ class LinkCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'link.page.new')
             ->setPageTitle(Crud::PAGE_EDIT, 'link.page.edit')
             ->setSearchFields(['title', 'key'])
-            ->setDefaultRowAction(Action::DETAIL);
+            ->setDefaultRowAction(Action::DETAIL)
+            ->setFormOptions(['attr' => ['novalidate' => 'novalidate']]);
     }
 
     public function configureActions(Actions $actions): Actions

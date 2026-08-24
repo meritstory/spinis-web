@@ -17,7 +17,11 @@ class AppExtension extends AbstractExtension
 
     public function __construct(private readonly LinkRepository $linkRepository)
     {
-        $this->richTextSanitizer = new HtmlSanitizer((new HtmlSanitizerConfig())->allowSafeElements());
+        $this->richTextSanitizer = new HtmlSanitizer(
+            new HtmlSanitizerConfig()
+                ->allowSafeElements()
+                ->allowAttribute('style', ['span']),
+        );
     }
 
     public function getFunctions(): array
