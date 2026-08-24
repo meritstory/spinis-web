@@ -22,14 +22,8 @@
 
             {% if authenticationError is defined and authenticationError %}
                 <div class="w-100 alert alert-danger rounded mb-3">
-                    {% if authenticationError == 'code_invalid' %}
-                        {{ 'login.error.invalid_code'|trans }}
-                    {% elseif authenticationError == 'login.error.empty_code' %}
-                        {{ 'login.error.empty_code'|trans }}
-                    {% else %}
-                        {% set translationDomain = authenticationError starts with 'login.' ? 'messages' : 'SchebTwoFactorBundle' %}
-                        {{ authenticationError|trans(authenticationErrorData|default({}), translationDomain) }}
-                    {% endif %}
+                    {% set translationDomain = authenticationError starts with 'login.' ? 'messages' : 'SchebTwoFactorBundle' %}
+                    {{ authenticationError|trans(authenticationErrorData|default({}), translationDomain) }}
                 </div>
             {% endif %}
 
