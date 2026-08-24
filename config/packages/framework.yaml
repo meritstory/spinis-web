@@ -2,6 +2,10 @@
 framework:
     secret: '%env(APP_SECRET)%'
     default_locale: '%env(APP_LOCALE)%'
+    # Trust the directly connected proxy, so rate limiting counts the real client IP.
+    trusted_proxies: '127.0.0.1,REMOTE_ADDR'
+    # Allowed host names; blocks Host header spoofing in emailed absolute URLs.
+    trusted_hosts: ['%env(TRUSTED_HOSTS)%']
 
     # Note that the session will be started ONLY if you read or write from it.
     session: true

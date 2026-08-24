@@ -51,6 +51,9 @@ login:
         invalid_code: 'Neteisingas autentifikacijos kodas.'
         empty_code: 'Įveskite autentifikacijos kodą.'
         invalid_request: 'Neteisinga užklausa. Bandykite dar kartą.'
+        too_many_attempts: 'Per daug nepavykusių prisijungimo bandymų. Bandykite dar kartą po %minutes% min.'
+        too_many_code_attempts: 'Per daug autentifikacijos kodo bandymų. Kodas panaikintas. Bandykite dar kartą po %minutes% min.'
+        too_many_resends: 'Per daug kodo siuntimo užklausų. Bandykite dar kartą po %minutes% min.'
     reset:
         new_password: 'Naujas slaptažodis'
         new_password_confirm: 'Pakartokite slaptažodį'

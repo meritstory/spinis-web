@@ -10,6 +10,7 @@ use App\Security\AdminAuthenticationHelper;
 use App\Security\AdminPasswordPolicy;
 use App\Service\Admin\AdminInvitationService;
 use App\Service\Admin\AdminMailer;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Scheb\TwoFactorBundle\Controller\FormController;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGenerator;
@@ -17,11 +18,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\RateLimiter\RateLimit;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAccountStatusException;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\Exception\TooManyLoginAttemptsAuthenticationException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
@@ -46,6 +52,8 @@ class SecurityController extends AbstractController
         private readonly AdminInvitationService $invitationService,
         private readonly AdminAuthenticationHelper $authenticationHelper,
         private readonly AdminPasswordPolicy $passwordPolicy,
+        private readonly RateLimiterFactoryInterface $twoFactorResendIntervalLimiter,
+        private readonly RateLimiterFactoryInterface $twoFactorResendWindowLimiter,
     ) {
     }
 
@@ -81,6 +89,8 @@ class SecurityController extends AbstractController
     #[Route('/admin/login/2fa', name: 'admin_2fa_login', methods: [Request::METHOD_GET])]
     public function twoFactorLogin(Request $request): Response
     {
+        $this->translateThrottlingError($request);
+
         return $this->twoFactorFormController->form($request);
     }
 
@@ -102,6 +112,16 @@ class SecurityController extends AbstractController
         $user = $this->getUser();
 
         if ($user instanceof Admin) {
+            $exceededLimit = $this->consumeResendLimits(sprintf('2fa_resend:%s', $user->getUserIdentifier()));
+
+            if ($exceededLimit !== null) {
+                $this->addFlash('danger', $this->translator->trans('login.error.too_many_resends', [
+                    '%minutes%' => $this->minutesUntil($exceededLimit->getRetryAfter()),
+                ]));
+
+                return $this->redirectToRoute('admin_2fa_login');
+            }
+
             $this->twoFactorCodeGenerator->generateAndSend($user);
         }
 
@@ -367,6 +387,43 @@ class SecurityController extends AbstractController
             return $this->translator->trans('login.error.invalid_credentials');
         }
 
+        if ($error instanceof TooManyLoginAttemptsAuthenticationException) {
+            return $this->translator->trans('login.error.too_many_attempts', $error->getMessageData());
+        }
+
         return $this->translator->trans($error->getMessageKey(), $error->getMessageData());
+    }
+
+    private function translateThrottlingError(Request $request): void
+    {
+        $session = $request->getSession();
+        $error = $session->get(SecurityRequestAttributes::AUTHENTICATION_ERROR);
+
+        if (!$error instanceof TooManyLoginAttemptsAuthenticationException) {
+            return;
+        }
+
+        $session->set(
+            SecurityRequestAttributes::AUTHENTICATION_ERROR,
+            new CustomUserMessageAuthenticationException('login.error.too_many_attempts', $error->getMessageData()),
+        );
+    }
+
+    private function consumeResendLimits(string $key): ?RateLimit
+    {
+        $limit = $this->twoFactorResendIntervalLimiter->create($key)->consume();
+
+        if (!$limit->isAccepted()) {
+            return $limit;
+        }
+
+        $limit = $this->twoFactorResendWindowLimiter->create($key)->consume();
+
+        return $limit->isAccepted() ? null : $limit;
+    }
+
+    private function minutesUntil(DateTimeImmutable $retryAfter): int
+    {
+        return max(1, (int) ceil(($retryAfter->getTimestamp() - time()) / 60));
     }
 }

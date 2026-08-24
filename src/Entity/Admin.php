@@ -24,8 +24,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\UniqueConstraint(fields: ['email'])]
 #[UniqueEntity(
     fields: ['email'],
-    repositoryMethod: 'findOneByEmailForUniqueValidation',
     message: 'admin.error.email_unique',
+    repositoryMethod: 'findOneByEmailForUniqueValidation',
 )]
 #[SoftDeleteable(fieldName: 'deletedAt', timeAware: false, hardDelete: false)]
 class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface, EquatableInterface, \Stringable

@@ -66,6 +66,22 @@ final class LoginContext extends RawMinkContext implements Context
         $this->submitVerificationCode($code);
     }
 
+    #[Given('I submit the admin login form with email :email and password :password :count times')]
+    public function iSubmitAdminLoginFormTimes(string $email, string $password, string $count): void
+    {
+        for ($attempt = 0; $attempt < (int) $count; ++$attempt) {
+            $this->submitLoginCredentials($email, $password);
+        }
+    }
+
+    #[Given('I confirm admin login with authentication code :code :count times')]
+    public function iConfirmAdminLoginWithCodeTimes(string $code, string $count): void
+    {
+        for ($attempt = 0; $attempt < (int) $count; ++$attempt) {
+            $this->submitVerificationCode($code);
+        }
+    }
+
     #[Given('I visit the admin two-factor login page')]
     public function iVisitTheAdminTwoFactorLoginPage(): void
     {
@@ -156,6 +172,16 @@ final class LoginContext extends RawMinkContext implements Context
 
         $admin->setAuthCodeExpiresAt(new \DateTimeImmutable('-1 minute'));
         $this->entityManager->flush();
+    }
+
+    #[Then('the authentication code for admin :email should be cleared')]
+    public function theAuthenticationCodeForAdminShouldBeCleared(string $email): void
+    {
+        $this->entityManager->clear();
+
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+        Assert::null($admin->getAuthCode());
     }
 
     #[Then('I should be on the admin accounts page')]

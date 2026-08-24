@@ -75,6 +75,36 @@ Feature: Admin login
     And I resend the admin authentication code
     Then I should see "Jums buvo išsiųstas naujas patvirtinimo kodas."
 
+  Scenario: Too many failed login attempts are blocked
+    Given admin with email "admin@example.com" and password "secret" is created
+    When I submit the admin login form with email "admin@example.com" and password "wrong" 5 times
+    And I submit the admin login form with email "admin@example.com" and password "secret"
+    Then I should see "Per daug nepavykusių prisijungimo bandymų."
+    And I should not see "Autentifikacijos kodas"
+
+  Scenario: Too many invalid authentication codes invalidate the code
+    Given admin with email "admin@example.com" and password "secret" is created
+    When I submit the admin login form with email "admin@example.com" and password "secret"
+    And I confirm admin login with authentication code "000000" 5 times
+    And I confirm admin login with authentication code "000000"
+    Then I should see "Per daug autentifikacijos kodo bandymų."
+    And the authentication code for admin "admin@example.com" should be cleared
+
+  Scenario: Login throttling reached at the code step shows a translated message
+    Given admin with email "admin@example.com" and password "secret" is created
+    When I submit the admin login form with email "admin@example.com" and password "wrong" 3 times
+    And I submit the admin login form with email "admin@example.com" and password "secret"
+    And I confirm admin login with authentication code "000000" 3 times
+    Then I should see "Per daug nepavykusių prisijungimo bandymų."
+    And I should not see "%minutes%"
+
+  Scenario: Resending the authentication code too often is blocked
+    Given admin with email "admin@example.com" and password "secret" is created
+    When I submit the admin login form with email "admin@example.com" and password "secret"
+    And I resend the admin authentication code
+    And I resend the admin authentication code
+    Then I should see "Per daug kodo siuntimo užklausų."
+
   Scenario: Forgot password shows email field and reset button
     When I open the admin forgot password form
     Then I should see "El. paštas"

@@ -51,6 +51,9 @@ login:
         invalid_code: 'Invalid authentication code.'
         empty_code: 'Enter the authentication code.'
         invalid_request: 'Invalid request. Please try again.'
+        too_many_attempts: 'Too many failed login attempts. Please try again in %minutes% min.'
+        too_many_code_attempts: 'Too many authentication code attempts. The code has been invalidated. Please try again in %minutes% min.'
+        too_many_resends: 'Too many code requests. Please try again in %minutes% min.'
     reset:
         new_password: 'New password'
         new_password_confirm: 'Confirm password'
