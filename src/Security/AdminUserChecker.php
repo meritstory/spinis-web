@@ -22,8 +22,12 @@ final class AdminUserChecker implements UserCheckerInterface
             return;
         }
 
-        if ($user->isDeleted() || !$user->isActive()) {
+        if ($user->isDeleted()) {
             throw new CustomUserMessageAccountStatusException('login.error.invalid_credentials');
+        }
+
+        if (!$user->isActive()) {
+            throw new CustomUserMessageAccountStatusException('login.error.account_deactivated');
         }
     }
 }

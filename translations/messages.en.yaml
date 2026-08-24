@@ -48,6 +48,7 @@ login:
     back_to_login: 'Back to login'
     error:
         invalid_credentials: 'Invalid login credentials.'
+        account_deactivated: 'Your account is deactivated. Contact the system administrator for access.'
         invalid_code: 'Invalid authentication code.'
         empty_code: 'Enter the authentication code.'
         invalid_request: 'Invalid request. Please try again.'

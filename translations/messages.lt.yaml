@@ -48,6 +48,7 @@ login:
     back_to_login: 'Grįžti į prisijungimą'
     error:
         invalid_credentials: 'Neteisingi prisijungimo duomenys.'
+        account_deactivated: 'Jūsų paskyra yra deaktyvuota. Dėl prieigos kreipkitės į sistemos administratorių.'
         invalid_code: 'Neteisingas autentifikacijos kodas.'
         empty_code: 'Įveskite autentifikacijos kodą.'
         invalid_request: 'Neteisinga užklausa. Bandykite dar kartą.'

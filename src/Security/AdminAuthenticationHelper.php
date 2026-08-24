@@ -18,8 +18,12 @@ final readonly class AdminAuthenticationHelper
 
     public function authenticateAfterPasswordSetup(Admin $admin): ?Response
     {
-        if ($admin->isDeleted() || !$admin->isActive()) {
+        if ($admin->isDeleted()) {
             throw new CustomUserMessageAccountStatusException('login.error.invalid_credentials');
+        }
+
+        if (!$admin->isActive()) {
+            throw new CustomUserMessageAccountStatusException('login.error.account_deactivated');
         }
 
         return $this->security->login($admin, 'form_login', 'admin');
