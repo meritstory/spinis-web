@@ -20,14 +20,14 @@
                 {% endfor %}
             {% endfor %}
 
-            {% if error is defined and error %}
-                <div class="w-100 alert alert-danger rounded mb-3">
-                    {{ error }}
-                </div>
-            {% endif %}
-
             {% if step == 'login' or step == 'forgot' %}
                 <div id="login-form-wrapper"{% if step == 'forgot' %} class="d-none"{% endif %}>
+                    {% if login_error is defined and login_error %}
+                        <div class="w-100 alert alert-danger rounded mb-3">
+                            {{ login_error }}
+                        </div>
+                    {% endif %}
+
                     <form method="post" action="{{ path('admin_login_check') }}" id="login-form" novalidate>
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
 
@@ -54,13 +54,19 @@
                 </div>
 
                 <div id="forgot-form-wrapper"{% if step == 'login' %} class="d-none"{% endif %}>
+                    {% if forgot_error is defined and forgot_error %}
+                        <div class="w-100 alert alert-danger rounded mb-3">
+                            {{ forgot_error }}
+                        </div>
+                    {% endif %}
+
                     <form method="post" action="{{ path('admin_forgot_password') }}" id="forgot-form" novalidate>
                         <input type="hidden" name="_csrf_token" value="{{ csrf_token(csrf_token_intention) }}">
 
                         <div class="form-group">
                             <label class="form-control-label required" for="forgot-email">{{ 'login.email'|trans }}</label>
                             <div class="form-widget">
-                                <input type="email" id="forgot-email" name="email" class="form-control" required{% if step == 'forgot' %} autofocus{% endif %} autocomplete="email">
+                                <input type="email" id="forgot-email" name="email" class="form-control" value="{{ forgot_email|default('') }}" required{% if step == 'forgot' %} autofocus{% endif %} autocomplete="email">
                             </div>
                         </div>
 

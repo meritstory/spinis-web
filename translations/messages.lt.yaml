@@ -50,7 +50,9 @@ login:
         invalid_credentials: 'Neteisingi prisijungimo duomenys.'
         account_deactivated: 'Jūsų paskyra yra deaktyvuota. Dėl prieigos kreipkitės į sistemos administratorių.'
         invalid_code: 'Neteisingas autentifikacijos kodas.'
+        expired_code: 'Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo.'
         empty_code: 'Įveskite autentifikacijos kodą.'
+        reset_throttled: 'Slaptažodžio atkūrimo užklausą galėsite pateikti dar kartą po %minutes% min.'
         invalid_request: 'Neteisinga užklausa. Bandykite dar kartą.'
     reset:
         new_password: 'Naujas slaptažodis'

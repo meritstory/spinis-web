@@ -50,7 +50,9 @@ login:
         invalid_credentials: 'Invalid login credentials.'
         account_deactivated: 'Your account is deactivated. Contact the system administrator for access.'
         invalid_code: 'Invalid authentication code.'
+        expired_code: 'The authentication code has expired. Resend the code.'
         empty_code: 'Enter the authentication code.'
+        reset_throttled: 'You can submit another password reset request in %minutes% minute(s).'
         invalid_request: 'Invalid request. Please try again.'
     reset:
         new_password: 'New password'

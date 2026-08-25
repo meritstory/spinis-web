@@ -26,6 +26,8 @@
                         {{ 'login.error.invalid_code'|trans }}
                     {% elseif authenticationError == 'login.error.empty_code' %}
                         {{ 'login.error.empty_code'|trans }}
+                    {% elseif authenticationError == 'login.error.expired_code' %}
+                        {{ 'login.error.expired_code'|trans }}
                     {% else %}
                         {{ authenticationError|trans({}, 'SchebTwoFactorBundle') }}
                     {% endif %}

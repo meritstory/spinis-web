@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Admin;
 use App\Repository\AdminRepository;
+use App\Repository\ResetPasswordRequestRepository;
 use App\Security\AdminAuthenticationHelper;
 use App\Security\AdminPasswordPolicy;
 use App\Service\Admin\AdminInvitationService;
@@ -25,6 +26,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\Exception\TooManyPasswordRequestsException;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 class SecurityController extends AbstractController
@@ -36,6 +38,7 @@ class SecurityController extends AbstractController
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly AdminRepository $adminRepository,
+        private readonly ResetPasswordRequestRepository $resetPasswordRequestRepository,
         private readonly ResetPasswordHelperInterface $resetPasswordHelper,
         private readonly AdminMailer $adminMailer,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -67,7 +70,7 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
 
         return $this->renderLogin('login', [
-            'error' => $this->resolveLoginError($error),
+            'login_error' => $this->resolveLoginError($error),
             'last_email' => $authenticationUtils->getLastUsername(),
         ]);
     }
@@ -115,7 +118,7 @@ class SecurityController extends AbstractController
     {
         if (!$this->isCsrfTokenValid(self::CSRF_TOKEN_ID, $request->request->getString('_csrf_token'))) {
             return $this->renderLogin('forgot', [
-                'error' => $this->translator->trans('login.error.invalid_request'),
+                'forgot_error' => $this->translator->trans('login.error.invalid_request'),
             ]);
         }
 
@@ -125,6 +128,10 @@ class SecurityController extends AbstractController
         if ($admin !== null) {
             try {
                 $resetToken = $this->resetPasswordHelper->generateResetToken($admin);
+                $this->resetPasswordRequestRepository->removeOtherResetPasswordRequests(
+                    $admin,
+                    $resetToken->getToken(),
+                );
                 $this->adminMailer->sendPasswordResetLink(
                     $admin->getEmail(),
                     $this->urlGenerator->generate(
@@ -133,6 +140,13 @@ class SecurityController extends AbstractController
                         UrlGeneratorInterface::ABSOLUTE_URL,
                     ),
                 );
+            } catch (TooManyPasswordRequestsException $exception) {
+                return $this->renderLogin('forgot', [
+                    'forgot_error' => $this->translator->trans('login.error.reset_throttled', [
+                        '%minutes%' => max(1, (int) ceil($exception->getRetryAfter() / 60)),
+                    ]),
+                    'forgot_email' => $email,
+                ]);
             } catch (ResetPasswordExceptionInterface) {
             }
         }

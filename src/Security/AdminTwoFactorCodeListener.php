@@ -7,7 +7,6 @@ namespace App\Security;
 use App\Entity\Admin;
 use App\Repository\AdminRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Scheb\TwoFactorBundle\Security\Authentication\Exception\InvalidTwoFactorCodeException;
 use Scheb\TwoFactorBundle\Security\Http\Authenticator\Passport\Credentials\TwoFactorCodeCredentials;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
@@ -55,7 +54,7 @@ final readonly class AdminTwoFactorCodeListener
         $this->entityManager->refresh($admin);
 
         if ($admin->isAuthCodeExpired()) {
-            throw new InvalidTwoFactorCodeException(InvalidTwoFactorCodeException::MESSAGE);
+            throw new CustomUserMessageAuthenticationException('login.error.expired_code');
         }
     }
 }

@@ -19,6 +19,8 @@ class ResetPasswordRequestRepository extends ServiceEntityRepository implements 
 {
     use ResetPasswordRequestRepositoryTrait;
 
+    private const int SELECTOR_LENGTH = 20;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, ResetPasswordRequest::class);
@@ -35,5 +37,17 @@ class ResetPasswordRequestRepository extends ServiceEntityRepository implements 
         }
 
         return new ResetPasswordRequest($user, $expiresAt, $selector, $hashedToken);
+    }
+
+    public function removeOtherResetPasswordRequests(Admin $user, string $token): void
+    {
+        $this->createQueryBuilder('request')
+            ->delete()
+            ->where('request.user = :user')
+            ->andWhere('request.selector != :selector')
+            ->setParameter('user', $user)
+            ->setParameter('selector', substr($token, 0, self::SELECTOR_LENGTH))
+            ->getQuery()
+            ->execute();
     }
 }
