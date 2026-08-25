@@ -97,19 +97,20 @@ Feature: Admin login
     Given admin with email "admin@example.com" and password "secret" is created
     When I request admin password reset for email "admin@example.com"
     Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti."
+    And I should see "naują užklausą galėsite pateikti po 5 min."
     And the response should contain "alert alert-info"
 
   Scenario: Forgot password for unknown email shows the same confirmation message
     When I request admin password reset for email "unknown@example.com"
     Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti."
+    And I should see "naują užklausą galėsite pateikti po 5 min."
 
-  Scenario: Repeating password reset request within throttle period shows wait message
+  Scenario: Repeating password reset request within throttle period keeps the previous link valid
     Given admin with email "admin@example.com" and password "secret" is created
     And a password reset token was issued for admin "admin@example.com"
-    And I request admin password reset for email "admin@example.com"
-    And I should see "Slaptažodžio atkūrimo užklausą galėsite pateikti dar kartą po"
+    When I request admin password reset for email "admin@example.com"
     And I visit the remembered password reset link
-    And I should not see "Slaptažodžio atkūrimo nuoroda negalioja."
+    Then I should not see "Slaptažodžio atkūrimo nuoroda negalioja."
 
   Scenario: Repeating password reset request after throttle invalidates the previous link
     Given admin with email "admin@example.com" and password "secret" is created

@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Scheb\TwoFactorBundle\Controller\FormController;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Email\Generator\CodeGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -26,7 +27,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
-use SymfonyCasts\Bundle\ResetPassword\Exception\TooManyPasswordRequestsException;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
 
 class SecurityController extends AbstractController
@@ -36,6 +36,8 @@ class SecurityController extends AbstractController
     private const string CSRF_TOKEN_ID = 'authenticate';
 
     public function __construct(
+        #[Autowire('%symfonycasts_reset_password.throttle_limit%')]
+        private readonly int $passwordResetThrottleLimit,
         private readonly TranslatorInterface $translator,
         private readonly AdminRepository $adminRepository,
         private readonly ResetPasswordRequestRepository $resetPasswordRequestRepository,
@@ -64,7 +66,11 @@ class SecurityController extends AbstractController
         }
 
         if ($request->query->getString('step') === 'forgot_sent') {
-            return $this->renderLogin('forgot_sent');
+            return $this->renderLogin('forgot_sent', [
+                'forgot_sent_message' => $this->translator->trans('login.forgot_sent', [
+                    '%minutes%' => intdiv($this->passwordResetThrottleLimit, 60),
+                ]),
+            ]);
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -128,10 +134,6 @@ class SecurityController extends AbstractController
         if ($admin !== null) {
             try {
                 $resetToken = $this->resetPasswordHelper->generateResetToken($admin);
-                $this->resetPasswordRequestRepository->removeOtherResetPasswordRequests(
-                    $admin,
-                    $resetToken->getToken(),
-                );
                 $this->adminMailer->sendPasswordResetLink(
                     $admin->getEmail(),
                     $this->urlGenerator->generate(
@@ -140,13 +142,10 @@ class SecurityController extends AbstractController
                         UrlGeneratorInterface::ABSOLUTE_URL,
                     ),
                 );
-            } catch (TooManyPasswordRequestsException $exception) {
-                return $this->renderLogin('forgot', [
-                    'forgot_error' => $this->translator->trans('login.error.reset_throttled', [
-                        '%minutes%' => max(1, (int) ceil($exception->getRetryAfter() / 60)),
-                    ]),
-                    'forgot_email' => $email,
-                ]);
+                $this->resetPasswordRequestRepository->removeOtherResetPasswordRequests(
+                    $admin,
+                    $resetToken->getToken(),
+                );
             } catch (ResetPasswordExceptionInterface) {
             }
         }

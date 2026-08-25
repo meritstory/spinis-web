@@ -81,7 +81,7 @@
                 </div>
             {% elseif step == 'forgot_sent' %}
                 <div class="w-100 alert alert-info rounded mb-3">
-                    {{ 'login.forgot_sent'|trans }}
+                    {{ forgot_sent_message }}
                 </div>
                 <div class="form-text mt-3">
                     <a href="{{ path('admin_login') }}">{{ 'login.back_to_login'|trans }}</a>
