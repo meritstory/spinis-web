@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Admin;
 
 use App\Admin\Field\TinyMceField;
+use App\Admin\Filter\CrudDateTimeFilter;
 use App\Entity\Faq;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -16,7 +17,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 
 /**
  * @extends AbstractCrudController<Faq>
@@ -66,8 +66,8 @@ class FaqCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(DateTimeFilter::new('createdAt', 'faq.field.created_at'))
-            ->add(DateTimeFilter::new('updatedAt', 'faq.field.updated_at'));
+            ->add(CrudDateTimeFilter::new('createdAt', 'faq.field.created_at'))
+            ->add(CrudDateTimeFilter::new('updatedAt', 'faq.field.updated_at'));
     }
 
     public function configureFields(string $pageName): iterable
