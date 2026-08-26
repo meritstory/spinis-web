@@ -79,6 +79,7 @@ body.ea {
     --sidebar-menu-active-item-bg: var(--color-surface-green);
     --sidebar-menu-active-item-bg-dark: rgba(var(--color-primary-rgb), 0.16);
     --table-thead-sorted-marker-color: var(--color-primary);
+    --table-selected-cell-bg: var(--gray-100);
     --form-type-check-input-checked-bg: var(--color-primary);
 
     --ea-admin-border-color: var(--border-color, #dee2e6);
@@ -86,21 +87,71 @@ body.ea {
     --ea-admin-surface-subtle: var(--color-status-neutral-bg);
     --ea-admin-text-secondary: var(--text-muted, #6c757d);
     --ea-admin-text-primary: var(--text-color, #212529);
+
+    --button-line-height: 1;
 }
 
 body.ea.ea-dark-scheme {
     --sidebar-menu-active-item-bg: var(--sidebar-menu-active-item-bg-dark);
+    --table-selected-cell-bg: var(--gray-900);
 }
 
-.content-top .content-search .content-search-reset .icon {
+body.ea .form-fieldset-body {
+    padding-inline: var(--ea-focus-ring-width, 3px);
+}
+
+body.ea .form-fieldset-body.show:not(.collapsing) {
+    overflow-inline: visible;
+}
+
+body.ea .btn {
+    justify-content: center;
+    line-height: 1;
+}
+
+body.ea .btn > :is(.btn-label, .action-label) {
+    line-height: 1;
+}
+
+body.ea .content-top .content-search .form-widget {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--ea-sp-1, 0.25rem);
+}
+
+@media (min-width: 992px) {
+    body.ea .content-top .content-search .form-widget {
+        display: flex;
+    }
+}
+
+body.ea .content-top .content-search :is(.content-search-icon, .content-search-reset) {
     align-items: center;
     display: inline-flex;
+    flex-shrink: 0;
     justify-content: center;
-    vertical-align: middle;
+    line-height: 0;
 }
 
-.content-top .content-search .content-search-reset .icon svg {
-    vertical-align: initial;
+body.ea .content-top .content-search :is(.content-search-icon, .content-search-reset) svg {
+    display: block;
+}
+
+body.ea .content-top .content-search .content-search-reset {
+    align-self: center;
+    block-size: 22px;
+    inline-size: 22px;
+    padding: 0;
+    text-decoration: none;
+}
+
+body.ea .content-top .content-search .content-search-reset .icon {
+    align-items: center;
+    display: inline-flex;
+    font-size: 0.75rem;
+    justify-content: center;
+    line-height: 0;
 }
 
 .main-header #header-logo a .ea-dashboard-logo {

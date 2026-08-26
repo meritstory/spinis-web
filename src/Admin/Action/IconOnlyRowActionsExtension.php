@@ -34,14 +34,21 @@ final readonly class IconOnlyRowActionsExtension implements ActionsExtensionInte
             }
 
             $label = $actionDto->getLabel();
+            if (false === $label) {
+                continue;
+            }
+
             if (!$label instanceof TranslatableInterface && (!is_string($label) || $label === '')) {
                 continue;
             }
 
-            $tooltip = is_string($label) ? $this->translator->trans($label) : $label;
+            $tooltip = $label instanceof TranslatableInterface
+                ? $label->trans($this->translator)
+                : $this->translator->trans($label);
 
-            $actions->update(Crud::PAGE_INDEX, $actionDto->getName(), static fn(Action $action): Action => $action
+            $actions->update(Crud::PAGE_INDEX, $actionDto->getName(), fn (Action $action): Action => $action
                 ->setLabel(false)
+                ->asTextLink()
                 ->setHtmlAttributes([...$actionDto->getHtmlAttributes(), 'title' => $tooltip])
             );
         }
