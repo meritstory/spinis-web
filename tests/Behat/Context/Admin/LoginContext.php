@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Behat\Context\Admin;
 
 use App\Entity\Admin;
+use App\Entity\ResetPasswordRequest;
 use App\Repository\AdminRepository;
 use App\Service\Admin\AdminHomeRouteResolver;
 use App\Tests\Behat\Support\PasswordResetTokenStore;
@@ -146,6 +147,40 @@ final class LoginContext extends RawMinkContext implements Context
             'password' => $password,
             'password_confirm' => $password,
         ]);
+    }
+
+    #[Given('I visit the remembered password reset link')]
+    public function iVisitTheRememberedPasswordResetLink(): void
+    {
+        $token = $this->passwordResetTokenStore->get();
+        Assert::notNull($token);
+
+        $this->getClient()->request('GET', '/admin/reset-password/'.$token);
+    }
+
+    #[Given('admin :email should have exactly :count password reset request(s)')]
+    public function adminShouldHaveExactlyPasswordResetRequests(string $email, int $count): void
+    {
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+
+        $actualCount = $this->entityManager->getRepository(ResetPasswordRequest::class)->count(['user' => $admin]);
+        Assert::same($count, $actualCount);
+    }
+
+    #[Given('the password reset throttle has passed for admin :email')]
+    public function thePasswordResetThrottleHasPassedForAdmin(string $email): void
+    {
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+
+        $this->entityManager->getConnection()->executeStatement(
+            'UPDATE reset_password_request SET requested_at = :requested_at WHERE user_id = :user_id',
+            [
+                'requested_at' => (new \DateTimeImmutable('-10 minutes'))->format('Y-m-d H:i:s'),
+                'user_id' => $admin->getId(),
+            ],
+        );
     }
 
     #[Given('the authentication code for admin :email has expired')]

@@ -44,12 +44,13 @@ login:
     resend_link: 'Siųsti kodą iš naujo'
     resend_success: 'Jums buvo išsiųstas naujas patvirtinimo kodas.'
     reset_password: 'Atkurti slaptažodį'
-    forgot_sent: 'Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti.'
+    forgot_sent: 'Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti. Jei neseniai jau prašėte slaptažodžio atkūrimo, naują užklausą galėsite pateikti po %minutes% min.'
     back_to_login: 'Grįžti į prisijungimą'
     error:
         invalid_credentials: 'Neteisingi prisijungimo duomenys.'
         account_deactivated: 'Jūsų paskyra yra deaktyvuota. Dėl prieigos kreipkitės į sistemos administratorių.'
         invalid_code: 'Neteisingas autentifikacijos kodas.'
+        expired_code: 'Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo.'
         empty_code: 'Įveskite autentifikacijos kodą.'
         invalid_request: 'Neteisinga užklausa. Bandykite dar kartą.'
     reset:

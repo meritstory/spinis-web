@@ -44,12 +44,13 @@ login:
     resend_link: 'Resend code'
     resend_success: 'A new verification code has been sent to you.'
     reset_password: 'Reset password'
-    forgot_sent: 'If the specified email address is registered in our system, you will soon receive an email with a link to reset your password.'
+    forgot_sent: 'If the specified email address is registered in our system, you will soon receive an email with a link to reset your password. If you recently requested a password reset, you can submit a new request after %minutes% minute(s).'
     back_to_login: 'Back to login'
     error:
         invalid_credentials: 'Invalid login credentials.'
         account_deactivated: 'Your account is deactivated. Contact the system administrator for access.'
         invalid_code: 'Invalid authentication code.'
+        expired_code: 'The authentication code has expired. Resend the code.'
         empty_code: 'Enter the authentication code.'
         invalid_request: 'Invalid request. Please try again.'
     reset:
