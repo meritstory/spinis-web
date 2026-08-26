@@ -91,6 +91,14 @@ link:
         create: Sukurti nuorodą
 
 admin:
+    entity_not_found:
+        back_admin: 'Grįžti į paskyras'
+        back_complainant: 'Grįžti į pareiškėjus'
+        back_complaint: 'Grįžti į skundus'
+        back_document: 'Grįžti į dokumentus'
+        back_faq: 'Grįžti į DUK'
+        back_link: 'Grįžti į nuorodas'
+        back_setting: 'Grįžti į nustatymus'
     label:
         singular: Paskyra
     field:

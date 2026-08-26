@@ -7,3 +7,7 @@ delete_modal:
 
 batch_action_modal:
     content: 'Ištrintų elementų atkurti negalėsite.'
+
+exception:
+    entity_not_found: 'Šis elementas buvo ištrintas arba neegzistuoja.'
+    general_403: 'Neturite teisės atlikti šio veiksmo.'
