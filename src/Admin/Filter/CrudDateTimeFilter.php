@@ -10,7 +10,7 @@ use Symfony\Contracts\Translation\TranslatableInterface;
 
 final class CrudDateTimeFilter
 {
-    public static function new(string $propertyName, TranslatableInterface|string|bool|null $label = null): DateTimeFilter
+    public static function new(string $propertyName, TranslatableInterface|string|false|null $label = null): DateTimeFilter
     {
         return DateTimeFilter::new($propertyName, $label)
             ->setFormTypeOption('comparison_type_options', [
