@@ -1,4 +1,5 @@
 action:
+    detail: Peržiūrėti
     delete: Ištrinti
 
 delete_modal:

@@ -1,7 +1,72 @@
-.tinymce-editor-invalid .tox-tinymce {
-    border-color: var(--form-invalid-border-color, #dc3545);
+.ea-text-editor-wrapper textarea[data-tinymce-editor="true"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
-.ea-text-editor-wrapper.has-error .tox-tinymce {
-    border-color: var(--form-invalid-border-color, #dc3545);
+.ea-text-editor-wrapper:has(textarea[data-tinymce-editor]:not([data-tinymce-initialized="1"])) {
+    min-height: 12rem;
+}
+
+body.ea .ea-text-editor-wrapper {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
+}
+
+body.ea .ea-text-editor-wrapper:focus,
+body.ea .ea-text-editor-wrapper:focus-within,
+body.ea .has-error.ea-text-editor-wrapper,
+body.ea .has-error.form-group .ea-text-editor-wrapper {
+    border: 0;
+    box-shadow: none;
+    outline: 0;
+}
+
+body.ea .ea-text-editor-wrapper .tox-tinymce {
+    border-color: var(--form-input-border-color);
+    box-shadow: var(--form-input-shadow);
+    transition: border-color var(--ea-duration-fast) var(--ea-ease-in), box-shadow var(--ea-duration-fast) var(--ea-ease-in);
+}
+
+body.ea .ea-text-editor-wrapper:focus-within .tox-tinymce {
+    border-color: var(--form-input-hover-border-color);
+    box-shadow: var(--form-input-hover-shadow);
+}
+
+body.ea .ea-text-editor-wrapper.has-error .tox-tinymce,
+body.ea .tinymce-editor-invalid .tox-tinymce {
+    border-color: var(--form-input-error-border-color);
+    box-shadow: var(--form-input-error-shadow);
+}
+
+.tox-tinymce-aux .tox-tooltip {
+    pointer-events: none;
+}
+
+.tox-swatches-menu .tox-swatch:not(.tox-swatches__picker-btn) {
+    position: relative;
+}
+
+.tox-swatches-menu .tox-swatch:not(.tox-swatches__picker-btn)::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.tox-swatches-menu .tox-swatch:not(.tox-swatches__picker-btn):is(:hover, :focus)::after {
+    transform: translate(-50%, -50%) scale(1.25);
 }
