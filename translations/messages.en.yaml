@@ -90,6 +90,14 @@ link:
         create: Create link
 
 admin:
+    entity_not_found:
+        back_admin: 'Back to accounts'
+        back_complainant: 'Back to complainants'
+        back_complaint: 'Back to complaints'
+        back_document: 'Back to documents'
+        back_faq: 'Back to FAQ'
+        back_link: 'Back to links'
+        back_setting: 'Back to settings'
     label:
         singular: Account
     field:

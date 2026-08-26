@@ -11,7 +11,6 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
@@ -112,7 +111,28 @@ final class DocumentContext extends RawMinkContext implements Context
         $this->getClient()->request('GET', '/admin/document', ['query' => $query]);
     }
 
-    #[When('I delete the document with key :key from the admin index')]
+    #[Given('the admin documents list shows :firstText and :secondText')]
+    public function theAdminDocumentsListShowsTexts(string $firstText, string $secondText): void
+    {
+        $this->assertSession()->pageTextContains($firstText);
+        $this->assertSession()->pageTextContains($secondText);
+    }
+
+    #[Given('the admin documents list shows :text')]
+    public function theAdminDocumentsListShowsText(string $text): void
+    {
+        $this->assertSession()->pageTextContains($text);
+    }
+
+    #[Given('the admin create document form shows :text')]
+    public function theAdminCreateDocumentFormShowsText(string $text): void
+    {
+        Assert::same(Response::HTTP_OK, $this->getClient()->getResponse()->getStatusCode());
+        $this->assertSession()->addressMatches('#/admin/document/new#');
+        $this->assertSession()->pageTextContains($text);
+    }
+
+    #[Given('I delete the document with key :key from the admin index')]
     public function iDeleteTheDocumentWithKeyFromTheAdminIndex(string $key): void
     {
         $document = $this->documentRepository->findOneBy(['key' => $key]);
@@ -136,6 +156,41 @@ final class DocumentContext extends RawMinkContext implements Context
     public function aDocumentWithKeyShouldNotExistInTheDatabase(string $key): void
     {
         Assert::null($this->documentRepository->findOneBy(['key' => $key]));
+    }
+
+    #[Given('I open the admin edit document form for key :key')]
+    public function iOpenTheAdminEditDocumentFormForKey(string $key): void
+    {
+        $document = $this->documentRepository->findOneBy(['key' => $key]);
+        Assert::notNull($document);
+        Assert::notNull($document->getId());
+
+        $this->getClient()->request('GET', sprintf('/admin/document/%d/edit', $document->getId()));
+        Assert::same(Response::HTTP_OK, $this->getClient()->getResponse()->getStatusCode());
+    }
+
+    #[Given('the admin edit document form allows changing the key')]
+    public function theAdminEditDocumentFormAllowsChangingTheKey(): void
+    {
+        $this->assertSession()->addressMatches('#/admin/document/\d+/edit#');
+
+        $keyField = $this->getClient()->getCrawler()->filter('select[name="Document[key]"]');
+        Assert::greaterThan($keyField->count(), 0, 'Document key select was not found on the edit form.');
+        Assert::null($keyField->attr('disabled'));
+    }
+
+    #[Given('I submit the admin document edit form with key :key')]
+    public function iSubmitTheAdminDocumentEditFormWithKey(string $key): void
+    {
+        $client = $this->getClient();
+        $crawler = $client->getCrawler();
+        $formNode = $crawler->filter('form.ea-edit-form');
+        Assert::greaterThan($formNode->count(), 0, 'Document edit form was not found on the page.');
+
+        $form = $formNode->form();
+        $form['Document[key]']->setValue($key);
+
+        $client->submit($form);
     }
 
     private function submitDocumentForm(string $title, string $key, string $description): void

@@ -17,14 +17,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * @extends AbstractCrudController<Document>
@@ -109,10 +106,17 @@ class DocumentCrudController extends AbstractCrudController
         }
 
         if ($pageName === Crud::PAGE_EDIT) {
-            yield TextField::new('key')
+            $document = $this->getContext()?->getEntity()?->getInstance();
+            $availableChoices = $document instanceof Document
+                ? $this->getKeyChoicesForEdit($document)
+                : [];
+
+            yield ChoiceField::new('key')
                 ->setLabel('document.field.key')
-                ->setFormTypeOption('disabled', true)
-                ->setFormTypeOption('mapped', false);
+                ->setRequired(true)
+                ->setChoices($availableChoices)
+                ->setFormTypeOption('placeholder', 'document.field.key_placeholder')
+                ->setFormTypeOption('empty_data', '');
         }
 
         yield TinyMceField::new('description')
@@ -120,21 +124,6 @@ class DocumentCrudController extends AbstractCrudController
             ->hideOnIndex()
             ->setRequired(true)
             ->setFormTypeOption('empty_data', '');
-    }
-
-    /**
-     * @return FormBuilderInterface<mixed>
-     */
-    public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
-    {
-        $formBuilder = parent::createEditFormBuilder($entityDto, $formOptions, $context);
-
-        $entity = $entityDto->getInstance();
-        if ($entity instanceof Document && $formBuilder->has('key')) {
-            $formBuilder->get('key')->setData($this->labelledEnumHelper->formatValue($entity->getKey(), DocumentKeyEnum::class));
-        }
-
-        return $formBuilder;
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -167,6 +156,20 @@ class DocumentCrudController extends AbstractCrudController
         return $this->labelledEnumHelper->getAvailableChoices(
             DocumentKeyEnum::class,
             $this->documentRepository->findUsedKeys(),
+        );
+    }
+
+    /** @return array<string, string> */
+    private function getKeyChoicesForEdit(Document $document): array
+    {
+        $usedKeys = array_values(array_filter(
+            $this->documentRepository->findUsedKeys(),
+            static fn (string $key): bool => $key !== $document->getKey(),
+        ));
+
+        return $this->labelledEnumHelper->getAvailableChoices(
+            DocumentKeyEnum::class,
+            $usedKeys,
         );
     }
 }
