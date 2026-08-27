@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Admin\Filter\CrudDateTimeFilter;
 use App\Entity\Admin;
 use App\Entity\RoleEnum;
 use App\Repository\AdminRepository;
@@ -30,7 +31,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -92,8 +92,8 @@ class AdminCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(DateTimeFilter::new('createdAt', 'admin.field.created_at'))
-            ->add(DateTimeFilter::new('updatedAt', 'admin.field.updated_at'));
+            ->add(CrudDateTimeFilter::new('createdAt', 'admin.field.created_at'))
+            ->add(CrudDateTimeFilter::new('updatedAt', 'admin.field.updated_at'));
     }
 
     public function configureActions(Actions $actions): Actions
