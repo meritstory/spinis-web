@@ -18,6 +18,8 @@ use Behat\Step\Then;
 use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Webmozart\Assert\Assert;
 
 final class AccountContext extends RawMinkContext implements Context
@@ -32,6 +34,7 @@ final class AccountContext extends RawMinkContext implements Context
         private readonly AdminRepository $adminRepository,
         private readonly AdminInvitationRepository $invitationRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -67,6 +70,124 @@ final class AccountContext extends RawMinkContext implements Context
     public function iVisitTheAdminAccountsListPage(): void
     {
         $this->getClient()->request('GET', '/admin/admin');
+    }
+
+    #[Given('the admin accounts list page is open')]
+    public function theAdminAccountsListPageIsOpen(): void
+    {
+        $this->iVisitTheAdminAccountsListPage();
+    }
+
+    #[When('I visit the admin accounts list page with page size :pageSize')]
+    public function iVisitTheAdminAccountsListPageWithPageSize(int $pageSize): void
+    {
+        $this->getClient()->request('GET', '/admin/admin?pageSize='.$pageSize);
+    }
+
+    #[Given('the admin accounts list page is open with page size :pageSize')]
+    public function theAdminAccountsListPageIsOpenWithPageSize(int $pageSize): void
+    {
+        $this->iVisitTheAdminAccountsListPageWithPageSize($pageSize);
+    }
+
+    #[Given(':count specialist accounts exist for pagination testing')]
+    public function specialistAccountsExistForPaginationTesting(int $count): void
+    {
+        for ($i = 1; $i <= $count; $i++) {
+            $admin = new Admin()
+                ->setEmail(sprintf('pagination-specialist-%d@example.com', $i))
+                ->setFirstName('Pagination')
+                ->setLastName('Specialist')
+                ->setRoles([RoleEnum::SPECIALIST->value])
+                ->setActive(true)
+                ->setEmailTwoFactorEnabled(true);
+
+            $admin->setPassword($this->passwordHasher->hashPassword($admin, 'secret'));
+
+            $this->entityManager->persist($admin);
+        }
+
+        $this->entityManager->flush();
+    }
+
+    #[When('I visit the admin account create form')]
+    public function iVisitTheAdminAccountCreateForm(): void
+    {
+        $this->getClient()->request('GET', '/admin/admin/new');
+    }
+
+    #[Given('the admin account create form is open')]
+    public function theAdminAccountCreateFormIsOpen(): void
+    {
+        $this->iVisitTheAdminAccountCreateForm();
+    }
+
+    #[When('I visit the admin account edit form for :email')]
+    public function iVisitTheAdminAccountEditFormFor(string $email): void
+    {
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+        Assert::notNull($admin->getId());
+
+        $this->getClient()->request('GET', '/admin/admin/'.$admin->getId().'/edit');
+    }
+
+    #[Given('the admin account edit form for :email is open')]
+    public function theAdminAccountEditFormForIsOpen(string $email): void
+    {
+        $this->iVisitTheAdminAccountEditFormFor($email);
+    }
+
+    #[Given('I create an admin account with invalid numeric name fields')]
+    public function iCreateAnAdminAccountWithInvalidNumericNameFields(): void
+    {
+        $this->iCreateAnAdminAccount(
+            'numbers@example.com',
+            'Jonas123',
+            'Jonaitis456',
+            'specialist',
+            'enabled',
+        );
+    }
+
+    #[Given('I create an admin account with control whitespace in name fields')]
+    public function iCreateAnAdminAccountWithControlWhitespaceInNameFields(): void
+    {
+        $this->iCreateAnAdminAccount(
+            'control-whitespace@example.com',
+            "Jo\nnas",
+            "Jonai\ttis",
+            'specialist',
+            'enabled',
+        );
+    }
+
+    #[Given('the account form shows name character validation errors')]
+    public function theAccountFormShowsNameCharacterValidationErrors(): void
+    {
+        $this->assertSession()->pageTextContains('Vardą gali sudaryti tik raidės, tarpai, brūkšneliai ir apostrofai.');
+        $this->assertSession()->pageTextContains('Pavardę gali sudaryti tik raidės, tarpai, brūkšneliai ir apostrofai.');
+    }
+
+    #[Given('the account form fields appear in this order:')]
+    public function theAccountFormFieldsShouldAppearInThisOrder(TableNode $labels): void
+    {
+        $formNode = $this->getClient()->getCrawler()->filter('form.ea-new-form, form.ea-edit-form');
+        Assert::greaterThan($formNode->count(), 0, 'Account form was not found on the page.');
+
+        $expectedLabels = array_map(trim(...), $labels->getColumn(0));
+        $matchedLabels = [];
+
+        foreach ($formNode->first()->filter('label') as $labelNode) {
+            $labelText = trim(rtrim(trim($labelNode->textContent ?? ''), '*'));
+            if (!in_array($labelText, $expectedLabels, true)) {
+                continue;
+            }
+
+            $matchedLabels[] = $labelText;
+        }
+
+        Assert::same($expectedLabels, $matchedLabels);
     }
 
     #[When('I search admin accounts for :query')]
@@ -212,6 +333,26 @@ final class AccountContext extends RawMinkContext implements Context
         $client->submit($form);
     }
 
+    #[Given('I edit admin account :email setting first name to :firstName and last name to :lastName')]
+    public function iEditAdminAccountNames(string $email, string $firstName, string $lastName): void
+    {
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+        Assert::notNull($admin->getId());
+
+        $client = $this->getClient();
+        $client->request('GET', '/admin/admin/'.$admin->getId().'/edit');
+        $crawler = $client->getCrawler();
+        $formNode = $crawler->filter('form.ea-edit-form');
+        Assert::greaterThan($formNode->count(), 0, 'Account edit form was not found on the page.');
+
+        $form = $formNode->form();
+        $form['Admin[firstName]'] = $firstName;
+        $form['Admin[lastName]'] = $lastName;
+
+        $client->submit($form);
+    }
+
     #[When('I edit admin account :email changing role to :role')]
     public function iEditAdminAccountChangingRole(string $email, string $role): void
     {
@@ -284,6 +425,12 @@ final class AccountContext extends RawMinkContext implements Context
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
         Assert::count($this->invitationRepository->findBy(['admin' => $admin]), 0);
+    }
+
+    #[Given('admin :email has no pending account invitation')]
+    public function adminHasNoPendingAccountInvitation(string $email): void
+    {
+        $this->noInvitationShouldExistForAdmin($email);
     }
 
     #[Given('admin :email has a pending account invitation')]
@@ -372,9 +519,9 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::notNull($admin->getId());
 
         $client = $this->getClient();
-        $client->request('GET', '/admin/admin/'.$admin->getId());
-        $formNode = $client->getCrawler()->filter('form[action*="/resend-invitation"]');
-        Assert::greaterThan($formNode->count(), 0, 'Resend invitation form was not found on the page.');
+        $client->request('GET', '/admin/admin');
+        $formNode = $client->getCrawler()->filter('form[action*="/'.$admin->getId().'/resend-invitation"]');
+        Assert::greaterThan($formNode->count(), 0, 'Resend invitation form was not found on the accounts list.');
         $client->submit($formNode->form());
     }
 
@@ -401,6 +548,55 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::notSame($this->storedInvitationTokenHash, $newTokenHash);
     }
 
+    #[Given('changing legacy pending admin email from :oldEmail to :newEmail renews its invitation')]
+    public function changingLegacyPendingAdminEmailRenewsItsInvitation(string $oldEmail, string $newEmail): void
+    {
+        $admin = new Admin()
+            ->setEmail($oldEmail)
+            ->setFirstName('Legacy')
+            ->setLastName('Pending')
+            ->setRoles([RoleEnum::SPECIALIST->value])
+            ->setActive(true)
+            ->setEmailTwoFactorEnabled(true);
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, bin2hex(random_bytes(32))));
+
+        $this->entityManager->persist($admin);
+        $this->entityManager->flush();
+
+        $this->createInvitation($oldEmail, new \DateTimeImmutable('+1 day'));
+        $this->storedInvitationTokenHash = $this->getInvitationTokenHashForAdmin($oldEmail);
+        $this->iEditAdminAccount($oldEmail, $newEmail, 'active');
+        $this->adminShouldHaveARenewedInvitation($newEmail);
+    }
+
+    #[Given('resend invitation is not available after password setup with pending two-factor for admin :email')]
+    public function resendInvitationIsNotAvailableAfterPasswordSetupWithPendingTwoFactor(string $email): void
+    {
+        $this->iCreateAnAdminAccount($email, 'Tomas', 'Tomaitis', 'specialist', 'enabled');
+        $this->adminHasAPendingAccountInvitation($email);
+        $this->visitLogoutPage();
+        $this->iSetTheAccountInvitationPasswordTo('Newsecretpass1!');
+        $this->iShouldBeOnTheAdminTwoFactorLoginPage();
+        $this->submitAdminLoginCredentials('admin@example.com', 'secret');
+        $this->entityManager->clear();
+        $this->submitAdminLoginVerificationCode('admin@example.com');
+        $this->iVisitTheAdminAccountsListPage();
+        $this->resendInvitationShouldNotBeAvailableForAdmin($email);
+    }
+
+    #[Given('resend invitation should not be available for admin :email')]
+    public function resendInvitationShouldNotBeAvailableForAdmin(string $email): void
+    {
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+        Assert::notNull($admin->getId());
+
+        $client = $this->getClient();
+        $client->request('GET', '/admin/admin');
+        $formNode = $client->getCrawler()->filter('form[action*="/'.$admin->getId().'/resend-invitation"]');
+        Assert::same(0, $formNode->count(), 'Resend invitation form should not be available.');
+    }
+
     #[Then('I should see account :email in the accounts list')]
     public function iShouldSeeAccountInTheAccountsList(string $email): void
     {
@@ -411,6 +607,79 @@ final class AccountContext extends RawMinkContext implements Context
     public function iShouldNotSeeAccountInTheAccountsList(string $email): void
     {
         $this->assertSession()->pageTextNotContains($email);
+    }
+
+    #[Given('the accounts list shows :count rows')]
+    public function theAccountsListShouldShowRows(int $count): void
+    {
+        $rows = $this->getClient()->getCrawler()->filter('table.datagrid tbody tr');
+        Assert::same($rows->count(), $count);
+    }
+
+    #[Given('pagination controls are hidden on the single-page accounts list')]
+    public function paginationControlsAreHiddenOnTheSinglePageAccountsList(): void
+    {
+        Assert::same(
+            $this->getClient()->getCrawler()->filter('.list-pagination-paginator')->count(),
+            0,
+        );
+    }
+
+    #[Given('pagination is visible on the accounts list')]
+    public function iShouldSeePaginationOnTheAccountsList(): void
+    {
+        $crawler = $this->getClient()->getCrawler();
+        Assert::greaterThan($crawler->filter('.list-pagination-paginator')->count(), 0);
+
+        $pageTwoLink = $crawler->filter('.list-pagination-paginator a.page-link')->reduce(
+            static fn (Crawler $node): bool => trim($node->text()) === '2',
+        );
+        Assert::greaterThan($pageTwoLink->count(), 0);
+    }
+
+    #[Given('the accounts paginator has accessible navigation states')]
+    public function theAccountsPaginatorHasAccessibleNavigationStates(): void
+    {
+        $crawler = $this->getClient()->getCrawler();
+        $disabledLinks = $crawler->filter('.list-pagination-paginator .page-item.disabled > a.page-link');
+        Assert::greaterThan($disabledLinks->count(), 0);
+
+        foreach ($disabledLinks as $link) {
+            Assert::same($link->getAttribute('aria-disabled'), 'true');
+            Assert::same($link->getAttribute('tabindex'), '-1');
+        }
+
+        Assert::same(
+            $crawler->filter('.list-pagination-paginator a[aria-current="page"]')->count(),
+            1,
+        );
+    }
+
+    #[Given('the accounts list page size selector shows options :option1, :option2, and :option3')]
+    public function theAccountsListPageSizeSelectorShouldShowOptions(
+        int $option1,
+        int $option2,
+        int $option3,
+    ): void {
+        $html = $this->getClient()->getResponse()->getContent();
+        Assert::notNull($html);
+        Assert::true(str_contains($html, 'pageSize='.$option1));
+        Assert::true(str_contains($html, 'pageSize='.$option2));
+        Assert::true(str_contains($html, 'pageSize='.$option3));
+        Assert::true(str_contains($html, 'list-pagination-size'));
+    }
+
+    #[Given('the invalid page size warning is shown once')]
+    public function theInvalidPageSizeWarningIsShownOnce(): void
+    {
+        $warnings = $this->getClient()->getCrawler()->filter('.alert')->reduce(
+            static fn (Crawler $node): bool => str_contains(
+                $node->text(),
+                'Neteisingas puslapio dydis. Rodoma 10 įrašų puslapyje.',
+            ),
+        );
+
+        Assert::same($warnings->count(), 1);
     }
 
     #[Then('admin account :email should not exist')]
@@ -449,6 +718,52 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::isInstanceOf($client, KernelBrowser::class);
 
         return $client;
+    }
+
+    private function visitLogoutPage(): void
+    {
+        $client = $this->getClient();
+        $client->request('GET', '/admin');
+        $logoutUrl = $client->getCrawler()->filter('a.user-action')->reduce(
+            static fn (Crawler $node): bool => str_contains($node->text(), 'Atsijungti')
+                || str_contains($node->attr('href') ?? '', '/admin/logout'),
+        )->first()->attr('href');
+
+        Assert::notNull($logoutUrl);
+        $client->request('GET', $logoutUrl);
+    }
+
+    private function submitAdminLoginCredentials(string $email, string $password): void
+    {
+        $client = $this->getClient();
+        $client->request('GET', '/admin/login');
+        $csrfToken = $client->getCrawler()->filter('input[name="_csrf_token"]')->attr('value');
+        Assert::notNull($csrfToken);
+
+        $client->request('POST', '/admin/login_check', [
+            '_csrf_token' => $csrfToken,
+            'email' => $email,
+            'password' => $password,
+        ]);
+    }
+
+    private function submitAdminLoginVerificationCode(string $email): void
+    {
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
+
+        $code = $admin->getAuthCode();
+        Assert::notNull($code);
+
+        $client = $this->getClient();
+        $client->request('GET', '/admin/login/2fa');
+        $csrfToken = $client->getCrawler()->filter('input[name="_csrf_token"]')->attr('value');
+        Assert::notNull($csrfToken);
+
+        $client->request('POST', '/admin/login/2fa_check', [
+            '_csrf_token' => $csrfToken,
+            '_auth_code' => $code,
+        ]);
     }
 
     private function findAdminBypassingSoftDelete(int $id): ?Admin

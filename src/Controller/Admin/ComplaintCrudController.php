@@ -68,7 +68,6 @@ class ComplaintCrudController extends AbstractCrudController
             ->setDefaultSort(['createdAt' => 'DESC'])
             ->setDefaultRowAction(Action::EDIT)
             ->showEntityActionsInlined()
-            ->setPaginatorPageSize(10)
             ->overrideTemplate('crud/edit', 'admin/crud/complaint_edit.html.twig');
     }
 

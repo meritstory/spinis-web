@@ -8,6 +8,9 @@ app:
 
 paginator:
     counter: '<strong>%start%–%end%</strong> iš %total% įrašų'
+    show: Rodyti
+    page_size_aria: Įrašų skaičius puslapyje
+    invalid_page_size: 'Neteisingas puslapio dydis. Rodoma %default% įrašų puslapyje.'
 
 menu:
     admins: Paskyros
@@ -108,6 +111,7 @@ admin:
         role: Rolė
         role_placeholder: 'Pasirinkite rolę'
         email_two_factor: 'Dviguba autentifikacija el. paštu (2FA)'
+        email_two_factor_index: '<span class="ea-admin-2fa-label-long">Dviguba autentifikacija el. paštu (2FA)</span><span class="ea-admin-2fa-label-short" aria-hidden="true">2FA</span>'
         active: Aktyvus
         created_at: 'Sukūrimo data'
         updated_at: 'Atnaujinimo data'
