@@ -33,6 +33,7 @@ setting:
     value:
         not_blank: 'Enter a value.'
         invalid_date: 'Enter a valid date.'
+        invalid_email: 'Enter a valid email address.'
 
 document:
     title:

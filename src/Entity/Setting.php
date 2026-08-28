@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Enum\SettingKeyEnum;
 use App\Repository\SettingRepository;
+use App\Validator\SettingValue;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -15,7 +16,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: SettingRepository::class)]
 #[ORM\Table(name: 'setting')]
 #[ORM\UniqueConstraint(fields: ['key'])]
-#[UniqueEntity(fields: ['key'], message: 'setting.key.unique')]
+#[UniqueEntity(
+    fields: ['key'],
+    message: 'setting.key.unique',
+    repositoryMethod: 'findCompletedByKey',
+)]
+#[SettingValue]
 class Setting implements \Stringable
 {
     use TimestampableEntity;
@@ -60,7 +66,7 @@ class Setting implements \Stringable
 
     public function setValue(?string $value): static
     {
-        $this->value = $value ?? '';
+        $this->value = $value === null ? '' : trim($value);
 
         return $this;
     }

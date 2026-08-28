@@ -33,6 +33,7 @@ setting:
     value:
         not_blank: 'Įveskite reikšmę.'
         invalid_date: 'Įveskite teisingą datą.'
+        invalid_email: 'Įveskite galiojantį el. pašto adresą.'
 
 document:
     title:
