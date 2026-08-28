@@ -233,6 +233,10 @@ body.ea-index-Admin .ea-admin-2fa-label-short {
     display: none;
 }
 
+body.ea-index-Admin .datagrid thead .ea-admin-2fa-label-long {
+    display: inline;
+}
+
 @media (max-width: 1399px) {
     body.ea-index-Admin .ea-admin-2fa-label-long {
         block-size: 1px;
