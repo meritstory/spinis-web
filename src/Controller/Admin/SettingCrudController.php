@@ -37,7 +37,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SettingCrudController extends AbstractCrudController
 {
-    private const DRAFT_RESUME_ID_ATTR = '_setting_draft_resume_id';
+    private const string DRAFT_RESUME_ID_ATTR = '_setting_draft_resume_id';
 
     public function __construct(
         private readonly SettingRepository $settingRepository,

@@ -13,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SettingRepository extends ServiceEntityRepository
 {
-    private const EMPTY_VALUE = '';
+    private const string EMPTY_VALUE = '';
 
     public function __construct(ManagerRegistry $registry)
     {
