@@ -44,7 +44,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -59,7 +58,6 @@ class AdminCrudController extends AbstractCrudController
         private readonly TranslatorInterface $translator,
         private readonly AdminInvitationService $invitationService,
         private readonly LabelledEnumHelper $labelledEnumHelper,
-        private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ResetPasswordRequestRepository $resetPasswordRequestRepository,
         private readonly AdminRepository $adminRepository,
@@ -99,11 +97,9 @@ class AdminCrudController extends AbstractCrudController
         $resendInvitation = Action::new('resendInvitation', 'admin.action.resend_invitation', 'fa fa-envelope')
             ->linkToUrl(fn (Admin $admin): string => $this->urlGenerator->generate(
                 'admin_admin_resend_invitation',
-                [
-                    'entityId' => $admin->getId(),
-                    'token' => $this->csrfTokenManager->getToken($this->getResendInvitationCsrfTokenId($admin)),
-                ],
+                ['entityId' => $admin->getId()],
             ))
+            ->setTemplatePath('admin/crud/resend_invitation_action.html.twig')
             ->renderAsForm()
             ->displayIf(fn (?Admin $admin): bool => $admin instanceof Admin && $this->invitationService->canResendInvitation($admin));
 
@@ -161,7 +157,7 @@ class AdminCrudController extends AbstractCrudController
     #[AdminRoute(path: '/{entityId}/resend-invitation', options: ['methods' => [Request::METHOD_POST]])]
     public function resendInvitation(Request $request, #[MapEntity(id: 'entityId')] Admin $admin): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid($this->getResendInvitationCsrfTokenId($admin), $request->query->getString('token'))) {
+        if (!$this->isCsrfTokenValid($this->getResendInvitationCsrfTokenId($admin), $request->request->getString('_token'))) {
             throw new AccessDeniedHttpException();
         }
 

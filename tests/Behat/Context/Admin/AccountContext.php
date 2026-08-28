@@ -522,6 +522,11 @@ final class AccountContext extends RawMinkContext implements Context
         $client->request('GET', '/admin/admin');
         $formNode = $client->getCrawler()->filter('form[action*="/'.$admin->getId().'/resend-invitation"]');
         Assert::greaterThan($formNode->count(), 0, 'Resend invitation form was not found on the accounts list.');
+        $formAction = $formNode->attr('action');
+        Assert::string($formAction);
+        Assert::notContains($formAction, 'token=', 'The resend invitation CSRF token must not be included in the URL.');
+        $tokenNode = $formNode->filter('input[type="hidden"][name="_token"]');
+        Assert::greaterThan($tokenNode->count(), 0, 'Resend invitation CSRF token field was not found.');
         $client->submit($formNode->form());
     }
 
@@ -534,7 +539,8 @@ final class AccountContext extends RawMinkContext implements Context
 
         $this->getClient()->request(
             'POST',
-            '/admin/admin/'.$admin->getId().'/resend-invitation?token=invalid',
+            '/admin/admin/'.$admin->getId().'/resend-invitation',
+            ['_token' => 'invalid'],
         );
     }
 
