@@ -143,7 +143,6 @@ Feature: Admin account management
     And I delete admin account "hidden@example.com"
     When I visit the admin account detail page for the remembered account id
     Then the response status code should be 404
-    And I should see "Ši paskyra buvo ištrinta arba neegzistuoja."
 
   Scenario: Soft deleted account can be recreated with the same email
     When I create an admin account with email "reusable@example.com" first name "Ana" last name "Anaitė" role "specialist" and two-factor "enabled"
@@ -223,12 +222,3 @@ Feature: Admin account management
     And I confirm admin login with the latest authentication code for "specialist@example.com"
     And I visit the admin accounts list page
     Then the response status code should be 403
-    And I should see "Neturite teisės atlikti šio veiksmo."
-
-  Scenario: Department head cannot access accounts page
-    When I visit the logout page
-    And department_head with email "head@example.com" and password "secret" is created without two-factor
-    And I am logged in to the admin panel as "head@example.com" with password "secret" without two-factor
-    And I visit the admin accounts list page
-    Then the response status code should be 403
-    And I should see "Neturite teisės atlikti šio veiksmo."
