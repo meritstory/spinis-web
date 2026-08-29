@@ -268,23 +268,47 @@ body.ea-index-Admin .datagrid thead .ea-admin-2fa-label-long {
     }
 }
 
-@media (min-width: 768px) {
-    body.ea-index-Admin .datagrid td.actions:not(.actions-as-dropdown) {
-        min-inline-size: 9.375rem;
-        white-space: nowrap;
-    }
+body.ea-index .content-body {
+    overflow-x: auto;
+}
 
-    body.ea-index-Admin .datagrid td.actions:not(.actions-as-dropdown) > :is(a, form) {
-        margin: 0;
-    }
+body.ea-index .datagrid thead th:has(> .visually-hidden),
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) {
+    min-inline-size: 6.5rem;
+    overflow: visible;
+    padding-inline-end: var(--ea-sp-6);
+    white-space: nowrap;
+    width: 1%;
+}
 
-    body.ea-index-Admin .datagrid td.actions:not(.actions-as-dropdown) > :is(a, form) + :is(a, form) {
-        margin-inline-start: var(--ea-sp-1);
-    }
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) .btn {
+    overflow: visible;
+}
 
-    body.ea-index-Admin .datagrid td.actions:not(.actions-as-dropdown) > form {
-        display: inline;
-    }
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) .btn > .btn-icon {
+    inline-size: 1.25em;
+    min-inline-size: 1.25em;
+    overflow: visible;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) .btn .btn-icon svg {
+    block-size: 1em;
+    inline-size: auto;
+    max-block-size: none;
+    max-inline-size: none;
+    overflow: visible;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) > :is(a, form) {
+    margin: 0;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) > :is(a, form) + :is(a, form) {
+    margin-inline-start: var(--ea-sp-1);
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) > form {
+    display: inline;
 }
 
 @media (max-width: 767px) {
