@@ -93,12 +93,19 @@ link:
 admin:
     entity_not_found:
         back_admin: 'Back to accounts'
+        message_admin: 'This account was deleted or does not exist.'
         back_complainant: 'Back to complainants'
+        message_complainant: 'This complainant was deleted or does not exist.'
         back_complaint: 'Back to complaints'
+        message_complaint: 'This complaint was deleted or does not exist.'
         back_document: 'Back to documents'
+        message_document: 'This document was deleted or does not exist.'
         back_faq: 'Back to FAQ'
+        message_faq: 'This FAQ entry was deleted or does not exist.'
         back_link: 'Back to links'
+        message_link: 'This link was deleted or does not exist.'
         back_setting: 'Back to settings'
+        message_setting: 'This setting was deleted or does not exist.'
     label:
         singular: Account
     field:

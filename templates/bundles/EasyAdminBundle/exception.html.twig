@@ -3,30 +3,41 @@
 {% block body_class 'ea-detail' %}
 {% block page_title %}{{ 'page_title.exception'|trans({'%count%': 1}, 'EasyAdminBundle') }}{% endblock %}
 
-{% block content_title %}
-    <span class="admin-error-title">
-        <twig:ea:Icon name="internal:circle-exclamation" />
-        <span>{{ 'page_title.exception'|trans({'%count%': 1}, 'EasyAdminBundle') }}</span>
-    </span>
-{% endblock %}
-
-{% block page_actions %}
-    {% if exception.statusCode != 403 and ea.crud.controllerFqcn is not null %}
-        {% set entity_short = ea.crud.entityFqcn|split('\\')|last|lower %}
-        <a href="{{ path('admin_' ~ entity_short ~ '_index') }}" class="btn btn-secondary action-index">
-            {{ ('admin.entity_not_found.back_' ~ entity_short)|trans(domain: 'messages') }}
-        </a>
+{% block content_header %}
+    {% set admin_context = ea() %}
+    {% set entity_short = admin_context is not null and admin_context.crud.controllerFqcn is not null and admin_context.crud.entityFqcn is not null ? admin_context.crud.entityFqcn|split('\\')|last|lower : null %}
+    {% if entity_short is not null %}
+        {% set entity_message_key = 'admin.entity_not_found.message_' ~ entity_short %}
+        {% set entity_message = entity_message_key|trans(domain: 'messages') %}
     {% endif %}
+
+    <div class="content-header-title">
+        <h1 class="title">
+            <span class="admin-error-title">
+                <twig:ea:Icon name="internal:circle-exclamation" />
+                <span>{{ 'page_title.exception'|trans({'%count%': 1}, 'EasyAdminBundle') }}</span>
+            </span>
+        </h1>
+        <p class="admin-error-message">
+            {% if exception.statusCode == 404 and entity_short is not null and entity_message != entity_message_key %}
+                {{ entity_message }}
+            {% else %}
+                {{ exception.publicMessage|trans(exception.translationParameters, 'EasyAdminBundle') }}
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="page-actions">
+        {% if exception.statusCode != 403 and entity_short is not null %}
+            <a href="{{ path('admin_' ~ entity_short ~ '_index') }}" class="btn btn-secondary action-index">
+                {{ ('admin.entity_not_found.back_' ~ entity_short)|trans(domain: 'messages') }}
+            </a>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block content_footer_wrapper '' %}
-{% block main %}
-    <div class="field-group admin-error-message">
-        <div class="field-value">
-            {{ exception.publicMessage|trans(exception.translationParameters, 'EasyAdminBundle') }}
-        </div>
-    </div>
-{% endblock %}
+{% block main %}{% endblock %}
 
 {% block configured_head_contents %}
     {{ parent() }}
@@ -53,8 +64,12 @@
             line-height: var(--line-height-none);
         }
 
-        body.ea-detail .field-group.admin-error-message {
-            margin-block: 0;
+        body.ea-detail .admin-error-message {
+            color: var(--text-color);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-normal);
+            line-height: var(--line-height-normal);
+            margin-block: var(--ea-sp-3) 0;
         }
     </style>
 {% endblock %}

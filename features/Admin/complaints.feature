@@ -33,6 +33,7 @@ Feature: Admin complaints
     And I am logged in to the admin panel as "admin@example.com" with password "secret"
     And I visit the admin complaints list page
     Then the response status code should be 403
+    And I should see "Neturite teisės atlikti šio veiksmo."
 
   Scenario: Complaint edit page shows core sections for patient-submitted complaint
     Given a full complaint exists with number "SK-2026-EDIT-01"
