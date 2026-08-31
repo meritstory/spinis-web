@@ -42,10 +42,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -57,11 +55,9 @@ class AdminCrudController extends AbstractCrudController
     private const string FORM_ROLE_FIELD = 'adminRole';
 
     public function __construct(
-        private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly TranslatorInterface $translator,
         private readonly AdminInvitationService $invitationService,
         private readonly LabelledEnumHelper $labelledEnumHelper,
-        private readonly CsrfTokenManagerInterface $csrfTokenManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ResetPasswordRequestRepository $resetPasswordRequestRepository,
         private readonly AdminRepository $adminRepository,
@@ -82,7 +78,7 @@ class AdminCrudController extends AbstractCrudController
             ->setPageTitle(Crud::PAGE_NEW, 'admin.page.create')
             ->setPageTitle(Crud::PAGE_EDIT, 'admin.page.edit')
             ->setPageTitle(Crud::PAGE_DETAIL, 'admin.page.detail')
-            ->setSearchFields(['email', 'firstName', 'lastName'])
+            ->setSearchFields(['email', 'firstName', 'lastName', 'roleLabel'])
             ->setDefaultSort(['email' => 'ASC'])
             ->setDefaultRowAction(Action::DETAIL)
             ->showEntityActionsInlined()
@@ -101,13 +97,11 @@ class AdminCrudController extends AbstractCrudController
         $resendInvitation = Action::new('resendInvitation', 'admin.action.resend_invitation', 'fa fa-envelope')
             ->linkToUrl(fn (Admin $admin): string => $this->urlGenerator->generate(
                 'admin_admin_resend_invitation',
-                [
-                    'entityId' => $admin->getId(),
-                    'token' => $this->csrfTokenManager->getToken($this->getResendInvitationCsrfTokenId($admin)),
-                ],
+                ['entityId' => $admin->getId()],
             ))
+            ->setTemplatePath('admin/crud/resend_invitation_action.html.twig')
             ->renderAsForm()
-            ->displayIf(fn (?Admin $admin): bool => $admin instanceof Admin && $this->invitationService->hasInvitation($admin));
+            ->displayIf(fn (?Admin $admin): bool => $admin instanceof Admin && $this->invitationService->canResendInvitation($admin));
 
         return $actions
             ->update(Crud::PAGE_INDEX, Action::NEW, static function (Action $action): Action {
@@ -163,7 +157,7 @@ class AdminCrudController extends AbstractCrudController
     #[AdminRoute(path: '/{entityId}/resend-invitation', options: ['methods' => [Request::METHOD_POST]])]
     public function resendInvitation(Request $request, #[MapEntity(id: 'entityId')] Admin $admin): RedirectResponse
     {
-        if (!$this->isCsrfTokenValid($this->getResendInvitationCsrfTokenId($admin), $request->query->getString('token'))) {
+        if (!$this->isCsrfTokenValid($this->getResendInvitationCsrfTokenId($admin), $request->request->getString('_token'))) {
             throw new AccessDeniedHttpException();
         }
 
@@ -171,7 +165,7 @@ class AdminCrudController extends AbstractCrudController
             throw new NotFoundHttpException();
         }
 
-        if (!$this->invitationService->hasInvitation($admin)) {
+        if (!$this->invitationService->canResendInvitation($admin)) {
             $this->addFlash('danger', $this->translator->trans('admin.invitation.resend_not_allowed'));
 
             return $this->redirectToAdminPage(self::class, Action::INDEX);
@@ -181,21 +175,21 @@ class AdminCrudController extends AbstractCrudController
 
         $this->addFlash('success', $this->translator->trans('admin.invitation.resend_success'));
 
-        return $this->redirectToAdminPage(self::class, Action::DETAIL, $admin->getId());
+        return $this->redirectToAdminPage(self::class, Action::INDEX);
     }
 
     /** @return iterable<FieldInterface> */
     public function configureFields(string $pageName): iterable
     {
-        if ($pageName === Crud::PAGE_NEW || $pageName === Crud::PAGE_DETAIL) {
+        if ($pageName === Crud::PAGE_NEW || $pageName === Crud::PAGE_EDIT || $pageName === Crud::PAGE_DETAIL) {
             yield TextField::new('firstName')
                 ->setLabel('admin.field.first_name')
-                ->setRequired($pageName === Crud::PAGE_NEW)
+                ->setRequired($pageName !== Crud::PAGE_DETAIL)
                 ->setFormTypeOption('empty_data', '');
 
             yield TextField::new('lastName')
                 ->setLabel('admin.field.last_name')
-                ->setRequired($pageName === Crud::PAGE_NEW)
+                ->setRequired($pageName !== Crud::PAGE_DETAIL)
                 ->setFormTypeOption('empty_data', '');
         }
 
@@ -206,7 +200,9 @@ class AdminCrudController extends AbstractCrudController
 
         if ($pageName === Crud::PAGE_INDEX || $pageName === Crud::PAGE_DETAIL) {
             yield BooleanField::new('emailTwoFactorEnabled')
-                ->setLabel('admin.field.email_two_factor')
+                ->setLabel($pageName === Crud::PAGE_INDEX
+                    ? 'admin.field.email_two_factor_index'
+                    : 'admin.field.email_two_factor')
                 ->renderAsSwitch(false);
 
             yield TextField::new('roleLabel')
@@ -241,16 +237,6 @@ class AdminCrudController extends AbstractCrudController
         }
 
         if ($pageName === Crud::PAGE_EDIT) {
-            yield TextField::new('firstName')
-                ->setLabel('admin.field.first_name')
-                ->setRequired(true)
-                ->setFormTypeOption('empty_data', '');
-
-            yield TextField::new('lastName')
-                ->setLabel('admin.field.last_name')
-                ->setRequired(true)
-                ->setFormTypeOption('empty_data', '');
-
             yield BooleanField::new('emailTwoFactorEnabled')
                 ->setLabel('admin.field.email_two_factor');
 
@@ -353,7 +339,7 @@ class AdminCrudController extends AbstractCrudController
         $originalEmail = $originalData['email'] ?? null;
         $renewInvitation = is_string($originalEmail)
             && $originalEmail !== $entityInstance->getEmail()
-            && $this->invitationService->hasInvitation($entityInstance);
+            && $this->invitationService->canResendInvitation($entityInstance);
 
         parent::updateEntity($entityManager, $entityInstance);
 
@@ -459,8 +445,7 @@ class AdminCrudController extends AbstractCrudController
 
     private function setUnusablePassword(Admin $admin): void
     {
-        $plainPassword = bin2hex(random_bytes(32));
-        $admin->setPassword($this->passwordHasher->hashPassword($admin, $plainPassword));
+        $this->invitationService->hashUnusablePassword($admin);
     }
 
     private function getResendInvitationCsrfTokenId(Admin $admin): string

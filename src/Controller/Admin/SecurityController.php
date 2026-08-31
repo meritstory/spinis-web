@@ -205,6 +205,7 @@ class SecurityController extends AbstractController
 
                 $this->resetPasswordHelper->removeResetRequest($token);
                 $admin->setPassword($this->passwordHasher->hashPassword($admin, $password));
+                $this->invitationService->removeInvitationsFor($admin);
                 $this->entityManager->flush();
                 $this->cleanSessionAfterReset();
             } catch (ResetPasswordExceptionInterface) {

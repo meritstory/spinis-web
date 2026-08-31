@@ -1,17 +1,97 @@
+{# @var paginator \EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator #}
+{% trans_default_domain 'messages' %}
+
 <div class="list-pagination">
-    <div class="list-pagination-counter">
+    {% set currentPageSize = app.request.attributes.get('pageSize') %}
+
+    <div class="list-pagination-leading">
+        {% if currentPageSize %}
+            <span class="list-pagination-label">{{ 'paginator.show'|trans }}</span>
+            <select
+                id="list-pagination-page-size-select"
+                class="list-pagination-size"
+                aria-label="{{ 'paginator.page_size_aria'|trans }}"
+                data-list-pagination-size
+            >
+                {% for pageSizeOption in app.request.attributes.get('pageSizes', []) %}
+                    <option
+                        value="{{ ea_url({page: paginator.currentPage, pageSize: pageSizeOption}) }}"
+                        {{ pageSizeOption == currentPageSize ? 'selected' }}
+                    >{{ pageSizeOption }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+
         {% if render_detailed_pagination ?? true %}
-            {{ 'paginator.counter'|trans({
-                '%start%': paginator.rangeFirstResultNumber,
-                '%end%': paginator.rangeLastResultNumber,
-                '%total%': paginator.numResults,
-            })|raw }}
+            <span class="list-pagination-counter">
+                {{ 'paginator.counter'|trans({
+                    '%start%': paginator.rangeFirstResultNumber,
+                    '%end%': paginator.rangeLastResultNumber,
+                    '%total%': paginator.numResults,
+                })|raw }}
+            </span>
         {% endif %}
     </div>
 
-    <twig:ea:Pagination
-        paginator="{{ paginator }}"
-        :showResultsCount="false"
-        :showPageNumbers="render_detailed_pagination ?? true"
-    />
+    {% if paginator.hasPreviousPage or paginator.hasNextPage %}
+        <nav class="pager list-pagination-paginator {{ not paginator.hasPreviousPage ? 'first-page' }} {{ not paginator.hasNextPage ? 'last-page' }}" aria-label="{{ 'paginator.label'|trans({}, 'EasyAdminBundle') }}">
+            <ul class="pagination">
+                <li class="page-item {{ not paginator.hasPreviousPage ? 'disabled' }}">
+                    <a
+                        class="page-link"
+                        href="{{ not paginator.hasPreviousPage ? '#' : ea_url({page: paginator.previousPage, pageSize: currentPageSize}) }}"
+                        {% if paginator.hasPreviousPage %}rel="prev"{% else %}aria-disabled="true" tabindex="-1"{% endif %}
+                    >
+                        <twig:ea:Icon name="internal:chevron-left" class="mx-1" aria-hidden="true" />
+                        <span class="btn-label">{{ 'paginator.previous'|trans({}, 'EasyAdminBundle') }}</span>
+                    </a>
+                </li>
+
+                {% if render_detailed_pagination ?? true %}
+                    {% for page in paginator.pageRange %}
+                        <li class="page-item {{ page == paginator.currentPage ? 'active' }} {{ page is null ? 'disabled' }}">
+                            {% if page is null %}
+                                <span class="page-link">
+                                    <span aria-hidden="true">&hellip;</span>
+                                    <span class="visually-hidden">{{ 'paginator.more_pages'|trans({}, 'EasyAdminBundle') }}</span>
+                                </span>
+                            {% else %}
+                                <a
+                                    class="page-link"
+                                    href="{{ ea_url({page: page, pageSize: currentPageSize}) }}"
+                                    {% if page == paginator.currentPage %}aria-current="page"{% endif %}
+                                >{{ page }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="page-item active">
+                        <a class="page-link" href="{{ ea_url({page: paginator.currentPage, pageSize: currentPageSize}) }}" aria-current="page">{{ paginator.currentPage }}</a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item {{ not paginator.hasNextPage ? 'disabled' }}">
+                    <a
+                        class="page-link"
+                        href="{{ not paginator.hasNextPage ? '#' : ea_url({page: paginator.nextPage, pageSize: currentPageSize}) }}"
+                        {% if paginator.hasNextPage %}rel="next"{% else %}aria-disabled="true" tabindex="-1"{% endif %}
+                    >
+                        <span class="btn-label">{{ 'paginator.next'|trans({}, 'EasyAdminBundle') }}</span>
+                        <twig:ea:Icon name="internal:chevron-right" class="mx-1" aria-hidden="true" />
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
 </div>
+
+<script>
+document.querySelectorAll('[data-list-pagination-size]').forEach((select) => {
+    select.addEventListener('change', () => {
+        const url = select.value;
+        if (url) {
+            window.location.assign(url);
+        }
+    });
+});
+</script>

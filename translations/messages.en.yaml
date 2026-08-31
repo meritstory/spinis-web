@@ -8,6 +8,9 @@ app:
 
 paginator:
     counter: '<strong>%start%–%end%</strong> of %total% entries'
+    show: Show
+    page_size_aria: Items per page
+    invalid_page_size: 'Invalid page size. Showing %default% entries per page.'
 
 menu:
     admins: Accounts
@@ -108,6 +111,7 @@ admin:
         role: Role
         role_placeholder: 'Select a role'
         email_two_factor: 'Email two-factor authentication (2FA)'
+        email_two_factor_index: '<span class="ea-admin-2fa-label-long">Email two-factor authentication (2FA)</span><span class="ea-admin-2fa-label-short" aria-hidden="true">2FA</span>'
         active: Active
         created_at: 'Created at'
         updated_at: 'Updated at'

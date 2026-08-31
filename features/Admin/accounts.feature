@@ -62,6 +62,50 @@ Feature: Admin account management
     Then I should see "Vardas yra privalomas."
     And I should see "Pavardė yra privaloma."
 
+  Scenario: Creating account validates name fields reject numbers
+    Given I create an admin account with invalid numeric name fields
+    Given the account form shows name character validation errors
+
+  Scenario: Editing account validates name fields reject numbers
+    Given specialist with email "name-edit@example.com" and password "secret" is created
+    Given I edit admin account "name-edit@example.com" setting first name to "Jonas123" and last name to "Jonaitis456"
+    Given the account form shows name character validation errors
+
+  Scenario: Creating account accepts hyphenated names with apostrophe
+    Given I create an admin account with email "hyphen-name@example.com" first name "Marija-Saulė" last name "O'Brien" role "specialist" and two-factor "enabled"
+    Given I should see account "hyphen-name@example.com" in the accounts list
+
+  Scenario: Creating account rejects control whitespace in names
+    Given I create an admin account with control whitespace in name fields
+    Given the account form shows name character validation errors
+
+  Scenario: Account create and edit forms use the same field order
+    Given the admin account create form is open
+    Given the account form fields appear in this order:
+      | Vardas     |
+      | Pavardė    |
+      | El. paštas |
+    Given specialist with email "field-order@example.com" and password "secret" is created
+    Given the admin account edit form for "field-order@example.com" is open
+    Given the account form fields appear in this order:
+      | Vardas     |
+      | Pavardė    |
+      | El. paštas |
+
+  Scenario: Accounts list supports pagination with configurable page size
+    Given the admin accounts list page is open
+    Given pagination controls are hidden on the single-page accounts list
+    Given 11 specialist accounts exist for pagination testing
+    Given the admin accounts list page is open
+    Given the accounts list shows 10 rows
+    Given pagination is visible on the accounts list
+    Given the accounts paginator has accessible navigation states
+    Given the accounts list page size selector shows options 10, 20, and 50
+    Given the admin accounts list page is open with page size 20
+    Given the accounts list shows 12 rows
+    Given the admin accounts list page is open with page size 99
+    Given the invalid page size warning is shown once
+
   Scenario: System administrator can edit account details
     Given specialist with email "editable@example.com" and password "secret" is created
     When I edit admin account "editable@example.com" setting email to "updated@example.com" and active to "inactive"
@@ -159,7 +203,21 @@ Feature: Admin account management
     And I remember the invitation token hash for admin "expired-resend@example.com"
     When I resend the account invitation for "expired-resend@example.com"
     Then I should see "Pakvietimas išsiųstas iš naujo."
+    Given I should be on the admin accounts page
     And admin "expired-resend@example.com" should have a renewed invitation
+
+  Scenario: Resend invitation is not shown after password setup with pending two-factor
+    Given resend invitation is not available after password setup with pending two-factor for admin "partial-activate@example.com"
+
+  Scenario: Password reset completes a pending account invitation
+    Given I create an admin account with email "reset-pending@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
+    Given I visit the logout page
+    Given a password reset token was issued for admin "reset-pending@example.com"
+    Given I reset admin password using the stored reset token to "Newsecretpass1!"
+    Given admin "reset-pending@example.com" has no pending account invitation
+
+  Scenario: Changing a legacy pending account email renews its invitation
+    Given changing legacy pending admin email from "legacy-old@example.com" to "legacy-new@example.com" renews its invitation
 
   Scenario: Changing a pending account email renews its invitation
     When I create an admin account with email "old-invite@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
