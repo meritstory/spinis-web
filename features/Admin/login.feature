@@ -61,13 +61,23 @@ Feature: Admin login
     And I confirm admin login with the latest authentication code for "admin@example.com"
     And I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
 
-  Scenario: Expired authentication code with invalid code shows the expired code error
+  Scenario: Expired authentication code with invalid code shows invalid code error
     Given admin with email "admin@example.com" and password "secret" is created
     And I submit the admin login form with email "admin@example.com" and password "secret"
     And the authentication code for admin "admin@example.com" has expired
     And I confirm admin login with authentication code "000000"
+    Then I should see "Neteisingas autentifikacijos kodas."
+    And I should not see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
+
+  Scenario: After expired code error, entering wrong code shows invalid code error
+    Given admin with email "admin@example.com" and password "secret" is created
+    And I submit the admin login form with email "admin@example.com" and password "secret"
+    And the authentication code for admin "admin@example.com" has expired
+    And entity manager is cleared
+    And I confirm admin login with the latest authentication code for "admin@example.com"
     And I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
-    And I should not see "Neteisingas autentifikacijos kodas."
+    When I confirm admin login with authentication code "000000"
+    Then I should see "Neteisingas autentifikacijos kodas."
 
   Scenario: Cancel two-factor authentication returns to login
     Given admin with email "admin@example.com" and password "secret" is created
@@ -97,13 +107,19 @@ Feature: Admin login
     Given admin with email "admin@example.com" and password "secret" is created
     When I request admin password reset for email "admin@example.com"
     Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti."
-    And I should see "naują užklausą galėsite pateikti po 5 min."
+    And I should see "Jei slaptažodžio atkūrimo užklausą jau pateikėte, naują užklausą galėsite pateikti po 5 minučių."
     And the response should contain "alert alert-info"
 
   Scenario: Forgot password for unknown email shows the same confirmation message
     When I request admin password reset for email "unknown@example.com"
     Then I should see "Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti."
-    And I should see "naują užklausą galėsite pateikti po 5 min."
+    And I should see "Jei slaptažodžio atkūrimo užklausą jau pateikėte, naują užklausą galėsite pateikti po 5 minučių."
+
+  Scenario: Repeating password reset request within throttle period shows confirmation message
+    Given admin with email "admin@example.com" and password "secret" is created
+    And a password reset token was issued for admin "admin@example.com"
+    When I request admin password reset for email "admin@example.com"
+    Then I should see "Jei slaptažodžio atkūrimo užklausą jau pateikėte, naują užklausą galėsite pateikti po 5 minučių."
 
   Scenario: Repeating password reset request within throttle period keeps the previous link valid
     Given admin with email "admin@example.com" and password "secret" is created
