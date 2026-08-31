@@ -57,62 +57,50 @@ final class CrudDateTimeFilter implements FilterInterface
             return;
         }
 
-        $field = sprintf('%s.%s', $alias, $property);
-        $minuteField = $this->minuteTruncatedField($field);
-
         if (!$value instanceof \DateTimeInterface) {
-            $this->applyExactComparison($queryBuilder, $minuteField, $comparison, $parameterName, $parameter2Name, $value, $value2);
-
             return;
         }
 
-        $start = $this->truncateToMinute($value);
+        $field = sprintf('%s.%s', $alias, $property);
+        $minuteStart = $this->truncateToMinute($value);
+        $nextMinute = $minuteStart->modify('+1 minute');
 
         switch ($comparison) {
             case ComparisonType::GT:
-                $queryBuilder->andWhere(sprintf('%s > :%s', $minuteField, $parameterName))
-                    ->setParameter($parameterName, $start);
+                $queryBuilder->andWhere(sprintf('%s >= :%s', $field, $parameterName))
+                    ->setParameter($parameterName, $nextMinute);
                 break;
             case ComparisonType::GTE:
-                $queryBuilder->andWhere(sprintf('%s >= :%s', $minuteField, $parameterName))
-                    ->setParameter($parameterName, $start);
+                $queryBuilder->andWhere(sprintf('%s >= :%s', $field, $parameterName))
+                    ->setParameter($parameterName, $minuteStart);
                 break;
             case ComparisonType::LT:
-                $queryBuilder->andWhere(sprintf('%s < :%s', $minuteField, $parameterName))
-                    ->setParameter($parameterName, $start);
+                $queryBuilder->andWhere(sprintf('%s < :%s', $field, $parameterName))
+                    ->setParameter($parameterName, $minuteStart);
                 break;
             case ComparisonType::LTE:
-                $queryBuilder->andWhere(sprintf('%s <= :%s', $minuteField, $parameterName))
-                    ->setParameter($parameterName, $start);
+                $queryBuilder->andWhere(sprintf('%s < :%s', $field, $parameterName))
+                    ->setParameter($parameterName, $nextMinute);
                 break;
             case ComparisonType::BETWEEN:
                 if (!$value2 instanceof \DateTimeInterface) {
-                    $this->applyExactComparison($queryBuilder, $minuteField, $comparison, $parameterName, $parameter2Name, $value, $value2);
-                    break;
+                    return;
                 }
 
-                $rangeStart = $start;
-                $rangeEnd = $this->truncateToMinute($value2);
+                $rangeStart = $minuteStart;
+                $rangeEndMinute = $this->truncateToMinute($value2);
 
-                if ($rangeStart > $rangeEnd) {
-                    [$rangeStart, $rangeEnd] = [$rangeEnd, $rangeStart];
+                if ($rangeStart > $rangeEndMinute) {
+                    [$rangeStart, $rangeEndMinute] = [$rangeEndMinute, $rangeStart];
                 }
 
-                $queryBuilder->andWhere(sprintf('%s BETWEEN :%s AND :%s', $minuteField, $parameterName, $parameter2Name))
+                $rangeEndExclusive = $rangeEndMinute->modify('+1 minute');
+
+                $queryBuilder->andWhere(sprintf('%s >= :%s AND %s < :%s', $field, $parameterName, $field, $parameter2Name))
                     ->setParameter($parameterName, $rangeStart)
-                    ->setParameter($parameter2Name, $rangeEnd);
+                    ->setParameter($parameter2Name, $rangeEndExclusive);
                 break;
-            default:
-                $this->applyExactComparison($queryBuilder, $minuteField, $comparison, $parameterName, $parameter2Name, $value, $value2);
         }
-    }
-
-    /**
-     * PostgreSQL-specific: compare at minute precision without changing stored values.
-     */
-    private function minuteTruncatedField(string $field): string
-    {
-        return sprintf("DATE_TRUNC('minute', %s)", $field);
     }
 
     private function truncateToMinute(\DateTimeInterface $dateTime): \DateTimeImmutable
@@ -123,26 +111,5 @@ final class CrudDateTimeFilter implements FilterInterface
             (int) $normalized->format('H'),
             (int) $normalized->format('i'),
         );
-    }
-
-    private function applyExactComparison(
-        QueryBuilder $queryBuilder,
-        string $minuteField,
-        string $comparison,
-        string $parameterName,
-        string $parameter2Name,
-        mixed $value,
-        mixed $value2,
-    ): void {
-        if (ComparisonType::BETWEEN === $comparison) {
-            $queryBuilder->andWhere(sprintf('%s BETWEEN :%s AND :%s', $minuteField, $parameterName, $parameter2Name))
-                ->setParameter($parameterName, $value)
-                ->setParameter($parameter2Name, $value2);
-
-            return;
-        }
-
-        $queryBuilder->andWhere(sprintf('%s %s :%s', $minuteField, $comparison, $parameterName))
-            ->setParameter($parameterName, $value);
     }
 }
