@@ -88,7 +88,7 @@ Feature: Admin complaints
     And I visit the admin complaint edit page for "SK-2026-SAVE-01"
     When I save complaint "SK-2026-SAVE-01" from the edit page and return to the list with status IN_REVIEW
     Then I should be on the admin complaints list page
-    And I should see "Pakeitimai išsaugoti."
+    And I should see "Pakeitimai išsaugoti"
     And entity manager is cleared
     And complaint "SK-2026-SAVE-01" should have status IN_REVIEW
     And complaint "SK-2026-SAVE-01" should have 1 status history records
@@ -98,7 +98,7 @@ Feature: Admin complaints
     And I visit the admin complaint edit page for "SK-2026-SAVE-02"
     When I save complaint "SK-2026-SAVE-02" from the edit page and continue editing with status IN_REVIEW
     Then I should be on the admin complaint edit page for "SK-2026-SAVE-02"
-    And I should see "Pakeitimai išsaugoti."
+    And I should see "Pakeitimai išsaugoti"
     And entity manager is cleared
     And complaint "SK-2026-SAVE-02" should have status IN_REVIEW
     And complaint "SK-2026-SAVE-02" should have 1 status history records

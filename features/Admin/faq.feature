@@ -19,6 +19,7 @@ Feature: Admin FAQ management
   Scenario: Admin can create FAQ entry
     When I submit the FAQ form with question "Kaip pateikti skundą?" answer "<p>Skundą galite pateikti el. paštu.</p>" position "1"
     Then I should be on the admin FAQ list page
+    And I should see "Įrašas sukurtas"
     And I should see "Kaip pateikti skundą?"
 
   Scenario: Empty answer shows validation error

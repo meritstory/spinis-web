@@ -24,7 +24,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -37,10 +36,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @extends AbstractCrudController<Complaint>
+ * @extends AbstractAdminCrudController<Complaint>
  */
 #[IsGranted(RoleEnum::DEPARTMENT_HEAD->value)]
-class ComplaintCrudController extends AbstractCrudController
+class ComplaintCrudController extends AbstractAdminCrudController
 {
     /** @var array<int, int>|null */
     private ?array $specialistAssignedComplaintCounts = null;
@@ -220,8 +219,6 @@ class ComplaintCrudController extends AbstractCrudController
         }
 
         parent::updateEntity($entityManager, $entityInstance);
-
-        $this->addFlash('success', $this->translator->trans('complaint.flash.saved'));
     }
 
     private function currentComplaintSpecialistId(): ?int

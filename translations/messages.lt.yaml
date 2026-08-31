@@ -9,6 +9,12 @@ app:
 paginator:
     counter: '<strong>%start%–%end%</strong> iš %total% įrašų'
 
+crud:
+    flash:
+        created: 'Įrašas sukurtas'
+        updated: 'Pakeitimai išsaugoti'
+        deleted: 'Įrašas ištrintas'
+
 menu:
     admins: Paskyros
     complainants: Pareiškėjai
@@ -136,7 +142,7 @@ admin:
         new_password_confirm: 'Pakartokite slaptažodį'
         submit: 'Išsaugoti slaptažodį'
         invalid_token: 'Paskyros aktyvavimo nuoroda negalioja.'
-        resend_success: 'Pakvietimas išsiųstas iš naujo.'
+        resend_success: 'Pakvietimas išsiųstas iš naujo'
         resend_failed: 'Nepavyko išsiųsti pakvietimo. Ankstesnė pakvietimo nuoroda tebegalioja.'
         resend_not_allowed: 'Šiai paskyrai negalima išsiųsti pakvietimo iš naujo.'
         send_failed: 'Nepavyko išsiųsti pakvietimo laiško. Bandykite išsiųsti pakvietimą iš naujo.'
@@ -320,8 +326,6 @@ complaint:
         save: 'Ar tikrai norite išsaugoti pakeitimus?'
         no: Ne
         yes: Taip
-    flash:
-        saved: 'Pakeitimai išsaugoti.'
     submitter:
         patient: Pacientas
         representative: 'Teikia atstovaujantis asmuo'

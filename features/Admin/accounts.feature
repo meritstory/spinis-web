@@ -24,6 +24,7 @@ Feature: Admin account management
   Scenario: System administrator can create a new account
     When I create an admin account with email "specialist@example.com" first name "Jonas" last name "Jonaitis" role "specialist" and two-factor "enabled"
     Then I should be on the admin accounts page
+    And I should see "Įrašas sukurtas"
     And I should see account "specialist@example.com" in the accounts list
     When I visit the admin account detail page for "specialist@example.com"
     Then I should see "Jonas"
@@ -141,6 +142,7 @@ Feature: Admin account management
     And a password reset token was issued for admin "hidden@example.com"
     And I remember the account id for "hidden@example.com"
     And I delete admin account "hidden@example.com"
+    And I should see "Įrašas ištrintas"
     When I visit the admin account detail page for the remembered account id
     Then the response status code should be 404
 
@@ -158,7 +160,7 @@ Feature: Admin account management
     And admin "expired-resend@example.com" has an expired account invitation
     And I remember the invitation token hash for admin "expired-resend@example.com"
     When I resend the account invitation for "expired-resend@example.com"
-    Then I should see "Pakvietimas išsiųstas iš naujo."
+    Then I should see "Pakvietimas išsiųstas iš naujo"
     And admin "expired-resend@example.com" should have a renewed invitation
 
   Scenario: Changing a pending account email renews its invitation

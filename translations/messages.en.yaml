@@ -9,6 +9,12 @@ app:
 paginator:
     counter: '<strong>%start%–%end%</strong> of %total% entries'
 
+crud:
+    flash:
+        created: 'Entry created'
+        updated: 'Changes saved'
+        deleted: 'Entry deleted'
+
 menu:
     admins: Accounts
     complainants: Complainants
@@ -320,8 +326,6 @@ complaint:
         save: 'Are you sure you want to save your changes?'
         no: No
         yes: Yes
-    flash:
-        saved: 'Changes saved.'
     submitter:
         patient: Patient
         representative: 'Submitted by representative'
