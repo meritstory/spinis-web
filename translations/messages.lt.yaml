@@ -96,12 +96,19 @@ link:
 admin:
     entity_not_found:
         back_admin: 'Grįžti į paskyras'
+        message_admin: 'Ši paskyra buvo ištrinta arba neegzistuoja.'
         back_complainant: 'Grįžti į pareiškėjus'
+        message_complainant: 'Šis pareiškėjas buvo ištrintas arba neegzistuoja.'
         back_complaint: 'Grįžti į skundus'
+        message_complaint: 'Šis skundas buvo ištrintas arba neegzistuoja.'
         back_document: 'Grįžti į dokumentus'
+        message_document: 'Šis dokumentas buvo ištrintas arba neegzistuoja.'
         back_faq: 'Grįžti į DUK'
+        message_faq: 'Šis DUK įrašas buvo ištrintas arba neegzistuoja.'
         back_link: 'Grįžti į nuorodas'
+        message_link: 'Ši nuoroda buvo ištrinta arba neegzistuoja.'
         back_setting: 'Grįžti į nustatymus'
+        message_setting: 'Šis nustatymas buvo ištrintas arba neegzistuoja.'
     label:
         singular: Paskyra
     field:
