@@ -12,6 +12,12 @@ paginator:
     page_size_aria: Items per page
     invalid_page_size: 'Invalid page size. Showing %default% entries per page.'
 
+crud:
+    flash:
+        created: 'Entry created'
+        updated: 'Changes saved'
+        deleted: 'Entry deleted'
+
 menu:
     admins: Accounts
     complainants: Complainants
@@ -332,8 +338,6 @@ complaint:
         save: 'Are you sure you want to save your changes?'
         no: No
         yes: Yes
-    flash:
-        saved: 'Changes saved.'
     submitter:
         patient: Patient
         representative: 'Submitted by representative'

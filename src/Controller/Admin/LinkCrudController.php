@@ -8,13 +8,12 @@ use App\Entity\Link;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 /**
- * @extends AbstractCrudController<Link>
+ * @extends AbstractAdminCrudController<Link>
  */
-class LinkCrudController extends AbstractCrudController
+class LinkCrudController extends AbstractAdminCrudController
 {
     public static function getEntityFqcn(): string
     {

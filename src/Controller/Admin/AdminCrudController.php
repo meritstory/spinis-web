@@ -23,7 +23,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Contracts\Field\FieldInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -47,10 +46,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @extends AbstractCrudController<Admin>
+ * @extends AbstractAdminCrudController<Admin>
  */
 #[IsGranted(RoleEnum::SYSTEM_ADMIN->value)]
-class AdminCrudController extends AbstractCrudController
+class AdminCrudController extends AbstractAdminCrudController
 {
     private const string FORM_ROLE_FIELD = 'adminRole';
 
@@ -146,7 +145,7 @@ class AdminCrudController extends AbstractCrudController
             ? $this->getSystemAdministrationLockoutError($admin, false, false)
             : null;
         if ($admin instanceof Admin && $lockoutError !== null) {
-            $this->addFlash('danger', $this->translator->trans($lockoutError));
+            $this->addFlash('danger', $lockoutError);
 
             return $this->redirectToAdminPage(self::class, Action::DETAIL, $admin->getId());
         }
@@ -166,14 +165,14 @@ class AdminCrudController extends AbstractCrudController
         }
 
         if (!$this->invitationService->canResendInvitation($admin)) {
-            $this->addFlash('danger', $this->translator->trans('admin.invitation.resend_not_allowed'));
+            $this->addFlash('danger', 'admin.invitation.resend_not_allowed');
 
             return $this->redirectToAdminPage(self::class, Action::INDEX);
         }
 
         $this->invitationService->invite($admin);
 
-        $this->addFlash('success', $this->translator->trans('admin.invitation.resend_success'));
+        $this->addFlash('success', 'admin.invitation.resend_success');
 
         return $this->redirectToAdminPage(self::class, Action::INDEX);
     }
@@ -318,7 +317,7 @@ class AdminCrudController extends AbstractCrudController
         return $formBuilder;
     }
 
-    public function persistEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    public function persistEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         /** @var Admin $entityInstance */
         $this->setUnusablePassword($entityInstance);
@@ -327,7 +326,7 @@ class AdminCrudController extends AbstractCrudController
         $this->invitationService->invite($entityInstance);
     }
 
-    public function updateEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         if (!$entityInstance instanceof Admin) {
             parent::updateEntity($entityManager, $entityInstance);
@@ -350,7 +349,7 @@ class AdminCrudController extends AbstractCrudController
         $this->invitationService->invite($entityInstance);
     }
 
-    public function deleteEntity(EntityManagerInterface $entityManager, mixed $entityInstance): void
+    public function deleteEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         /** @var Admin $entityInstance */
         if ($entityInstance->getId() === null) {
@@ -359,7 +358,7 @@ class AdminCrudController extends AbstractCrudController
 
         $lockoutError = $this->getSystemAdministrationLockoutError($entityInstance, false, false);
         if ($lockoutError !== null) {
-            $this->addFlash('danger', $this->translator->trans($lockoutError));
+            $this->addFlash('danger', $lockoutError);
 
             return;
         }
@@ -374,6 +373,8 @@ class AdminCrudController extends AbstractCrudController
         $entityManager->flush();
         $entityManager->remove($entityInstance);
         $entityManager->flush();
+
+        $this->addFlash('success', 'crud.flash.deleted');
     }
 
     public function createEntity(string $entityFqcn): Admin
