@@ -5,7 +5,9 @@ admin:
         email_invalid: 'Invalid email format.'
         role_required: 'Role is required.'
         first_name_required: 'First name is required.'
+        first_name_invalid: 'First name may contain only letters, spaces, hyphens, and apostrophes.'
         last_name_required: 'Last name is required.'
+        last_name_invalid: 'Last name may contain only letters, spaces, hyphens, and apostrophes.'
 
 faq:
     validation:
@@ -33,6 +35,7 @@ setting:
     value:
         not_blank: 'Enter a value.'
         invalid_date: 'Enter a valid date.'
+        invalid_email: 'Enter a valid email address.'
 
 document:
     title:

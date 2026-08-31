@@ -8,6 +8,9 @@ app:
 
 paginator:
     counter: '<strong>%start%–%end%</strong> of %total% entries'
+    show: Show
+    page_size_aria: Items per page
+    invalid_page_size: 'Invalid page size. Showing %default% entries per page.'
 
 crud:
     flash:
@@ -50,7 +53,7 @@ login:
     resend_link: 'Resend code'
     resend_success: 'A new verification code has been sent to you.'
     reset_password: 'Reset password'
-    forgot_sent: 'If the specified email address is registered in our system, you will soon receive an email with a link to reset your password. If you recently requested a password reset, you can submit a new request after %minutes% minute(s).'
+    forgot_sent: 'If the specified email address is registered in our system, you will soon receive an email with a link to reset your password. If you have already submitted a password reset request, you can submit a new request after %minutes% minutes.'
     back_to_login: 'Back to login'
     error:
         invalid_credentials: 'Invalid login credentials.'
@@ -99,12 +102,19 @@ link:
 admin:
     entity_not_found:
         back_admin: 'Back to accounts'
+        message_admin: 'This account was deleted or does not exist.'
         back_complainant: 'Back to complainants'
+        message_complainant: 'This complainant was deleted or does not exist.'
         back_complaint: 'Back to complaints'
+        message_complaint: 'This complaint was deleted or does not exist.'
         back_document: 'Back to documents'
+        message_document: 'This document was deleted or does not exist.'
         back_faq: 'Back to FAQ'
+        message_faq: 'This FAQ entry was deleted or does not exist.'
         back_link: 'Back to links'
+        message_link: 'This link was deleted or does not exist.'
         back_setting: 'Back to settings'
+        message_setting: 'This setting was deleted or does not exist.'
     label:
         singular: Account
     field:
@@ -114,6 +124,7 @@ admin:
         role: Role
         role_placeholder: 'Select a role'
         email_two_factor: 'Email two-factor authentication (2FA)'
+        email_two_factor_index: '<span class="ea-admin-2fa-label-long">Email two-factor authentication (2FA)</span><span class="ea-admin-2fa-label-short" aria-hidden="true">2FA</span>'
         active: Active
         created_at: 'Created at'
         updated_at: 'Updated at'
@@ -232,6 +243,7 @@ setting:
         value: Value
         key_placeholder: 'Select a setting'
     key:
+        request_recipient_email: 'Request recipient email'
         version: Version
         health_care_institution_import_from: 'Health care institution import date'
     page:

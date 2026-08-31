@@ -14,19 +14,19 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
  */
 abstract class AbstractAdminCrudController extends AbstractCrudController
 {
-    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    public function persistEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         parent::persistEntity($entityManager, $entityInstance);
         $this->addFlash('success', 'crud.flash.created');
     }
 
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         parent::updateEntity($entityManager, $entityInstance);
         $this->addFlash('success', 'crud.flash.updated');
     }
 
-    public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    public function deleteEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         parent::deleteEntity($entityManager, $entityInstance);
         $this->addFlash('success', 'crud.flash.deleted');

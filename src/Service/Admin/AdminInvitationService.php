@@ -8,10 +8,13 @@ use App\Entity\Admin;
 use App\Entity\AdminInvitation;
 use App\Repository\AdminInvitationRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class AdminInvitationService
 {
+    private const string UNUSABLE_PASSWORD_SENTINEL = 'UNUSABLE_ACCOUNT_PASSWORD_PLACEHOLDER';
+
     private const int TOKEN_BYTES = 32;
     private const int LIFETIME_SECONDS = 86400;
 
@@ -20,6 +23,7 @@ final readonly class AdminInvitationService
         private EntityManagerInterface $entityManager,
         private AdminMailer $adminMailer,
         private UrlGeneratorInterface $urlGenerator,
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -27,6 +31,12 @@ final readonly class AdminInvitationService
     {
         if ($admin->getId() === null) {
             throw new \LogicException('Admin must be persisted before creating an invitation.');
+        }
+
+        if ($admin->getPassword() === null) {
+            $this->hashUnusablePassword($admin);
+        } elseif (!$this->hasUnusablePassword($admin) && $admin->getLastActiveAt() !== null) {
+            throw new \LogicException('Cannot send an invitation to an activated account.');
         }
 
         $plainToken = bin2hex(random_bytes(self::TOKEN_BYTES));
@@ -56,6 +66,37 @@ final readonly class AdminInvitationService
     public function hasInvitation(Admin $admin): bool
     {
         return $this->invitationRepository->findOneBy(['admin' => $admin]) !== null;
+    }
+
+    public function hasUnusablePassword(Admin $admin): bool
+    {
+        if ($admin->getPassword() === null) {
+            return true;
+        }
+
+        return $this->passwordHasher->isPasswordValid($admin, self::UNUSABLE_PASSWORD_SENTINEL);
+    }
+
+    public function canResendInvitation(Admin $admin): bool
+    {
+        if ($admin->isDeleted() || !$admin->isActive()) {
+            return false;
+        }
+
+        if (!$this->hasInvitation($admin)) {
+            return false;
+        }
+
+        if ($this->hasUnusablePassword($admin)) {
+            return true;
+        }
+
+        return $admin->getLastActiveAt() === null;
+    }
+
+    public function hashUnusablePassword(Admin $admin): void
+    {
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, self::UNUSABLE_PASSWORD_SENTINEL));
     }
 
     public function validateToken(string $plainToken): ?AdminInvitation

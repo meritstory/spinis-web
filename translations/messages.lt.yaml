@@ -8,6 +8,9 @@ app:
 
 paginator:
     counter: '<strong>%start%–%end%</strong> iš %total% įrašų'
+    show: Rodyti
+    page_size_aria: Įrašų skaičius puslapyje
+    invalid_page_size: 'Neteisingas puslapio dydis. Rodoma %default% įrašų puslapyje.'
 
 crud:
     flash:
@@ -50,7 +53,7 @@ login:
     resend_link: 'Siųsti kodą iš naujo'
     resend_success: 'Jums buvo išsiųstas naujas patvirtinimo kodas.'
     reset_password: 'Atkurti slaptažodį'
-    forgot_sent: 'Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti. Jei neseniai jau prašėte slaptažodžio atkūrimo, naują užklausą galėsite pateikti po %minutes% min.'
+    forgot_sent: 'Jei nurodytas el. pašto adresas yra registruotas mūsų sistemoje, netrukus gausite laišką su nuoroda slaptažodžiui atkurti. Jei slaptažodžio atkūrimo užklausą jau pateikėte, naują užklausą galėsite pateikti po %minutes% minučių.'
     back_to_login: 'Grįžti į prisijungimą'
     error:
         invalid_credentials: 'Neteisingi prisijungimo duomenys.'
@@ -99,12 +102,19 @@ link:
 admin:
     entity_not_found:
         back_admin: 'Grįžti į paskyras'
+        message_admin: 'Ši paskyra buvo ištrinta arba neegzistuoja.'
         back_complainant: 'Grįžti į pareiškėjus'
+        message_complainant: 'Šis pareiškėjas buvo ištrintas arba neegzistuoja.'
         back_complaint: 'Grįžti į skundus'
+        message_complaint: 'Šis skundas buvo ištrintas arba neegzistuoja.'
         back_document: 'Grįžti į dokumentus'
+        message_document: 'Šis dokumentas buvo ištrintas arba neegzistuoja.'
         back_faq: 'Grįžti į DUK'
+        message_faq: 'Šis DUK įrašas buvo ištrintas arba neegzistuoja.'
         back_link: 'Grįžti į nuorodas'
+        message_link: 'Ši nuoroda buvo ištrinta arba neegzistuoja.'
         back_setting: 'Grįžti į nustatymus'
+        message_setting: 'Šis nustatymas buvo ištrintas arba neegzistuoja.'
     label:
         singular: Paskyra
     field:
@@ -114,6 +124,7 @@ admin:
         role: Rolė
         role_placeholder: 'Pasirinkite rolę'
         email_two_factor: 'Dviguba autentifikacija el. paštu (2FA)'
+        email_two_factor_index: '<span class="ea-admin-2fa-label-long">Dviguba autentifikacija el. paštu (2FA)</span><span class="ea-admin-2fa-label-short" aria-hidden="true">2FA</span>'
         active: Aktyvus
         created_at: 'Sukūrimo data'
         updated_at: 'Atnaujinimo data'
@@ -232,6 +243,7 @@ setting:
         value: Reikšmė
         key_placeholder: 'Pasirinkite nustatymą'
     key:
+        request_recipient_email: 'Užklausų gavėjo el. paštas'
         version: Versija
         health_care_institution_import_from: 'Sveikatos priežiūros įstaigų importavimo data'
     page:

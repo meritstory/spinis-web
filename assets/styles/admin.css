@@ -225,6 +225,98 @@ body.ea #modal-action-confirmation #modal-action-confirmation-button.btn-danger 
     --bs-btn-active-border-color: #8f170e;
 }
 
+body.ea .content-header .page-actions {
+    gap: var(--ea-sp-3);
+}
+
+body.ea-index-Admin .ea-admin-2fa-label-short {
+    display: none;
+}
+
+body.ea-index-Admin .datagrid thead .ea-admin-2fa-label-long {
+    display: inline;
+}
+
+@media (max-width: 1399px) {
+    body.ea-index-Admin .ea-admin-2fa-label-long {
+        block-size: 1px;
+        border: 0;
+        clip: rect(0, 0, 0, 0);
+        inline-size: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        white-space: nowrap;
+    }
+
+    body.ea-index-Admin .ea-admin-2fa-label-short {
+        display: inline;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    body.ea-index-Admin .datagrid :is(th, td)[data-column="createdAt"],
+    body.ea-index-Admin .datagrid :is(th, td)[data-column="updatedAt"] {
+        inline-size: 6rem;
+        max-inline-size: 6rem;
+    }
+
+    body.ea-index-Admin .datagrid th[data-column="createdAt"] > :is(a, span),
+    body.ea-index-Admin .datagrid th[data-column="updatedAt"] > :is(a, span) {
+        white-space: normal;
+    }
+}
+
+body.ea-index .content-body {
+    overflow-x: auto;
+}
+
+body.ea-index .datagrid thead th:has(> .visually-hidden),
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) {
+    min-inline-size: 6.5rem;
+    overflow: visible;
+    padding-inline-end: var(--ea-sp-6);
+    white-space: nowrap;
+    width: 1%;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) .btn {
+    overflow: visible;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) .btn > .btn-icon {
+    inline-size: 1.25em;
+    min-inline-size: 1.25em;
+    overflow: visible;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) .btn .btn-icon svg {
+    block-size: 1em;
+    inline-size: auto;
+    max-block-size: none;
+    max-inline-size: none;
+    overflow: visible;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) > :is(a, form) {
+    margin: 0;
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) > :is(a, form) + :is(a, form) {
+    margin-inline-start: var(--ea-sp-1);
+}
+
+body.ea-index .datagrid td.actions:not(.actions-as-dropdown) > form {
+    display: inline;
+}
+
+@media (max-width: 767px) {
+    body.ea-index-Admin table.datagrid:not(.datagrid-empty) td[data-column="emailTwoFactorEnabled"]::before {
+        content: "2FA";
+    }
+}
+
 #modal-filters .filter-heading a {
     color: var(--color-primary);
 }
@@ -420,4 +512,44 @@ body.ea-edit-Complaint .content-header-title h1.title {
     font-size: 0.875rem;
     color: var(--ea-admin-text-secondary);
     margin: 0;
+}
+
+.list-pagination-leading {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+}
+
+.list-pagination-label,
+.list-pagination-counter {
+    color: var(--pagination-color);
+    font-size: var(--font-size-sm);
+}
+
+body.ea .list-pagination .list-pagination-size {
+    display: inline-block;
+    font-size: var(--font-size-sm);
+    max-width: none;
+    min-width: 3.75rem;
+    width: auto;
+}
+
+.list-pagination-paginator .pagination {
+    margin-block: 0;
+}
+
+@media (max-width: 992px) {
+    .list-pagination-paginator .pagination {
+        margin-block-start: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .list-pagination {
+        align-items: stretch;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
 }

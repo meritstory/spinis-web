@@ -5,7 +5,9 @@ admin:
         email_invalid: 'Neteisingas el. pašto formatas.'
         role_required: 'Rolė yra privaloma.'
         first_name_required: 'Vardas yra privalomas.'
+        first_name_invalid: 'Vardą gali sudaryti tik raidės, tarpai, brūkšneliai ir apostrofai.'
         last_name_required: 'Pavardė yra privaloma.'
+        last_name_invalid: 'Pavardę gali sudaryti tik raidės, tarpai, brūkšneliai ir apostrofai.'
 
 faq:
     validation:
@@ -33,6 +35,7 @@ setting:
     value:
         not_blank: 'Įveskite reikšmę.'
         invalid_date: 'Įveskite teisingą datą.'
+        invalid_email: 'Įveskite galiojantį el. pašto adresą.'
 
 document:
     title:

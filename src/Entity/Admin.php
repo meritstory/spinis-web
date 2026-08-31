@@ -40,10 +40,12 @@ class Admin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFac
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'admin.error.first_name_required')]
+    #[Assert\Regex(pattern: '/^[\p{L}][\p{L}\p{Zs}\'\-]*$/u', message: 'admin.error.first_name_invalid')]
     private string $firstName = '';
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'admin.error.last_name_required')]
+    #[Assert\Regex(pattern: '/^[\p{L}][\p{L}\p{Zs}\'\-]*$/u', message: 'admin.error.last_name_invalid')]
     private string $lastName = '';
 
     #[Groups(['me'])]

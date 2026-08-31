@@ -67,7 +67,6 @@ class ComplaintCrudController extends AbstractAdminCrudController
             ->setDefaultSort(['createdAt' => 'DESC'])
             ->setDefaultRowAction(Action::EDIT)
             ->showEntityActionsInlined()
-            ->setPaginatorPageSize(10)
             ->overrideTemplate('crud/edit', 'admin/crud/complaint_edit.html.twig');
     }
 
@@ -206,7 +205,7 @@ class ComplaintCrudController extends AbstractAdminCrudController
     /**
      * @param Complaint $entityInstance
      */
-    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         $previousStatus = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance)['status'] ?? null;
 

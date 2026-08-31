@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Admin;
 use App\Service\Admin\AdminHomeRouteResolver;
 use App\Service\Admin\AdminMenuRegistry;
+use App\Service\PageSizeService;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -24,6 +25,7 @@ class DashboardController extends AbstractDashboardController
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly AdminHomeRouteResolver $homeRouteResolver,
+        private readonly PageSizeService $pageSizeService,
     ) {
     }
 
@@ -47,8 +49,10 @@ class DashboardController extends AbstractDashboardController
 
     public function configureCrud(): Crud
     {
-        return Crud::new()
-            ->overrideTemplate('crud/paginator', 'admin/paginator.html.twig');
+        return $this->pageSizeService->configureCrud(
+            Crud::new()
+                ->overrideTemplate('crud/paginator', 'admin/paginator.html.twig'),
+        );
     }
 
     public function configureAssets(): Assets
