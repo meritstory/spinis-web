@@ -47,7 +47,7 @@ login:
     resend_link: 'Resend code'
     resend_success: 'A new verification code has been sent to you.'
     reset_password: 'Reset password'
-    forgot_sent: 'If the specified email address is registered in our system, you will soon receive an email with a link to reset your password. If you recently requested a password reset, you can submit a new request after %minutes% minute(s).'
+    forgot_sent: 'If the specified email address is registered in our system, you will soon receive an email with a link to reset your password. If you have already submitted a password reset request, you can submit a new request after %minutes% minutes.'
     back_to_login: 'Back to login'
     error:
         invalid_credentials: 'Invalid login credentials.'

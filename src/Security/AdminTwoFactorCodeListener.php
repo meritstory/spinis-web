@@ -53,8 +53,22 @@ final readonly class AdminTwoFactorCodeListener
 
         $this->entityManager->refresh($admin);
 
-        if ($admin->isAuthCodeExpired()) {
-            throw new CustomUserMessageAuthenticationException('login.error.expired_code');
+        if (!$admin->isAuthCodeExpired()) {
+            return;
         }
+
+        $storedCode = $admin->getEmailAuthCode();
+
+        if ($storedCode === null) {
+            return;
+        }
+
+        $enteredCode = str_replace(' ', '', $credentialsBadge->getCode());
+
+        if (!hash_equals($storedCode, $enteredCode)) {
+            return;
+        }
+
+        throw new CustomUserMessageAuthenticationException('login.error.expired_code');
     }
 }
