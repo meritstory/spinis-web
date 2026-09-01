@@ -93,22 +93,32 @@ final class FileContext extends RawMinkContext implements Context
         $this->getClient()->request('GET', '/files/'.$uuid);
     }
 
-    #[Given('I download stored file :name by original name')]
-    public function iDownloadStoredFileByOriginalName(string $name): void
+    #[Given('stored file :name uploaded by :email is registered for download')]
+    public function storedFileUploadedByIsRegisteredForDownload(string $name, string $email): void
     {
-        if (isset($this->loadedFileUuids[$name])) {
-            $this->iDownloadStoredFile($this->loadedFileUuids[$name]);
-
-            return;
-        }
+        $admin = $this->adminRepository->findOneByEmail($email);
+        Assert::notNull($admin);
 
         $file = $this->entityManager->getRepository(StoredFile::class)->findOneBy([
             'originalName' => $name,
+            'uploadedByAdmin' => $admin,
         ]);
-        Assert::notNull($file);
+        Assert::notNull($file, sprintf('Stored file "%s" uploaded by "%s" was not found.', $name, $email));
         Assert::notNull($file->getId());
 
-        $this->iDownloadStoredFile($file->getId()->toRfc4122());
+        $this->loadedFileUuids[$name] = $file->getId()->toRfc4122();
+    }
+
+    #[Given('I download stored file :name by original name')]
+    public function iDownloadStoredFileByOriginalName(string $name): void
+    {
+        Assert::keyExists(
+            $this->loadedFileUuids,
+            $name,
+            sprintf('Stored file "%s" is not registered for download. Use "stored files are loaded:" or "stored file ... uploaded by ... is registered for download".', $name),
+        );
+
+        $this->iDownloadStoredFile($this->loadedFileUuids[$name]);
     }
 
     #[Given('the last response should be a file_s3 download')]

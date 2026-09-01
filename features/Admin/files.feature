@@ -62,6 +62,7 @@ Feature: Private stored files
 
   Scenario: Complaint attachment uploader can download their file
     Given a full complaint exists with number "SK-2026-UPLOADER-01"
+    Given stored file "patient-id.pdf" uploaded by "jonas.jonaitis@example.com" is registered for download
     Given I visit the logout page
     Given I submit the admin login form with email "jonas.jonaitis@example.com" and password "secret"
     Given I download stored file "patient-id.pdf" by original name
