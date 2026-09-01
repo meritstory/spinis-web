@@ -20,6 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController as EasyAdminAbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -238,7 +239,17 @@ class SettingCrudController extends AbstractAdminCrudController
             return;
         }
 
-        parent::persistEntity($entityManager, $entityInstance);
+        EasyAdminAbstractCrudController::persistEntity($entityManager, $entityInstance);
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance);
+        $wasDraft = trim((string) ($originalData['value'] ?? '')) === '';
+
+        EasyAdminAbstractCrudController::updateEntity($entityManager, $entityInstance);
+
+        $this->addFlash('success', $wasDraft ? 'crud.flash.created' : 'crud.flash.updated');
     }
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
