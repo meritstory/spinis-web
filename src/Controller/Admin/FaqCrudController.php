@@ -22,6 +22,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 class FaqCrudController extends AbstractAdminCrudController
 {
+    protected function getFlashEntityKey(): ?string
+    {
+        return 'faq';
+    }
+
     public static function getEntityFqcn(): string
     {
         return Faq::class;

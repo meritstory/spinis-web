@@ -15,6 +15,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
  */
 class LinkCrudController extends AbstractAdminCrudController
 {
+    protected function getFlashEntityKey(): ?string
+    {
+        return 'link';
+    }
+
     public static function getEntityFqcn(): string
     {
         return Link::class;
