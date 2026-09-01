@@ -9,7 +9,6 @@ use App\Tests\Behat\Support\FakeViispClient;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\Then;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Webmozart\Assert\Assert;
 
@@ -53,7 +52,7 @@ final class LoginContext extends RawMinkContext implements Context
         $client->request('POST', '/viisp/login-postback', ['ticket' => $ticket]);
     }
 
-    #[Then('a complainant with personal code :personalCode should exist')]
+    #[Given('a complainant with personal code :personalCode should exist')]
     public function aComplainantWithPersonalCodeShouldExist(string $personalCode): void
     {
         Assert::notNull($this->complainantRepository->findOneByPersonalCode($personalCode));

@@ -2,7 +2,9 @@ Feature: Admin documents
 
   Background:
     Given admin with email "admin@example.com" and password "secret" is created
-    Given I am logged in to the admin panel as "admin@example.com" with password "secret"
+    Given I submit the admin login form with email "admin@example.com" and password "secret"
+    And entity manager is cleared
+    And I confirm admin login with the latest authentication code for "admin@example.com"
 
   Scenario: Creating document without required fields shows validation errors
     Given I open the admin create document form

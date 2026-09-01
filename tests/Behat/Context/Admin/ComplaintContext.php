@@ -23,8 +23,6 @@ use App\Repository\HealthCareInstitutionRepository;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\Then;
-use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -153,7 +151,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         $this->requestComplaintEditPage($this->requireComplaint($number));
     }
 
-    #[Then('I should be on the admin complaint edit page for :number')]
+    #[Given('I should be on the admin complaint edit page for :number')]
     public function iShouldBeOnTheAdminComplaintEditPage(string $number): void
     {
         $complaint = $this->requireComplaint($number);
@@ -162,13 +160,13 @@ final class ComplaintContext extends RawMinkContext implements Context
         );
     }
 
-    #[Then('I should be on the admin complaints list page')]
+    #[Given('I should be on the admin complaints list page')]
     public function iShouldBeOnTheAdminComplaintsListPage(): void
     {
         $this->assertSession()->addressMatches('#/admin/complaint(?:\?.*)?$#');
     }
 
-    #[When('I open complaint :number from the complaints list')]
+    #[Given('I open complaint :number from the complaints list')]
     public function iOpenComplaintFromTheComplaintsList(string $number): void
     {
         $client = $this->getClient();
@@ -179,7 +177,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         $client->click($linkNode->link());
     }
 
-    #[When('I download complaint attachment :filename from the edit page')]
+    #[Given('I download complaint attachment :filename from the edit page')]
     public function iDownloadComplaintAttachmentFromEditPage(string $filename): void
     {
         $client = $this->getClient();
@@ -194,19 +192,19 @@ final class ComplaintContext extends RawMinkContext implements Context
         $client->request('GET', $href);
     }
 
-    #[When('I save complaint :number from the edit page and return to the list with status :status')]
+    #[Given('I save complaint :number from the edit page and return to the list with status :status')]
     public function iSaveComplaintFromEditAndReturn(string $number, string $status): void
     {
         $this->submitComplaintEditForm($number, 'saveAndReturn', $status);
     }
 
-    #[When('I save complaint :number from the edit page and continue editing with status :status')]
+    #[Given('I save complaint :number from the edit page and continue editing with status :status')]
     public function iSaveComplaintFromEditAndContinue(string $number, string $status): void
     {
         $this->submitComplaintEditForm($number, 'saveAndContinue', $status);
     }
 
-    #[When('I cancel unsaved complaint changes on the edit page for :number')]
+    #[Given('I cancel unsaved complaint changes on the edit page for :number')]
     public function iCancelUnsavedComplaintChangesOnEditPage(string $number): void
     {
         $complaint = $this->requireComplaint($number);
@@ -214,7 +212,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         $client->request('GET', $this->complaintAdminPath($complaint, 'edit'));
     }
 
-    #[When('I change complaint :number status on the edit page to :status without saving')]
+    #[Given('I change complaint :number status on the edit page to :status without saving')]
     public function iChangeComplaintStatusOnEditPageWithoutSaving(string $number, string $status): void
     {
         $complaint = $this->requireComplaint($number);
@@ -232,7 +230,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         $form[$statusFieldName]->setValue($statusValue);
     }
 
-    #[When('I follow the complaints breadcrumb from the complaint edit page')]
+    #[Given('I follow the complaints breadcrumb from the complaint edit page')]
     public function iFollowTheComplaintsBreadcrumbFromComplaintEditPage(): void
     {
         $client = $this->getClient();
@@ -241,7 +239,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         $client->click($linkNode->link());
     }
 
-    #[Then('the complaint edit page should show action confirmation modal labels')]
+    #[Given('the complaint edit page should show action confirmation modal labels')]
     public function theComplaintEditPageShouldShowActionConfirmationModalLabels(): void
     {
         $html = $this->getClient()->getResponse()->getContent();
@@ -263,7 +261,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::same(1, $pageActions->filter('button.action-saveAndContinue[data-action-confirmation="true"]')->count());
     }
 
-    #[Then('the complaint edit page should show EasyAdmin save actions tied to the edit form')]
+    #[Given('the complaint edit page should show EasyAdmin save actions tied to the edit form')]
     public function theComplaintEditPageShouldShowEasyAdminSaveActionsTiedToTheEditForm(): void
     {
         $editFormId = 'edit-Complaint-form';
@@ -284,7 +282,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::same($editFormId, $saveAndContinue->attr('form'));
     }
 
-    #[Then('complaint :number on the edit page should show status :status')]
+    #[Given('complaint :number on the edit page should show status :status')]
     public function complaintOnEditPageShouldShowStatus(string $number, string $status): void
     {
         $expectedValue = ComplaintStatusEnum::fromName(strtoupper($status))->value;
@@ -295,7 +293,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::same($form->get($statusFieldName)->getValue(), $expectedValue);
     }
 
-    #[Then('the complaint edit page term date field should allow only future dates')]
+    #[Given('the complaint edit page term date field should allow only future dates')]
     public function theComplaintEditPageTermDateFieldShouldAllowOnlyFutureDates(): void
     {
         $inputNode = $this->getClient()->getCrawler()->filter('input[name="Complaint[termDate]"]')->first();
@@ -306,7 +304,7 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::same($min, (new \DateTimeImmutable('today'))->format('Y-m-d'));
     }
 
-    #[Then('complaint :number should have a patient snapshot without linked complainant')]
+    #[Given('complaint :number should have a patient snapshot without linked complainant')]
     public function complaintShouldHavePatientSnapshotWithoutLinkedComplainant(string $number): void
     {
         $complaint = $this->requireComplaint($number);
@@ -320,14 +318,14 @@ final class ComplaintContext extends RawMinkContext implements Context
         Assert::same('Aistytė', $patient->getLastName());
     }
 
-    #[Then('complaint :number should have status :status')]
+    #[Given('complaint :number should have status :status')]
     public function complaintShouldHaveStatus(string $number, string $status): void
     {
         $expected = ComplaintStatusEnum::fromName(strtoupper($status));
         Assert::same($this->requireComplaint($number)->getStatus(), $expected);
     }
 
-    #[Then('complaint :number should have :count status history records')]
+    #[Given('complaint :number should have :count status history records')]
     public function complaintShouldHaveStatusHistoryCount(string $number, int $count): void
     {
         Assert::count($this->requireComplaint($number)->getStatusHistory(), $count);

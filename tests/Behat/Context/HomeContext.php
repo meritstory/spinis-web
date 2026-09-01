@@ -9,7 +9,6 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\Then;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Webmozart\Assert\Assert;
@@ -20,8 +19,8 @@ final class HomeContext extends RawMinkContext implements Context
     {
     }
 
-    #[Given('/^faqs exist:$/')]
-    public function faqsExist(TableNode $table): void
+    #[Given('/^faqs are loaded:$/')]
+    public function faqsAreLoaded(TableNode $table): void
     {
         $propertyAccessor = FeatureContext::getPropertyAccessor();
 
@@ -38,7 +37,7 @@ final class HomeContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[Then('the first FAQ answer should be expanded')]
+    #[Given('the first FAQ answer should be expanded')]
     public function theFirstFaqAnswerShouldBeExpanded(): void
     {
         $firstDetails = $this->getClient()->getCrawler()
@@ -48,7 +47,7 @@ final class HomeContext extends RawMinkContext implements Context
         Assert::true($firstDetails->matches('[open]'), 'Expected the first FAQ entry to have the "open" attribute.');
     }
 
-    #[Then('the FAQ questions should appear in this order:')]
+    #[Given('the FAQ questions should appear in this order:')]
     public function theFaqQuestionsShouldAppearInThisOrder(TableNode $table): void
     {
         $expectedQuestions = array_map(static fn (array $row): string => $row[0], $table->getRows());

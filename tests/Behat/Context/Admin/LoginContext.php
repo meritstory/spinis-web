@@ -12,7 +12,6 @@ use App\Tests\Behat\Support\PasswordResetTokenStore;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\Then;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
@@ -41,24 +40,6 @@ final class LoginContext extends RawMinkContext implements Context
     public function iConfirmAdminLoginWithLatestCode(string $email): void
     {
         $this->submitVerificationCode($this->getLatestAuthenticationCode($email));
-    }
-
-    #[Given('I am logged in to the admin panel as :email with password :password')]
-    public function iAmLoggedInToTheAdminPanel(string $email, string $password): void
-    {
-        $this->submitLoginCredentials($email, $password);
-
-        // The authentication code is written by the application in a rebooted kernel, so this
-        // step has to refresh the ORM state itself between its own two requests.
-        $this->entityManager->clear();
-
-        $this->submitVerificationCode($this->getLatestAuthenticationCode($email));
-    }
-
-    #[Given('I am logged in to the admin panel as :email with password :password without two-factor')]
-    public function iAmLoggedInToTheAdminPanelWithoutTwoFactor(string $email, string $password): void
-    {
-        $this->submitLoginCredentials($email, $password);
     }
 
     #[Given('I confirm admin login with authentication code :code')]
@@ -193,13 +174,13 @@ final class LoginContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[Then('I should be on the admin accounts page')]
+    #[Given('I should be on the admin accounts page')]
     public function iShouldBeOnTheAdminAccountsPage(): void
     {
         $this->assertSession()->addressMatches('#/admin/admin#');
     }
 
-    #[Then('I should be on the admin login page')]
+    #[Given('I should be on the admin login page')]
     public function iShouldBeOnTheAdminLoginPage(): void
     {
         $this->assertSession()->addressMatches('#/admin/login#');

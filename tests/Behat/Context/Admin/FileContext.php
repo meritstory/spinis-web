@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests\Behat\Context\Admin;
 
+use App\Entity\Admin;
 use App\Entity\StoredFile;
 use App\Repository\AdminRepository;
+use App\Tests\Behat\Context\FeatureContext;
 use Behat\Behat\Context\Context;
+use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\Then;
-use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -24,6 +25,9 @@ final class FileContext extends RawMinkContext implements Context
 {
     private ?string $fileUuid = null;
 
+    /** @var array<string, string> */
+    private array $loadedFileUuids = [];
+
     /** @var string[] */
     private array $storagePaths = [];
 
@@ -35,28 +39,45 @@ final class FileContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[Given('stored file :name with content :content exists for admin :email')]
-    public function storedFileExists(string $name, string $content, string $email): void
+    #[Given('/^stored files are loaded:$/')]
+    public function storedFilesAreLoaded(TableNode $table): void
     {
-        $admin = $this->adminRepository->findOneByEmail($email);
-        Assert::notNull($admin);
+        $propertyAccessor = FeatureContext::getPropertyAccessor();
+        /** @var array<string, StoredFile> $files */
+        $files = [];
 
-        $extension = pathinfo($name, PATHINFO_EXTENSION);
-        $path = 'behat-'.new Ulid().($extension !== '' ? '.'.$extension : '');
-        $this->storage->write($path, $content, ['mimetype' => 'text/plain']);
+        foreach ($table as $row) {
+            $adminEmail = $row['uploadedByAdmin'] ?? null;
+            Assert::notNull($adminEmail, 'Stored file fixture row must include uploadedByAdmin.');
 
-        $file = new StoredFile()
-            ->setUploadedByAdmin($admin)
-            ->setFileName($path)
-            ->setOriginalName($name)
-            ->setFileSize(strlen($content))
-            ->setMimeType('text/plain');
+            $admin = $this->adminRepository->findOneByEmail($adminEmail);
+            Assert::notNull($admin);
 
-        $this->entityManager->persist($file);
+            $file = $this->createStoredFile(
+                $admin,
+                $row['originalName'],
+                $row['content'] ?? '',
+                $row['mimeType'] ?? 'text/plain',
+            );
+
+            foreach ($row as $property => $value) {
+                if (in_array($property, ['uploadedByAdmin', 'content', 'originalName', 'mimeType'], true)) {
+                    continue;
+                }
+
+                $propertyAccessor->setValue($file, $property, $value);
+            }
+
+            $this->entityManager->persist($file);
+            $files[$row['originalName']] = $file;
+        }
+
         $this->entityManager->flush();
-        $this->fileUuid = $file->getId()?->toRfc4122();
-        Assert::notNull($this->fileUuid);
-        $this->storagePaths[] = $path;
+
+        foreach ($files as $originalName => $file) {
+            Assert::notNull($file->getId());
+            $this->loadedFileUuids[$originalName] = $file->getId()->toRfc4122();
+        }
     }
 
     #[Given('I download the stored file')]
@@ -72,23 +93,25 @@ final class FileContext extends RawMinkContext implements Context
         $this->getClient()->request('GET', '/files/'.$uuid);
     }
 
-    #[When('I download stored file :name uploaded by admin :email')]
-    public function iDownloadStoredFileUploadedByAdmin(string $name, string $email): void
+    #[Given('I download stored file :name by original name')]
+    public function iDownloadStoredFileByOriginalName(string $name): void
     {
-        $admin = $this->adminRepository->findOneByEmail($email);
-        Assert::notNull($admin);
+        if (isset($this->loadedFileUuids[$name])) {
+            $this->iDownloadStoredFile($this->loadedFileUuids[$name]);
+
+            return;
+        }
 
         $file = $this->entityManager->getRepository(StoredFile::class)->findOneBy([
             'originalName' => $name,
-            'uploadedByAdmin' => $admin,
         ]);
         Assert::notNull($file);
         Assert::notNull($file->getId());
 
-        $this->getClient()->request('GET', '/files/'.$file->getId()->toRfc4122());
+        $this->iDownloadStoredFile($file->getId()->toRfc4122());
     }
 
-    #[Then('the last response should be a file_s3 download')]
+    #[Given('the last response should be a file_s3 download')]
     public function theLastResponseShouldBeAFileS3Download(): void
     {
         $path = $this->getClient()->getRequest()->getPathInfo();
@@ -116,7 +139,7 @@ final class FileContext extends RawMinkContext implements Context
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
 
-        $file = new StoredFile()
+        $file = (new StoredFile())
             ->setUploadedByAdmin($admin)
             ->setFileName('missing-'.uniqid('', true).'.txt')
             ->setOriginalName('missing.txt')
@@ -156,6 +179,27 @@ final class FileContext extends RawMinkContext implements Context
 
         $this->storagePaths = [];
         $this->fileUuid = null;
+        $this->loadedFileUuids = [];
+    }
+
+    private function createStoredFile(
+        Admin $admin,
+        string $originalName,
+        string $content,
+        string $mimeType,
+    ): StoredFile {
+        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+        $path = 'behat-'.new Ulid().($extension !== '' ? '.'.$extension : '');
+        $this->storage->write($path, $content, ['mimetype' => $mimeType]);
+
+        $this->storagePaths[] = $path;
+
+        return (new StoredFile())
+            ->setUploadedByAdmin($admin)
+            ->setFileName($path)
+            ->setOriginalName($originalName)
+            ->setFileSize(strlen($content))
+            ->setMimeType($mimeType);
     }
 
     private function getClient(): KernelBrowser
