@@ -83,7 +83,13 @@
                 });
             }
 
-            window.addEventListener('pageshow', enableAdminFormSubmitButtons);
+            window.addEventListener('pageshow', function (event) {
+                if (!event.persisted) {
+                    return;
+                }
+
+                enableAdminFormSubmitButtons();
+            });
         })();
     </script>
 {% endblock %}
