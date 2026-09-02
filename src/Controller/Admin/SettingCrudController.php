@@ -243,7 +243,19 @@ class SettingCrudController extends AbstractAdminCrudController
             return;
         }
 
-        parent::persistEntity($entityManager, $entityInstance);
+        $entityManager->persist($entityInstance);
+        $entityManager->flush();
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
+    {
+        $originalData = $entityManager->getUnitOfWork()->getOriginalEntityData($entityInstance);
+        $wasDraft = trim((string) ($originalData['value'] ?? '')) === '';
+
+        $entityManager->persist($entityInstance);
+        $entityManager->flush();
+
+        $this->addFlash('success', $this->getFlashMessage($wasDraft ? 'created' : 'updated'));
     }
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
