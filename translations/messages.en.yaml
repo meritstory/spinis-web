@@ -17,6 +17,26 @@ crud:
         created: 'Entry created'
         updated: 'Changes saved'
         deleted: 'Entry deleted'
+        admin:
+            created: 'Account created'
+            updated: 'Account updated'
+            deleted: 'Account deleted'
+        faq:
+            created: 'FAQ entry created'
+            updated: 'FAQ entry updated'
+            deleted: 'FAQ entry deleted'
+        document:
+            created: 'Document created'
+            updated: 'Document updated'
+            deleted: 'Document deleted'
+        link:
+            created: 'Link created'
+            updated: 'Link updated'
+            deleted: 'Link deleted'
+        setting:
+            created: 'Setting created'
+            updated: 'Setting updated'
+            deleted: 'Setting deleted'
 
 menu:
     admins: Accounts

@@ -33,6 +33,11 @@ class DocumentCrudController extends AbstractAdminCrudController
     ) {
     }
 
+    protected function getFlashEntityKey(): ?string
+    {
+        return 'document';
+    }
+
     public static function getEntityFqcn(): string
     {
         return Document::class;

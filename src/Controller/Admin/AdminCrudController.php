@@ -63,6 +63,11 @@ class AdminCrudController extends AbstractAdminCrudController
     ) {
     }
 
+    protected function getFlashEntityKey(): ?string
+    {
+        return 'admin';
+    }
+
     public static function getEntityFqcn(): string
     {
         return Admin::class;
@@ -374,7 +379,7 @@ class AdminCrudController extends AbstractAdminCrudController
         $entityManager->remove($entityInstance);
         $entityManager->flush();
 
-        $this->addFlash('success', 'crud.flash.deleted');
+        $this->addFlash('success', $this->getFlashMessage('deleted'));
     }
 
     public function createEntity(string $entityFqcn): Admin

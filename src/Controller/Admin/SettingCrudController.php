@@ -44,6 +44,11 @@ class SettingCrudController extends AbstractAdminCrudController
     ) {
     }
 
+    protected function getFlashEntityKey(): ?string
+    {
+        return 'setting';
+    }
+
     public static function getEntityFqcn(): string
     {
         return Setting::class;
@@ -250,7 +255,7 @@ class SettingCrudController extends AbstractAdminCrudController
         $entityManager->persist($entityInstance);
         $entityManager->flush();
 
-        $this->addFlash('success', $wasDraft ? 'crud.flash.created' : 'crud.flash.updated');
+        $this->addFlash('success', $this->getFlashMessage($wasDraft ? 'created' : 'updated'));
     }
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse

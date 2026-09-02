@@ -14,21 +14,36 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
  */
 abstract class AbstractAdminCrudController extends AbstractCrudController
 {
+    protected function getFlashEntityKey(): ?string
+    {
+        return null;
+    }
+
+    protected function getFlashMessage(string $action): string
+    {
+        $entityKey = $this->getFlashEntityKey();
+        if ($entityKey !== null) {
+            return sprintf('crud.flash.%s.%s', $entityKey, $action);
+        }
+
+        return sprintf('crud.flash.%s', $action);
+    }
+
     public function persistEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         parent::persistEntity($entityManager, $entityInstance);
-        $this->addFlash('success', 'crud.flash.created');
+        $this->addFlash('success', $this->getFlashMessage('created'));
     }
 
     public function updateEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         parent::updateEntity($entityManager, $entityInstance);
-        $this->addFlash('success', 'crud.flash.updated');
+        $this->addFlash('success', $this->getFlashMessage('updated'));
     }
 
     public function deleteEntity(EntityManagerInterface $entityManager, object $entityInstance): void
     {
         parent::deleteEntity($entityManager, $entityInstance);
-        $this->addFlash('success', 'crud.flash.deleted');
+        $this->addFlash('success', $this->getFlashMessage('deleted'));
     }
 }

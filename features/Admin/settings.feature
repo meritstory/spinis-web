@@ -13,7 +13,7 @@ Feature: Admin settings
     Given I create a setting with key "version"
     Given I submit the admin setting value "0.0.1"
     Given the admin settings list is open
-    And I should see "Įrašas sukurtas"
+    And I should see "Nustatymas sukurtas"
     Given a setting with key "version" and value "0.0.1" should exist in the database
     And I should see "Versija"
     And I should see "0.0.1"
