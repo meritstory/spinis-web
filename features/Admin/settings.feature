@@ -13,10 +13,9 @@ Feature: Admin settings
 
   Scenario: Creating a setting and then setting its value
     Given I create a setting with key "version"
-    And I should see "Įrašas sukurtas"
     Given I submit the admin setting value "0.0.1"
     Given the admin settings list is open
-    And I should see "Pakeitimai išsaugoti"
+    And I should see "Nustatymas sukurtas"
     Given entity manager is cleared
     Given a setting with key "version" and value "0.0.1" should exist in the database
     And I should see "Versija"

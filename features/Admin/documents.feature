@@ -15,7 +15,7 @@ Feature: Admin documents
     Given I open the admin create document form
     Given I submit the admin document form with title "Privatumo politika" key "privacy_policy" and description "<p>Privatumo politikos turinys.</p>"
     Given the admin documents list is open
-    And I should see "Įrašas sukurtas"
+    And I should see "Dokumentas sukurtas"
     Given a document with key "privacy_policy" and title "Privatumo politika" should exist in the database
     Given the admin documents list shows "Privatumo politika"
 
@@ -46,7 +46,7 @@ Feature: Admin documents
       | title               | key            | description    |
       | Testinis dokumentas | privacy_policy | <p>Turinys</p> |
     Given I delete the document with key "privacy_policy" from the admin index
-    And I should see "Įrašas ištrintas"
+    And I should see "Dokumentas ištrintas"
     Given a document with key "privacy_policy" should not exist in the database
 
   Scenario: Editing document key is allowed
@@ -56,5 +56,5 @@ Feature: Admin documents
     Given I open the admin edit document form for key "privacy_policy"
     Given the admin edit document form allows changing the key
     Given I submit the admin document edit form with key "about_system"
-    And I should see "Pakeitimai išsaugoti"
+    And I should see "Dokumentas atnaujintas"
     Given a document with key "about_system" and title "Politika" should exist in the database

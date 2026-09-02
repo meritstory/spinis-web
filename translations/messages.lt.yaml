@@ -17,6 +17,26 @@ crud:
         created: 'Įrašas sukurtas'
         updated: 'Pakeitimai išsaugoti'
         deleted: 'Įrašas ištrintas'
+        admin:
+            created: 'Paskyra sukurta'
+            updated: 'Paskyra atnaujinta'
+            deleted: 'Paskyra ištrinta'
+        faq:
+            created: 'DUK įrašas sukurtas'
+            updated: 'DUK įrašas atnaujintas'
+            deleted: 'DUK įrašas ištrintas'
+        document:
+            created: 'Dokumentas sukurtas'
+            updated: 'Dokumentas atnaujintas'
+            deleted: 'Dokumentas ištrintas'
+        link:
+            created: 'Nuoroda sukurta'
+            updated: 'Nuoroda atnaujinta'
+            deleted: 'Nuoroda ištrinta'
+        setting:
+            created: 'Nustatymas sukurtas'
+            updated: 'Nustatymas atnaujintas'
+            deleted: 'Nustatymas ištrintas'
 
 menu:
     admins: Paskyros

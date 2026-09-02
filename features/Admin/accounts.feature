@@ -24,7 +24,7 @@ Feature: Admin account management
   Scenario: System administrator can create a new account
     Given I create an admin account with email "specialist@example.com" first name "Jonas" last name "Jonaitis" role "specialist" and two-factor "enabled"
     Given I should be on the admin accounts page
-    And I should see "Įrašas sukurtas"
+    And I should see "Paskyra sukurta"
     Given I should see account "specialist@example.com" in the accounts list
     Given I visit the admin account detail page for "specialist@example.com"
     And I should see "Jonas"
@@ -187,7 +187,7 @@ Feature: Admin account management
     Given a password reset token was issued for admin "hidden@example.com"
     Given I remember the account id for "hidden@example.com"
     Given I delete admin account "hidden@example.com"
-    And I should see "Įrašas ištrintas"
+    And I should see "Paskyra ištrinta"
     Given I visit the admin account detail page for the remembered account id
     And the response status code should be 404
 
