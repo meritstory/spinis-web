@@ -44,6 +44,11 @@ class SettingCrudController extends AbstractAdminCrudController
     ) {
     }
 
+    protected function getFlashEntityKey(): ?string
+    {
+        return 'setting';
+    }
+
     public static function getEntityFqcn(): string
     {
         return Setting::class;
