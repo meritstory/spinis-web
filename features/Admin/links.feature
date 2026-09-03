@@ -2,7 +2,7 @@ Feature: Admin links
 
   Background:
     Given admin with email "admin@example.com" and password "secret" is created
-    Given I submit the admin login form with email "admin@example.com" and password "secret"
+    When I submit the admin login form with email "admin@example.com" and password "secret"
     And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
 
@@ -19,7 +19,7 @@ Feature: Admin links
     Given I open the admin create link form
     Given I submit the admin link form with title "Pagalba", key "help-page" and url "https://example.com/help"
     Given the admin links list is open
-    And I should see "Nuoroda sukurta"
+    Then I should see "Nuoroda sukurta"
     Given a link with key "help-page", title "Pagalba" and url "https://example.com/help" should exist in the database
 
   Scenario: Creating a link with an invalid url shows a validation error

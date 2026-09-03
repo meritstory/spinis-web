@@ -149,7 +149,7 @@ final class FileContext extends RawMinkContext implements Context
         $admin = $this->adminRepository->findOneByEmail($email);
         Assert::notNull($admin);
 
-        $file = (new StoredFile())
+        $file = new StoredFile()
             ->setUploadedByAdmin($admin)
             ->setFileName('missing-'.uniqid('', true).'.txt')
             ->setOriginalName('missing.txt')
@@ -204,7 +204,7 @@ final class FileContext extends RawMinkContext implements Context
 
         $this->storagePaths[] = $path;
 
-        return (new StoredFile())
+        return new StoredFile()
             ->setUploadedByAdmin($admin)
             ->setFileName($path)
             ->setOriginalName($originalName)
