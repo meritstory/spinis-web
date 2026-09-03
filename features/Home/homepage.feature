@@ -1,7 +1,7 @@
 Feature: Public homepage
 
   Scenario: Homepage renders with key sections
-    Given I am on the homepage
+    When I visit "/"
     Then the response status code should be 200
     And I should see "Skundų nagrinėjimo sistema"
     And I should see "Kaip tai veikia?"
@@ -9,7 +9,7 @@ Feature: Public homepage
     And I should see "Prisijungti per el. valdžios vartus"
 
   Scenario: FAQ entries are shown ordered by position
-    Given faqs exist:
+    Given faqs are loaded:
       | question           | answer              | position |
       | Trečias klausimas  | <p>Atsakymas C.</p> | 3        |
       | Pirmas klausimas   | <p>Atsakymas A.</p> | 1        |
@@ -21,7 +21,7 @@ Feature: Public homepage
       | Trečias klausimas |
 
   Scenario: FAQ answer HTML is sanitized before rendering
-    Given faqs exist:
+    Given faqs are loaded:
       | question      | answer                                                                                                   | position |
       | Ar tai saugu? | <p>Taip.</p><script>window.xssTriggered = true;</script><img src=x onerror='window.xssTriggered = true'> | 1        |
     When I am on the homepage
@@ -30,7 +30,7 @@ Feature: Public homepage
     And the response should not contain "onerror"
 
   Scenario: Footer social links are hidden when none are configured
-    Given I am on the homepage
+    When I visit "/"
     Then the response should not contain "aria-label=\"Facebook\""
     And the response should not contain "aria-label=\"Twitter\""
     And the response should not contain "aria-label=\"LinkedIn\""

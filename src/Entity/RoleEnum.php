@@ -64,4 +64,20 @@ enum RoleEnum: string
 
         return self::tryFrom($role);
     }
+
+    /**
+     * @param array<string> $roles
+     */
+    public function isAssignedTo(array $roles): bool
+    {
+        return in_array($this->value, $roles, true);
+    }
+
+    /**
+     * @param array<string> $roles
+     */
+    public static function isSpecialist(array $roles): bool
+    {
+        return self::SPECIALIST->isAssignedTo($roles);
+    }
 }

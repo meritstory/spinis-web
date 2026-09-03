@@ -7,7 +7,6 @@ namespace App\Tests\Behat\Context\Admin;
 use Behat\Behat\Context\Context;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\Then;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Webmozart\Assert\Assert;
 
@@ -52,13 +51,13 @@ final class FaqContext extends RawMinkContext implements Context
         ]);
     }
 
-    #[Then('I should be on the admin FAQ list page')]
+    #[Given('I should be on the admin FAQ list page')]
     public function iShouldBeOnTheAdminFaqListPage(): void
     {
         $this->assertSession()->addressMatches('#/admin/faq(?:\?.*)?$#');
     }
 
-    #[Then('I should be on the admin FAQ create page')]
+    #[Given('I should be on the admin FAQ create page')]
     public function iShouldBeOnTheAdminFaqCreatePage(): void
     {
         $this->assertSession()->addressMatches('#/admin/faq/new#');

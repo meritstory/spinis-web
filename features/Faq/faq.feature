@@ -20,7 +20,7 @@ Feature: FAQ page
     Then I should be on "/faq"
 
   Scenario: First FAQ entry is expanded on load
-    Given faqs exist:
+    Given faqs are loaded:
       | question           | answer              | position |
       | Pirmas klausimas   | <p>Atsakymas A.</p> | 1        |
       | Antras klausimas   | <p>Atsakymas B.</p> | 2        |
@@ -29,7 +29,7 @@ Feature: FAQ page
     And the response should contain "Atsakymas A."
 
   Scenario: FAQ entries render ordered by position
-    Given faqs exist:
+    Given faqs are loaded:
       | question           | answer              | position |
       | Trečias klausimas  | <p>Atsakymas C.</p> | 3        |
       | Pirmas klausimas   | <p>Atsakymas A.</p> | 1        |
@@ -41,7 +41,7 @@ Feature: FAQ page
       | Trečias klausimas |
 
   Scenario: FAQ answer HTML is sanitized before rendering
-    Given faqs exist:
+    Given faqs are loaded:
       | question      | answer                                                                                                   | position |
       | Ar tai saugu? | <p>Taip.</p><script>window.xssTriggered = true;</script><img src=x onerror='window.xssTriggered = true'> | 1        |
     When I am on "/faq"

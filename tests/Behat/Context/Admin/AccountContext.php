@@ -14,8 +14,6 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Behat\Step\Given;
-use Behat\Step\Then;
-use Behat\Step\When;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\DomCrawler\Crawler;
@@ -38,7 +36,7 @@ final class AccountContext extends RawMinkContext implements Context
     ) {
     }
 
-    #[When('I remember the account id for :email')]
+    #[Given('I remember the account id for :email')]
     public function iRememberTheAccountIdFor(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -48,7 +46,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->rememberedAccountId = $admin->getId();
     }
 
-    #[When('I visit the admin account detail page for :email')]
+    #[Given('I visit the admin account detail page for :email')]
     public function iVisitTheAdminAccountDetailPageFor(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -58,7 +56,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->getClient()->request('GET', '/admin/admin/'.$admin->getId());
     }
 
-    #[When('I visit the admin account detail page for the remembered account id')]
+    #[Given('I visit the admin account detail page for the remembered account id')]
     public function iVisitTheAdminAccountDetailPageForTheRememberedAccountId(): void
     {
         Assert::notNull($this->rememberedAccountId);
@@ -66,7 +64,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->getClient()->request('GET', '/admin/admin/'.$this->rememberedAccountId);
     }
 
-    #[When('I visit the admin accounts list page')]
+    #[Given('I visit the admin accounts list page')]
     public function iVisitTheAdminAccountsListPage(): void
     {
         $this->getClient()->request('GET', '/admin/admin');
@@ -78,7 +76,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->iVisitTheAdminAccountsListPage();
     }
 
-    #[When('I visit the admin accounts list page with page size :pageSize')]
+    #[Given('I visit the admin accounts list page with page size :pageSize')]
     public function iVisitTheAdminAccountsListPageWithPageSize(int $pageSize): void
     {
         $this->getClient()->request('GET', '/admin/admin?pageSize='.$pageSize);
@@ -110,7 +108,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[When('I visit the admin account create form')]
+    #[Given('I visit the admin account create form')]
     public function iVisitTheAdminAccountCreateForm(): void
     {
         $this->getClient()->request('GET', '/admin/admin/new');
@@ -122,7 +120,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->iVisitTheAdminAccountCreateForm();
     }
 
-    #[When('I visit the admin account edit form for :email')]
+    #[Given('I visit the admin account edit form for :email')]
     public function iVisitTheAdminAccountEditFormFor(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -190,13 +188,13 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::same($expectedLabels, $matchedLabels);
     }
 
-    #[When('I search admin accounts for :query')]
+    #[Given('I search admin accounts for :query')]
     public function iSearchAdminAccountsFor(string $query): void
     {
         $this->getClient()->request('GET', '/admin/admin', ['query' => $query]);
     }
 
-    #[When('I sort admin accounts by role')]
+    #[Given('I sort admin accounts by role')]
     public function iSortAdminAccountsByRole(): void
     {
         $client = $this->getClient();
@@ -204,7 +202,7 @@ final class AccountContext extends RawMinkContext implements Context
         $client->click($link);
     }
 
-    #[Then('accounts should appear in this order:')]
+    #[Given('accounts should appear in this order:')]
     public function accountsShouldAppearInThisOrder(TableNode $accounts): void
     {
         $pageText = $this->getClient()->getCrawler()->filter('table')->text();
@@ -218,7 +216,7 @@ final class AccountContext extends RawMinkContext implements Context
         }
     }
 
-    #[When('I create an admin account with email :email first name :firstName last name :lastName role :role and two-factor :twoFactor')]
+    #[Given('I create an admin account with email :email first name :firstName last name :lastName role :role and two-factor :twoFactor')]
     public function iCreateAnAdminAccount(
         string $email,
         string $firstName,
@@ -255,7 +253,7 @@ final class AccountContext extends RawMinkContext implements Context
         ]);
     }
 
-    #[When('admin account :email is deactivated for session invalidation')]
+    #[Given('admin account :email is deactivated for session invalidation')]
     public function adminAccountIsDeactivatedForSessionInvalidation(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -266,7 +264,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[When('admin account :email is soft deleted directly')]
+    #[Given('admin account :email is soft deleted directly')]
     public function adminAccountIsSoftDeletedDirectly(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -282,7 +280,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[When('admin account :email has two-factor disabled directly')]
+    #[Given('admin account :email has two-factor disabled directly')]
     public function adminAccountHasTwoFactorDisabledDirectly(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -292,7 +290,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[When('admin account :email has role changed directly to :role')]
+    #[Given('admin account :email has role changed directly to :role')]
     public function adminAccountHasRoleChangedDirectly(string $email, string $role): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -302,13 +300,13 @@ final class AccountContext extends RawMinkContext implements Context
         $this->entityManager->flush();
     }
 
-    #[Then('I should be on the admin FAQ page')]
+    #[Given('I should be on the admin FAQ page')]
     public function iShouldBeOnTheAdminFaqPage(): void
     {
         $this->assertSession()->addressMatches('/\/admin\/faq$/');
     }
 
-    #[When('I edit admin account :email setting email to :newEmail and active to :active')]
+    #[Given('I edit admin account :email setting email to :newEmail and active to :active')]
     public function iEditAdminAccount(string $email, string $newEmail, string $active): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -353,7 +351,7 @@ final class AccountContext extends RawMinkContext implements Context
         $client->submit($form);
     }
 
-    #[When('I edit admin account :email changing role to :role')]
+    #[Given('I edit admin account :email changing role to :role')]
     public function iEditAdminAccountChangingRole(string $email, string $role): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -373,7 +371,7 @@ final class AccountContext extends RawMinkContext implements Context
         $client->submit($form);
     }
 
-    #[Then('admin :email should have role :role')]
+    #[Given('admin :email should have role :role')]
     public function adminShouldHaveRole(string $email, string $role): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -381,7 +379,7 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::same($admin->getPrimaryRole(), RoleEnum::fromName(strtoupper($role)));
     }
 
-    #[When('I delete admin account :email')]
+    #[Given('I delete admin account :email')]
     public function iDeleteAdminAccount(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -401,7 +399,7 @@ final class AccountContext extends RawMinkContext implements Context
         ]);
     }
 
-    #[Then('admin :email should have two-factor disabled')]
+    #[Given('admin :email should have two-factor disabled')]
     public function adminShouldHaveTwoFactorDisabled(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -409,7 +407,7 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::false($admin->isEmailTwoFactorEnabled());
     }
 
-    #[Then('an invitation should exist for admin :email')]
+    #[Given('an invitation should exist for admin :email')]
     public function anInvitationShouldExistForAdmin(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -419,7 +417,7 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::count($invitations, 1);
     }
 
-    #[Then('no invitation should exist for admin :email')]
+    #[Given('no invitation should exist for admin :email')]
     public function noInvitationShouldExistForAdmin(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -445,7 +443,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->createInvitation($email, new \DateTimeImmutable('-1 day'));
     }
 
-    #[When('I open the account invitation link')]
+    #[Given('I open the account invitation link')]
     public function iOpenTheAccountInvitationLink(): void
     {
         Assert::notNull($this->invitationPlainToken);
@@ -453,7 +451,7 @@ final class AccountContext extends RawMinkContext implements Context
         $this->getClient()->request('GET', '/admin/invitation/'.$this->invitationPlainToken);
     }
 
-    #[When('I remember the current session id')]
+    #[Given('I remember the current session id')]
     public function iRememberTheCurrentSessionId(): void
     {
         $session = $this->getClient()->getRequest()->getSession();
@@ -462,7 +460,7 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::notEmpty($this->rememberedSessionId);
     }
 
-    #[When('I set the account invitation password to :password')]
+    #[Given('I set the account invitation password to :password')]
     public function iSetTheAccountInvitationPasswordTo(string $password): void
     {
         Assert::notNull($this->invitationPlainToken);
@@ -479,14 +477,14 @@ final class AccountContext extends RawMinkContext implements Context
         ]);
     }
 
-    #[Then('I should be on the admin two-factor login page')]
+    #[Given('I should be on the admin two-factor login page')]
     public function iShouldBeOnTheAdminTwoFactorLoginPage(): void
     {
         $this->assertSession()->addressMatches('/\/admin\/login\/2fa$/');
         $this->assertSession()->pageTextContains('Autentifikacijos kodas');
     }
 
-    #[Then('the session id should have changed')]
+    #[Given('the session id should have changed')]
     public function theSessionIdShouldHaveChanged(): void
     {
         Assert::notNull($this->rememberedSessionId);
@@ -496,7 +494,7 @@ final class AccountContext extends RawMinkContext implements Context
         );
     }
 
-    #[Then('admin :email should have a last active time')]
+    #[Given('admin :email should have a last active time')]
     public function adminShouldHaveALastActiveTime(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -504,14 +502,14 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::notNull($admin->getLastActiveAt());
     }
 
-    #[When('I remember the invitation token hash for admin :email')]
+    #[Given('I remember the invitation token hash for admin :email')]
     public function iRememberTheInvitationTokenHashForAdmin(string $email): void
     {
         $this->storedInvitationTokenHash = $this->getInvitationTokenHashForAdmin($email);
         Assert::notNull($this->storedInvitationTokenHash);
     }
 
-    #[When('I resend the account invitation for :email')]
+    #[Given('I resend the account invitation for :email')]
     public function iResendTheAccountInvitationFor(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -530,7 +528,7 @@ final class AccountContext extends RawMinkContext implements Context
         $client->submit($formNode->form());
     }
 
-    #[When('I resend the account invitation for :email without a valid CSRF token')]
+    #[Given('I resend the account invitation for :email without a valid CSRF token')]
     public function iResendTheAccountInvitationWithoutAValidCsrfToken(string $email): void
     {
         $admin = $this->adminRepository->findOneByEmail($email);
@@ -544,7 +542,7 @@ final class AccountContext extends RawMinkContext implements Context
         );
     }
 
-    #[Then('admin :email should have a renewed invitation')]
+    #[Given('admin :email should have a renewed invitation')]
     public function adminShouldHaveARenewedInvitation(string $email): void
     {
         Assert::notNull($this->storedInvitationTokenHash);
@@ -575,21 +573,6 @@ final class AccountContext extends RawMinkContext implements Context
         $this->adminShouldHaveARenewedInvitation($newEmail);
     }
 
-    #[Given('resend invitation is not available after password setup with pending two-factor for admin :email')]
-    public function resendInvitationIsNotAvailableAfterPasswordSetupWithPendingTwoFactor(string $email): void
-    {
-        $this->iCreateAnAdminAccount($email, 'Tomas', 'Tomaitis', 'specialist', 'enabled');
-        $this->adminHasAPendingAccountInvitation($email);
-        $this->visitLogoutPage();
-        $this->iSetTheAccountInvitationPasswordTo('Newsecretpass1!');
-        $this->iShouldBeOnTheAdminTwoFactorLoginPage();
-        $this->submitAdminLoginCredentials('admin@example.com', 'secret');
-        $this->entityManager->clear();
-        $this->submitAdminLoginVerificationCode('admin@example.com');
-        $this->iVisitTheAdminAccountsListPage();
-        $this->resendInvitationShouldNotBeAvailableForAdmin($email);
-    }
-
     #[Given('resend invitation should not be available for admin :email')]
     public function resendInvitationShouldNotBeAvailableForAdmin(string $email): void
     {
@@ -603,13 +586,13 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::same(0, $formNode->count(), 'Resend invitation form should not be available.');
     }
 
-    #[Then('I should see account :email in the accounts list')]
+    #[Given('I should see account :email in the accounts list')]
     public function iShouldSeeAccountInTheAccountsList(string $email): void
     {
         $this->assertSession()->pageTextContains($email);
     }
 
-    #[Then('I should not see account :email in the accounts list')]
+    #[Given('I should not see account :email in the accounts list')]
     public function iShouldNotSeeAccountInTheAccountsList(string $email): void
     {
         $this->assertSession()->pageTextNotContains($email);
@@ -688,19 +671,19 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::same($warnings->count(), 1);
     }
 
-    #[Then('admin account :email should not exist')]
+    #[Given('admin account :email should not exist')]
     public function adminAccountShouldNotExist(string $email): void
     {
         Assert::null($this->adminRepository->findOneByEmail($email));
     }
 
-    #[Then('exactly one active admin account should exist with email :email')]
+    #[Given('exactly one active admin account should exist with email :email')]
     public function exactlyOneActiveAdminAccountShouldExistWithEmail(string $email): void
     {
         Assert::count($this->adminRepository->findBy(['email' => $email]), 1);
     }
 
-    #[Then('admin account :email should be soft deleted')]
+    #[Given('admin account :email should be soft deleted')]
     public function adminAccountShouldBeSoftDeleted(string $email): void
     {
         Assert::notNull($this->lastDeletedAdminId);
@@ -724,52 +707,6 @@ final class AccountContext extends RawMinkContext implements Context
         Assert::isInstanceOf($client, KernelBrowser::class);
 
         return $client;
-    }
-
-    private function visitLogoutPage(): void
-    {
-        $client = $this->getClient();
-        $client->request('GET', '/admin');
-        $logoutUrl = $client->getCrawler()->filter('a.user-action')->reduce(
-            static fn (Crawler $node): bool => str_contains($node->text(), 'Atsijungti')
-                || str_contains($node->attr('href') ?? '', '/admin/logout'),
-        )->first()->attr('href');
-
-        Assert::notNull($logoutUrl);
-        $client->request('GET', $logoutUrl);
-    }
-
-    private function submitAdminLoginCredentials(string $email, string $password): void
-    {
-        $client = $this->getClient();
-        $client->request('GET', '/admin/login');
-        $csrfToken = $client->getCrawler()->filter('input[name="_csrf_token"]')->attr('value');
-        Assert::notNull($csrfToken);
-
-        $client->request('POST', '/admin/login_check', [
-            '_csrf_token' => $csrfToken,
-            'email' => $email,
-            'password' => $password,
-        ]);
-    }
-
-    private function submitAdminLoginVerificationCode(string $email): void
-    {
-        $admin = $this->adminRepository->findOneByEmail($email);
-        Assert::notNull($admin);
-
-        $code = $admin->getAuthCode();
-        Assert::notNull($code);
-
-        $client = $this->getClient();
-        $client->request('GET', '/admin/login/2fa');
-        $csrfToken = $client->getCrawler()->filter('input[name="_csrf_token"]')->attr('value');
-        Assert::notNull($csrfToken);
-
-        $client->request('POST', '/admin/login/2fa_check', [
-            '_csrf_token' => $csrfToken,
-            '_auth_code' => $code,
-        ]);
     }
 
     private function findAdminBypassingSoftDelete(int $id): ?Admin
