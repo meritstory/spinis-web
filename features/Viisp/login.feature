@@ -21,6 +21,6 @@ Feature: VIISP login
   Scenario: Logout invalidates the session
     Given VIISP will successfully authenticate personal code "38001010000" as "Jonas" "Jonaitis"
     When I complete VIISP login via login-submit
-    When I follow "Atsijungti"
-    When I visit "/my-complaints"
+    And I follow "Atsijungti"
+    And I visit "/my-complaints"
     Then I should be on "/viisp/login-submit"

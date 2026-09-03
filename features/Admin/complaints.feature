@@ -12,7 +12,7 @@ Feature: Admin complaints
 
   Scenario: Complaints list shows complaint data
     Given a complaint exists with number "SK-2026-0001"
-    And I visit the admin complaints list page
+    When I visit the admin complaints list page
     Then I should see "SK-2026-0001"
     And I should see "Testinė poliklinika"
     And I should see "Jonas Jonaitis"
@@ -20,17 +20,17 @@ Feature: Admin complaints
 
   Scenario: Complaints list search finds complaint by number
     Given a complaint exists with number "SK-2026-0002"
-    And I search the admin complaints list for "SK-2026-0002"
+    When I search the admin complaints list for "SK-2026-0002"
     Then I should see "SK-2026-0002"
 
   Scenario: Empty complaints list shows no results message
-    And I visit the admin complaints list page
+    When I visit the admin complaints list page
     Then I should see "Rezultatų nerasta."
 
   Scenario: System administrator cannot access complaints list
-    Given I visit the logout page
-    And admin with email "admin@example.com" and password "secret" is created
-    When I submit the admin login form with email "admin@example.com" and password "secret"
+    Given admin with email "admin@example.com" and password "secret" is created
+    When I visit the logout page
+    And I submit the admin login form with email "admin@example.com" and password "secret"
     And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
     And I visit the admin complaints list page
@@ -38,7 +38,7 @@ Feature: Admin complaints
 
   Scenario: Complaint edit page shows core sections for patient-submitted complaint
     Given a full complaint exists with number "SK-2026-EDIT-01"
-    And I visit the admin complaint edit page for "SK-2026-EDIT-01"
+    When I visit the admin complaint edit page for "SK-2026-EDIT-01"
     Then I should be on the admin complaint edit page for "SK-2026-EDIT-01"
     And I should see "Skundas SK-2026-EDIT-01"
     And I should see "Įstaigos informacija"
@@ -65,14 +65,14 @@ Feature: Admin complaints
 
   Scenario: Complaint attachment on edit page downloads via file_s3
     Given a full complaint exists with number "SK-2026-FILE-01"
-    And I visit the admin complaint edit page for "SK-2026-FILE-01"
-    When I download complaint attachment "patient-id.pdf" from the edit page
+    When I visit the admin complaint edit page for "SK-2026-FILE-01"
+    And I download complaint attachment "patient-id.pdf" from the edit page
     Then the response status code should be 200
     And the last response should be a file_s3 download
 
   Scenario: Complaint edit page shows representative sections when submitted by representative
     Given a full complaint submitted by representative exists with number "SK-2026-REP-01"
-    And I visit the admin complaint edit page for "SK-2026-REP-01"
+    When I visit the admin complaint edit page for "SK-2026-REP-01"
     Then I should see "Teikia atstovaujantis asmuo"
     And I should see "Paciento atstovo /-ų informacija"
     And I should see "Atstovavimą patvirtinantys dokumentai"
@@ -81,14 +81,14 @@ Feature: Admin complaints
 
   Scenario: Complaints list opens edit page from row action
     Given a complaint exists with number "SK-2026-EDIT-03"
-    And I visit the admin complaints list page
-    When I open complaint "SK-2026-EDIT-03" from the complaints list
+    When I visit the admin complaints list page
+    And I open complaint "SK-2026-EDIT-03" from the complaints list
     Then I should be on the admin complaint edit page for "SK-2026-EDIT-03"
 
   Scenario: Saving complaint from edit page returns to list
     Given a complaint exists with number "SK-2026-SAVE-01"
-    And I visit the admin complaint edit page for "SK-2026-SAVE-01"
-    When I save complaint "SK-2026-SAVE-01" from the edit page and return to the list with status IN_REVIEW
+    When I visit the admin complaint edit page for "SK-2026-SAVE-01"
+    And I save complaint "SK-2026-SAVE-01" from the edit page and return to the list with status IN_REVIEW
     Then I should be on the admin complaints list page
     And I should see "Pakeitimai išsaugoti"
     And entity manager is cleared
@@ -97,8 +97,8 @@ Feature: Admin complaints
 
   Scenario: Saving complaint from edit page stays on edit
     Given a complaint exists with number "SK-2026-SAVE-02"
-    And I visit the admin complaint edit page for "SK-2026-SAVE-02"
-    When I save complaint "SK-2026-SAVE-02" from the edit page and continue editing with status IN_REVIEW
+    When I visit the admin complaint edit page for "SK-2026-SAVE-02"
+    And I save complaint "SK-2026-SAVE-02" from the edit page and continue editing with status IN_REVIEW
     Then I should be on the admin complaint edit page for "SK-2026-SAVE-02"
     And I should see "Pakeitimai išsaugoti"
     And entity manager is cleared
@@ -108,34 +108,34 @@ Feature: Admin complaints
 
   Scenario: Complaint edit breadcrumb links to complaints list
     Given a complaint exists with number "SK-2026-BREAD-01"
-    And I visit the admin complaint edit page for "SK-2026-BREAD-01"
-    When I follow the complaints breadcrumb from the complaint edit page
+    When I visit the admin complaint edit page for "SK-2026-BREAD-01"
+    And I follow the complaints breadcrumb from the complaint edit page
     Then I should be on the admin complaints list page
 
   Scenario: Complaint edit page shows confirmation modals and save form actions
     Given a full complaint exists with number "SK-2026-MODAL-01"
-    And I visit the admin complaint edit page for "SK-2026-MODAL-01"
+    When I visit the admin complaint edit page for "SK-2026-MODAL-01"
     Then the complaint edit page should show action confirmation modal labels
     And the complaint edit page should show EasyAdmin save actions tied to the edit form
 
   Scenario: Cancel changes restores last saved status on edit page
     Given a complaint exists with number "SK-2026-CANCEL-01"
-    And I visit the admin complaint edit page for "SK-2026-CANCEL-01"
-    When I change complaint "SK-2026-CANCEL-01" status on the edit page to IN_REVIEW without saving
+    When I visit the admin complaint edit page for "SK-2026-CANCEL-01"
+    And I change complaint "SK-2026-CANCEL-01" status on the edit page to IN_REVIEW without saving
     And I cancel unsaved complaint changes on the edit page for "SK-2026-CANCEL-01"
     Then I should be on the admin complaint edit page for "SK-2026-CANCEL-01"
     And complaint "SK-2026-CANCEL-01" on the edit page should show status SUBMITTED
 
   Scenario: Complaint edit page shows guest patient snapshot without system user link
     Given a full complaint with guest patient snapshot exists with number "SK-2026-GUEST-01"
-    And I visit the admin complaint edit page for "SK-2026-GUEST-01"
+    When I visit the admin complaint edit page for "SK-2026-GUEST-01"
     Then I should see "Aistė"
     And I should see "Aistytė"
-    Then I should see "Teikia atstovaujantis asmuo"
+    And I should see "Teikia atstovaujantis asmuo"
     And I should see "Elena"
     And complaint "SK-2026-GUEST-01" should have a patient snapshot without linked complainant
 
   Scenario: Term date field uses calendar input with minimum today
     Given a full complaint exists with number "SK-2026-DATE-01"
-    And I visit the admin complaint edit page for "SK-2026-DATE-01"
+    When I visit the admin complaint edit page for "SK-2026-DATE-01"
     Then the complaint edit page term date field should allow only future dates

@@ -8,7 +8,8 @@ Feature: Admin account management
 
   Scenario: Accounts can be searched and sorted by translated role
     Given specialist with email "role-search@example.com" and password "secret" is created
-    When I search admin accounts for "Specialistas"
+    When I visit the admin accounts list page
+    And I search admin accounts for "Specialistas"
     Then I should see account "role-search@example.com" in the accounts list
     When I visit the admin accounts list page
     And I sort admin accounts by role
@@ -65,48 +66,48 @@ Feature: Admin account management
     And I should see "Pavardė yra privaloma."
 
   Scenario: Creating account validates name fields reject numbers
-    Given I create an admin account with invalid numeric name fields
-    Given the account form shows name character validation errors
+    When I create an admin account with invalid numeric name fields
+    Then the account form shows name character validation errors
 
   Scenario: Editing account validates name fields reject numbers
     Given specialist with email "name-edit@example.com" and password "secret" is created
-    Given I edit admin account "name-edit@example.com" setting first name to "Jonas123" and last name to "Jonaitis456"
-    Given the account form shows name character validation errors
+    When I edit admin account "name-edit@example.com" setting first name to "Jonas123" and last name to "Jonaitis456"
+    Then the account form shows name character validation errors
 
   Scenario: Creating account accepts hyphenated names with apostrophe
-    Given I create an admin account with email "hyphen-name@example.com" first name "Marija-Saulė" last name "O'Brien" role "specialist" and two-factor "enabled"
-    Given I should see account "hyphen-name@example.com" in the accounts list
+    When I create an admin account with email "hyphen-name@example.com" first name "Marija-Saulė" last name "O'Brien" role "specialist" and two-factor "enabled"
+    Then I should see account "hyphen-name@example.com" in the accounts list
 
   Scenario: Creating account rejects control whitespace in names
-    Given I create an admin account with control whitespace in name fields
-    Given the account form shows name character validation errors
+    When I create an admin account with control whitespace in name fields
+    Then the account form shows name character validation errors
 
   Scenario: Account create and edit forms use the same field order
-    Given the admin account create form is open
-    Given the account form fields appear in this order:
+    When the admin account create form is open
+    Then the account form fields appear in this order:
       | Vardas     |
       | Pavardė    |
       | El. paštas |
     Given specialist with email "field-order@example.com" and password "secret" is created
-    Given the admin account edit form for "field-order@example.com" is open
-    Given the account form fields appear in this order:
+    When the admin account edit form for "field-order@example.com" is open
+    Then the account form fields appear in this order:
       | Vardas     |
       | Pavardė    |
       | El. paštas |
 
   Scenario: Accounts list supports pagination with configurable page size
-    Given the admin accounts list page is open
-    Given pagination controls are hidden on the single-page accounts list
+    When the admin accounts list page is open
+    Then pagination controls are hidden on the single-page accounts list
     Given 11 specialist accounts exist for pagination testing
-    Given the admin accounts list page is open
-    Given the accounts list shows 10 rows
-    Given pagination is visible on the accounts list
-    Given the accounts paginator has accessible navigation states
-    Given the accounts list page size selector shows options 10, 20, and 50
-    Given the admin accounts list page is open with page size 20
-    Given the accounts list shows 12 rows
-    Given the admin accounts list page is open with page size 99
-    Given the invalid page size warning is shown once
+    When the admin accounts list page is open
+    Then the accounts list shows 10 rows
+    And pagination is visible on the accounts list
+    And the accounts paginator has accessible navigation states
+    And the accounts list page size selector shows options 10, 20, and 50
+    When the admin accounts list page is open with page size 20
+    Then the accounts list shows 12 rows
+    When the admin accounts list page is open with page size 99
+    Then the invalid page size warning is shown once
 
   Scenario: System administrator can edit account details
     Given specialist with email "editable@example.com" and password "secret" is created
@@ -117,7 +118,7 @@ Feature: Admin account management
     Given specialist with email "rolechange@example.com" and password "secret" is created
     When I edit admin account "rolechange@example.com" changing role to "department_head"
     And entity manager is cleared
-    Then admin "rolechange@example.com" should have role "department_head"
+    And admin "rolechange@example.com" should have role "department_head"
     And I should see "Skyriaus vedėjas"
 
   Scenario: System administrator cannot remove their own account access
@@ -135,7 +136,7 @@ Feature: Admin account management
     And entity manager is cleared
     And I confirm admin login with the latest authentication code for "active-rolechange@example.com"
     And admin account "active-rolechange@example.com" has role changed directly to "department_head"
-    When I visit "/admin/faq"
+    And I visit "/admin/faq"
     Then I should be on the admin login page
     When I submit the admin login form with email "active-rolechange@example.com" and password "secret"
     And entity manager is cleared
@@ -154,8 +155,8 @@ Feature: Admin account management
   Scenario: Deactivated account cannot log in
     Given specialist with email "deactivated@example.com" and password "secret" is created
     When I edit admin account "deactivated@example.com" setting email to "deactivated@example.com" and active to "inactive"
-    When I visit the logout page
-    When I submit the admin login form with email "deactivated@example.com" and password "secret"
+    And I visit the logout page
+    And I submit the admin login form with email "deactivated@example.com" and password "secret"
     Then I should see "Jūsų paskyra yra deaktyvuota. Dėl prieigos kreipkitės į sistemos administratorių."
     And I should not see "Autentifikacijos kodas"
 
@@ -166,10 +167,10 @@ Feature: Admin account management
     And entity manager is cleared
     And I confirm admin login with the latest authentication code for "twofactor-change@example.com"
     And admin account "twofactor-change@example.com" has two-factor disabled directly
-    When I visit "/admin/faq"
+    And I visit "/admin/faq"
     Then I should be on the admin login page
     When I submit the admin login form with email "twofactor-change@example.com" and password "secret"
-    Given I should be on the admin home page
+    Then I should be on the admin home page
     And I should not see "Autentifikacijos kodas"
 
   Scenario: Soft deletion ends an existing session on the next request
@@ -184,10 +185,10 @@ Feature: Admin account management
 
   Scenario: Soft deleted account is not accessible by direct URL
     When I create an admin account with email "hidden@example.com" first name "Ana" last name "Anaitė" role "specialist" and two-factor "enabled"
-    And a password reset token was issued for admin "hidden@example.com"
-    And I remember the account id for "hidden@example.com"
+    Given a password reset token was issued for admin "hidden@example.com"
+    When I remember the account id for "hidden@example.com"
     And I delete admin account "hidden@example.com"
-    And I should see "Paskyra ištrinta"
+    Then I should see "Paskyra ištrinta"
     When I visit the admin account detail page for the remembered account id
     Then the response status code should be 404
 
@@ -204,30 +205,30 @@ Feature: Admin account management
     When I create an admin account with email "expired-resend@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
     And admin "expired-resend@example.com" has an expired account invitation
     And I remember the invitation token hash for admin "expired-resend@example.com"
-    When I resend the account invitation for "expired-resend@example.com"
-    Then I should see "Pakvietimas išsiųstas iš naujo"
+    And I resend the account invitation for "expired-resend@example.com"
     Then I should be on the admin accounts page
+    And I should see "Pakvietimas išsiųstas iš naujo"
     And entity manager is cleared
     And admin "expired-resend@example.com" should have a renewed invitation
 
   Scenario: Resend invitation is not shown after password setup with pending two-factor
     When I create an admin account with email "partial-activate@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
-    Given admin "partial-activate@example.com" has a pending account invitation
-    When I visit the logout page
-    When I set the account invitation password to "Newsecretpass1!"
+    And admin "partial-activate@example.com" has a pending account invitation
+    And I visit the logout page
+    And I set the account invitation password to "Newsecretpass1!"
     Then I should be on the admin two-factor login page
     When I submit the admin login form with email "admin@example.com" and password "secret"
     And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
-    When I visit the admin accounts list page
+    And I visit the admin accounts list page
     Then resend invitation should not be available for admin "partial-activate@example.com"
 
   Scenario: Password reset completes a pending account invitation
-    Given I create an admin account with email "reset-pending@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
-    When I visit the logout page
-    Given a password reset token was issued for admin "reset-pending@example.com"
-    Given I reset admin password using the stored reset token to "Newsecretpass1!"
-    Given admin "reset-pending@example.com" has no pending account invitation
+    When I create an admin account with email "reset-pending@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
+    And I visit the logout page
+    And a password reset token was issued for admin "reset-pending@example.com"
+    When I reset admin password using the stored reset token to "Newsecretpass1!"
+    Then admin "reset-pending@example.com" has no pending account invitation
 
   Scenario: Changing a legacy pending account email renews its invitation
     Given changing legacy pending admin email from "legacy-old@example.com" to "legacy-new@example.com" renews its invitation
@@ -235,9 +236,9 @@ Feature: Admin account management
   Scenario: Changing a pending account email renews its invitation
     When I create an admin account with email "old-invite@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
     And I remember the invitation token hash for admin "old-invite@example.com"
-    When I edit admin account "old-invite@example.com" setting email to "new-invite@example.com" and active to "active"
+    And I edit admin account "old-invite@example.com" setting email to "new-invite@example.com" and active to "active"
     And entity manager is cleared
-    Then admin "new-invite@example.com" should have a renewed invitation
+    And admin "new-invite@example.com" should have a renewed invitation
 
   Scenario: Resending an invitation requires a valid CSRF token
     When I create an admin account with email "csrf@example.com" first name "Tomas" last name "Tomaitis" role "specialist" and two-factor "enabled"
@@ -246,9 +247,9 @@ Feature: Admin account management
 
   Scenario: Invitation password must satisfy password policy
     When I visit the logout page
-    And specialist with email "weak-password@example.com" and password "secret" is created
-    And admin "weak-password@example.com" has a pending account invitation
-    When I set the account invitation password to "weak"
+    Given specialist with email "weak-password@example.com" and password "secret" is created
+    When admin "weak-password@example.com" has a pending account invitation
+    And I set the account invitation password to "weak"
     Then the response should contain "<li>Slaptažodis turi būti bent 12 simbolių.</li>"
     And the response should contain "<li>Slaptažodyje turi būti bent viena didžioji raidė.</li>"
     And the response should contain "<li>Slaptažodyje turi būti bent vienas skaitmuo.</li>"
@@ -257,9 +258,9 @@ Feature: Admin account management
 
   Scenario: Invitation password setup redirects to two-factor login
     When I visit the logout page
-    And specialist with email "activate@example.com" and password "secret" is created
-    And admin "activate@example.com" has a pending account invitation
-    When I set the account invitation password to "Newsecretpass1!"
+    Given specialist with email "activate@example.com" and password "secret" is created
+    When admin "activate@example.com" has a pending account invitation
+    And I set the account invitation password to "Newsecretpass1!"
     Then I should be on the admin two-factor login page
     When I cancel admin two-factor authentication
     And I open the account invitation link
@@ -267,13 +268,13 @@ Feature: Admin account management
 
   Scenario: Invitation setup without two-factor logs in securely
     When I visit the logout page
-    And specialist with email "activate-no-2fa@example.com" and password "secret" is created
-    And admin account "activate-no-2fa@example.com" has two-factor disabled directly
+    Given specialist with email "activate-no-2fa@example.com" and password "secret" is created
+    When admin account "activate-no-2fa@example.com" has two-factor disabled directly
     And admin "activate-no-2fa@example.com" has a pending account invitation
     And I open the account invitation link
     And I remember the current session id
-    When I set the account invitation password to "Newsecretpass1!"
-    Given I should be on the admin home page
+    And I set the account invitation password to "Newsecretpass1!"
+    Then I should be on the admin home page
     And the session id should have changed
     And entity manager is cleared
     And admin "activate-no-2fa@example.com" should have a last active time
@@ -281,8 +282,8 @@ Feature: Admin account management
 
   Scenario: Expired invitation token is rejected
     When I visit the logout page
-    And specialist with email "expired-invitation@example.com" and password "secret" is created
-    And admin "expired-invitation@example.com" has an expired account invitation
+    Given specialist with email "expired-invitation@example.com" and password "secret" is created
+    When admin "expired-invitation@example.com" has an expired account invitation
     And I open the account invitation link
     Then I should see "Paskyros aktyvavimo nuoroda negalioja."
 
@@ -292,5 +293,5 @@ Feature: Admin account management
     And I submit the admin login form with email "specialist@example.com" and password "secret"
     And entity manager is cleared
     And I confirm admin login with the latest authentication code for "specialist@example.com"
-    When I visit the admin accounts list page
+    And I visit the admin accounts list page
     Then the response status code should be 403

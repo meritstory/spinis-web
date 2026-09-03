@@ -24,7 +24,7 @@ Feature: FAQ page
       | question           | answer              | position |
       | Pirmas klausimas   | <p>Atsakymas A.</p> | 1        |
       | Antras klausimas   | <p>Atsakymas B.</p> | 2        |
-    Given I am on "/faq"
+    When I am on "/faq"
     Then the first FAQ answer should be expanded
     And the response should contain "Atsakymas A."
 
@@ -34,7 +34,7 @@ Feature: FAQ page
       | Trečias klausimas  | <p>Atsakymas C.</p> | 3        |
       | Pirmas klausimas   | <p>Atsakymas A.</p> | 1        |
       | Antras klausimas   | <p>Atsakymas B.</p> | 2        |
-    Given I am on "/faq"
+    When I am on "/faq"
     Then the FAQ questions should appear in this order:
       | Pirmas klausimas  |
       | Antras klausimas  |
@@ -44,7 +44,7 @@ Feature: FAQ page
     Given faqs are loaded:
       | question      | answer                                                                                                   | position |
       | Ar tai saugu? | <p>Taip.</p><script>window.xssTriggered = true;</script><img src=x onerror='window.xssTriggered = true'> | 1        |
-    Given I am on "/faq"
+    When I am on "/faq"
     Then I should see "Ar tai saugu?"
     And the response should not contain "<script>"
     And the response should not contain "onerror"

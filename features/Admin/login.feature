@@ -59,7 +59,7 @@ Feature: Admin login
     And entity manager is cleared
     And the authentication code for admin "admin@example.com" has expired
     And I confirm admin login with the latest authentication code for "admin@example.com"
-    And I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
+    Then I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
 
   Scenario: Expired authentication code with invalid code shows invalid code error
     Given admin with email "admin@example.com" and password "secret" is created
@@ -76,9 +76,9 @@ Feature: Admin login
     And entity manager is cleared
     And the authentication code for admin "admin@example.com" has expired
     And I confirm admin login with the latest authentication code for "admin@example.com"
-    And I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
+    Then I should see "Autentifikacijos kodo galiojimo laikas pasibaigė. Siųskite kodą iš naujo."
     And I confirm admin login with authentication code "000000"
-    Then I should see "Neteisingas autentifikacijos kodas."
+    And I should see "Neteisingas autentifikacijos kodas."
 
   Scenario: Cancel two-factor authentication returns to login
     Given admin with email "admin@example.com" and password "secret" is created
@@ -97,11 +97,11 @@ Feature: Admin login
     Given admin with email "admin@example.com" and password "secret" is created
     When I submit the admin login form with email "admin@example.com" and password "wrong"
     And I open the admin forgot password form
-    And I should not see "Neteisingi prisijungimo duomenys."
+    Then I should not see "Neteisingi prisijungimo duomenys."
 
   Scenario: Forgot password shows email field and reset button
-    And I open the admin forgot password form
-    And I should see "El. paštas"
+    When I open the admin forgot password form
+    Then I should see "El. paštas"
     And I should see "Atkurti slaptažodį"
 
   Scenario: Forgot password shows generic confirmation message
@@ -120,7 +120,7 @@ Feature: Admin login
     Given admin with email "admin@example.com" and password "secret" is created
     And a password reset token was issued for admin "admin@example.com"
     When I request admin password reset for email "admin@example.com"
-    And I should see "Jei slaptažodžio atkūrimo užklausą jau pateikėte, naują užklausą galėsite pateikti po 5 minučių."
+    Then I should see "Jei slaptažodžio atkūrimo užklausą jau pateikėte, naują užklausą galėsite pateikti po 5 minučių."
 
   Scenario: Repeating password reset request within throttle period keeps the previous link valid
     Given admin with email "admin@example.com" and password "secret" is created
@@ -132,10 +132,10 @@ Feature: Admin login
   Scenario: Repeating password reset request after throttle invalidates the previous link
     Given admin with email "admin@example.com" and password "secret" is created
     And a password reset token was issued for admin "admin@example.com"
-    And the password reset throttle has passed for admin "admin@example.com"
-    When I request admin password reset for email "admin@example.com"
+    When the password reset throttle has passed for admin "admin@example.com"
+    And I request admin password reset for email "admin@example.com"
     And I visit the remembered password reset link
-    And I should see "Slaptažodžio atkūrimo nuoroda negalioja."
+    Then I should see "Slaptažodžio atkūrimo nuoroda negalioja."
     And admin "admin@example.com" should have exactly 1 password reset request
 
   Scenario: Password reset allows login with new password
@@ -178,5 +178,5 @@ Feature: Admin login
     When I submit the admin login form with email "admin@example.com" and password "secret"
     And entity manager is cleared
     And I confirm admin login with the latest authentication code for "admin@example.com"
-    When I visit the logout page
+    And I visit the logout page
     Then I should be on the admin login page

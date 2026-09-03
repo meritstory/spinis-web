@@ -19,8 +19,8 @@ Feature: Private stored files
     Given stored files are loaded:
       | originalName | content    | uploadedByAdmin   |
       | private.txt  | owner only | admin@example.com |
-    And the admin session is cleared
-    When I download stored file "private.txt" by original name
+    When the admin session is cleared
+    And I download stored file "private.txt" by original name
     Then the file download should redirect to admin login
 
   Scenario: Missing file metadata returns not found
@@ -29,13 +29,13 @@ Feature: Private stored files
 
   Scenario: Missing S3 object returns not found
     Given file metadata without an S3 object exists for admin "admin@example.com"
-    When I download the stored file
+    And I download the stored file
     Then the response status code should be 404
 
   Scenario: Department head can download own private stored file
     When I visit the logout page
     Given department_head with email "head@example.com" and password "secret" is created without two-factor
-    Given stored files are loaded:
+    And stored files are loaded:
       | originalName  | content      | uploadedByAdmin   |
       | head-only.txt | head private | head@example.com  |
     When I submit the admin login form with email "head@example.com" and password "secret"
@@ -45,7 +45,7 @@ Feature: Private stored files
   Scenario: Department head cannot download system administrator private stored file
     When I visit the logout page
     Given department_head with email "head@example.com" and password "secret" is created without two-factor
-    Given stored files are loaded:
+    And stored files are loaded:
       | originalName   | content       | uploadedByAdmin    |
       | admin-only.txt | admin private | admin@example.com  |
     When I submit the admin login form with email "head@example.com" and password "secret"
@@ -54,7 +54,7 @@ Feature: Private stored files
 
   Scenario: System administrator cannot download department head private stored file
     Given department_head with email "head@example.com" and password "secret" is created without two-factor
-    Given stored files are loaded:
+    And stored files are loaded:
       | originalName     | content         | uploadedByAdmin   |
       | head-private.txt | not for sysadmin | head@example.com |
     When I download stored file "head-private.txt" by original name
@@ -62,8 +62,8 @@ Feature: Private stored files
 
   Scenario: Complaint attachment uploader can download their file
     Given a full complaint exists with number "SK-2026-UPLOADER-01"
-    Given stored file "patient-id.pdf" uploaded by "jonas.jonaitis@example.com" is registered for download
+    And stored file "patient-id.pdf" uploaded by "jonas.jonaitis@example.com" is registered for download
     When I visit the logout page
     And I submit the admin login form with email "jonas.jonaitis@example.com" and password "secret"
-    When I download stored file "patient-id.pdf" by original name
+    And I download stored file "patient-id.pdf" by original name
     Then the response status code should be 200

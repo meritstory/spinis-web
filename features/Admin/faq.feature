@@ -28,8 +28,8 @@ Feature: Admin FAQ management
     And I should see "Tekstas yra privalomas."
 
   Scenario: Duplicate position shows validation error
-    Given I submit the FAQ form with question "Pirmas klausimas" answer "<p>Pirmas atsakymas.</p>" position "1"
-    When I submit the FAQ form with question "Antras klausimas" answer "<p>Antras atsakymas.</p>" position "1"
+    When I submit the FAQ form with question "Pirmas klausimas" answer "<p>Pirmas atsakymas.</p>" position "1"
+    And I submit the FAQ form with question "Antras klausimas" answer "<p>Antras atsakymas.</p>" position "1"
     Then I should be on the admin FAQ create page
     And I should see "Ši pozicija jau naudojama kitame DUK įraše."
 
